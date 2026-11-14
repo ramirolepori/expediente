@@ -31,17 +31,15 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
       sePuedeAbrir: evaluar(s.requisito, estado, caso),
     })),
     pruebas: estado.fase === "lobby" ? [] : pruebasVisibles(estado, caso),
+    // un personaje todavía no disponible no revela ni su nombre (sería un spoiler)
     personajes: caso.personajes
       .filter((p) => p.interrogable)
-      .map((p) => ({
-        id: p.id,
-        nombre: p.nombre,
-        rol: p.rol,
-        edad: p.edad,
-        descripcion: p.descripcion,
-        disponible: evaluar(p.disponible, estado, caso),
-        visitado: estado.personajesVisitados.includes(p.id),
-      })),
+      .map((p) => {
+        const disponible = terminada || evaluar(p.disponible, estado, caso);
+        return disponible
+          ? { id: p.id, nombre: p.nombre, rol: p.rol, edad: p.edad, descripcion: p.descripcion, disponible: true, visitado: estado.personajesVisitados.includes(p.id) }
+          : { id: p.id, nombre: "???", rol: "", edad: undefined, descripcion: "", disponible: false, visitado: false };
+      }),
     descubrimientos: caso.hechos.filter((h) => estado.hechosRevelados.includes(h.id)),
     candados: caso.candados
       .filter((c) => evaluar(c.disponible, estado, caso))

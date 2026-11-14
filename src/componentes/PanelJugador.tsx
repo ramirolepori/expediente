@@ -86,6 +86,8 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
 function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
   const [abierta, setAbierta] = useState<string | null>(null);
   const [codigos, setCodigos] = useState<Record<string, string>>({});
+  // intentos enviados desde este dispositivo; si el candado sigue cerrado, el último falló
+  const [fallidos, setFallidos] = useState<Record<string, number>>({});
   const doc = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (abierta) doc.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -155,8 +157,9 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
                     className="mt-3 flex gap-2"
                     onSubmit={async (e) => {
                       e.preventDefault();
-                      await sala.accion({ tipo: "probarCandado", candado: c.id, codigo: codigos[c.id] ?? "" });
+                      const ok = await sala.accion({ tipo: "probarCandado", candado: c.id, codigo: codigos[c.id] ?? "" });
                       setCodigos((x) => ({ ...x, [c.id]: "" }));
+                      if (ok) setFallidos((x) => ({ ...x, [c.id]: (x[c.id] ?? 0) + 1 }));
                     }}
                   >
                     <input
@@ -167,6 +170,11 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
                     />
                     <button className="rounded-lg bg-acento px-4 text-sm font-semibold text-acento-texto">Probar</button>
                   </form>
+                )}
+                {!c.abierto && (fallidos[c.id] ?? 0) > 0 && (
+                  <p key={fallidos[c.id]} className="aparecer mt-2 text-sm text-acento">
+                    ✕ Código incorrecto{(fallidos[c.id] ?? 0) > 1 ? ` (${fallidos[c.id]} intentos)` : ""}
+                  </p>
                 )}
               </div>
             ))}
@@ -289,7 +297,7 @@ function Resolver({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
         <fieldset key={p.id} className="rounded-xl border border-borde bg-panel p-4">
           <legend className="px-1 font-semibold">{p.texto}</legend>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {(p.tipo === "personaje" ? vista.personajes.map((x) => ({ id: x.id, texto: x.nombre })) : (p.opciones ?? [])).map((o) => (
+            {(p.tipo === "personaje" ? vista.personajes.filter((x) => x.disponible).map((x) => ({ id: x.id, texto: x.nombre })) : (p.opciones ?? [])).map((o) => (
               <label key={o.id} className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${respuestas[p.id] === o.id ? "border-acento bg-panel-2" : "border-borde"}`}>
                 <input type="radio" name={p.id} className="accent-[var(--acento)]" checked={respuestas[p.id] === o.id} onChange={() => setRespuestas((r) => ({ ...r, [p.id]: o.id }))} />
                 {o.texto}

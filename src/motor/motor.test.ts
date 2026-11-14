@@ -54,6 +54,14 @@ describe("Hotel Aurora", () => {
     expect(vistaPara(caso, s, "a").verdad).toBeNull();
   });
 
+  it("los personajes bloqueados no revelan su nombre", () => {
+    const v = vistaPara(caso, partida(), "a");
+    const julian = v.personajes.find((p) => p.id === "julian")!;
+    expect(julian.disponible).toBe(false);
+    expect(julian.nombre).toBe("???");
+    expect(JSON.stringify(v)).not.toContain("Olazábal");
+  });
+
   it("las notas privadas solo las ve su autor", () => {
     let s = partida();
     s = aplicar(s, { tipo: "nota", texto: "sospecho del gerente", visibilidad: "privada" }, "a", caso);
