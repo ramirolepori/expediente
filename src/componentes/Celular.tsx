@@ -79,7 +79,8 @@ export function Celular({ datos }: { datos: Datos }) {
               <p className="mt-16 text-[15px] font-medium capitalize opacity-80">{datos.fecha ?? ""}</p>
               <p className="text-[76px] leading-none font-semibold tracking-tight">{datos.hora}</p>
               <div className="mt-6 w-full space-y-2 px-3">
-                {datos.chats.slice(0, 3).map((c) => {
+                {/* como mucho tres tarjetas, para que no tapen el texto de desbloqueo */}
+                {datos.chats.slice(0, bateriaBaja ? 2 : 3).map((c) => {
                   const ultimo = c.mensajes.filter((m) => m.de === "contacto").at(-1);
                   if (!ultimo) return null;
                   return (
