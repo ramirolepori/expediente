@@ -17,8 +17,13 @@ function novedades(antes: VistaPartida, ahora: VistaPartida): Aviso[] {
   if (antes.fase !== "jugando" || ahora.fase !== "jugando") return [];
   const out: Aviso[] = [];
   const pruebasAntes = new Set(antes.pruebas.map((p) => p.id));
-  for (const p of ahora.pruebas) {
-    if (!pruebasAntes.has(p.id)) out.push({ id: `p-${p.id}`, icono: "📎", titulo: "Nueva prueba", texto: p.titulo });
+  const nuevas = ahora.pruebas.filter((p) => !pruebasAntes.has(p.id));
+  const sobre = ahora.sobres.find((x) => x.abierto && !antes.sobres.find((y) => y.id === x.id)?.abierto);
+  if (sobre && nuevas.length > 1) {
+    // abrir un sobre trae muchas pruebas juntas: un solo aviso en lugar de una pila
+    out.push({ id: `s-${sobre.id}`, icono: "📂", titulo: sobre.titulo, texto: `${nuevas.length} pruebas nuevas en el expediente` });
+  } else {
+    for (const p of nuevas) out.push({ id: `p-${p.id}`, icono: "📎", titulo: "Nueva prueba", texto: p.titulo });
   }
   const hechosAntes = new Set(antes.descubrimientos.map((h) => h.id));
   for (const h of ahora.descubrimientos) {
