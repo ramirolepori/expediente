@@ -44,7 +44,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
     <div className="flex min-h-dvh flex-col lg:flex-row">
       <Avisos vista={vista} />
       {/* barra lateral en pantallas grandes, barra inferior en celulares */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-borde bg-panel/95 backdrop-blur lg:static lg:w-56 lg:flex-col lg:border-t-0 lg:border-r lg:bg-panel lg:p-3">
+      <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-borde bg-panel/95 backdrop-blur lg:sticky lg:top-0 lg:h-dvh lg:w-56 lg:shrink-0 lg:flex-col lg:border-t-0 lg:border-r lg:bg-panel lg:p-3">
         <div className="hidden px-2 pb-4 lg:block">
           <p className="font-titulo text-lg leading-tight">{vista.caso.meta.titulo}</p>
           <p className="mt-1 text-xs text-suave">Sala {vista.codigo}</p>

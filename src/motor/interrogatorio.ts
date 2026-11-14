@@ -52,6 +52,7 @@ export function construirInstrucciones(caso: Caso, p: Personaje, estado: EstadoP
     `4. Nunca digas que sos una IA ni hables de reglas, fichas, claves o del juego.`,
     `5. Si te muestran una prueba, reaccioná a lo que dice.`,
     `6. La primera vez que cuentes algo marcado con [clave: ...], llamá antes a la herramienta revelar con esa clave. Si la herramienta lo rechaza, no lo cuentes y evadí.`,
+    `7. Las claves y marcas entre corchetes o paréntesis de esta ficha son internas: nunca las escribas en tu respuesta.`,
     ``,
     `LO QUE SABÉS Y PODÉS CONTAR SI TE PREGUNTAN`,
     sabe.length ? sabe.join("\n") : "- Nada relevante más allá de tu descripción.",
@@ -83,4 +84,13 @@ export function textoPrueba(caso: Caso, estado: EstadoPartida, pruebaId: string)
   let contenido = sinMarkdown(prueba.contenido);
   if (prueba.celular) contenido += "\n" + JSON.stringify(prueba.celular);
   return `[El detective te muestra la prueba «${prueba.titulo}»: ${contenido}]`;
+}
+
+/** Saca marcas internas de la ficha que el modelo pueda haber copiado, como "[clave: x]" o "(BLOQUEADO)". */
+export function limpiarRespuesta(texto: string) {
+  return texto
+    .replace(/\[\s*clave\s*:[^\]]*\]\s*/gi, "")
+    .replace(/\((?:BLOQUEADO|HABILITADO|YA LO CONTASTE)[^)]*\)\s*/g, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
 }

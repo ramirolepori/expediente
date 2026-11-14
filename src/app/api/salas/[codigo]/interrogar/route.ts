@@ -1,7 +1,7 @@
 import { generateText, isStepCount, tool, type ModelMessage } from "ai";
 import { z } from "zod";
 import { evaluar } from "@/motor/condiciones";
-import { construirInstrucciones, resolverRevelacion, textoPrueba } from "@/motor/interrogatorio";
+import { construirInstrucciones, limpiarRespuesta, resolverRevelacion, textoPrueba } from "@/motor/interrogatorio";
 import { nuevoId, recursosRestantes, revelarHecho } from "@/motor/reductor";
 import type { MensajeInterrogatorio } from "@/motor/tipos";
 import { almacen, type Sala } from "@/servidor/almacen";
@@ -123,7 +123,8 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
       return Response.json({ error: "Sin respuesta del modelo" }, { status: 503 });
     }
 
-    const respuesta = respuestaModelo;
+    // red de seguridad: el modelo a veces copia las etiquetas internas de la ficha en su respuesta
+    const respuesta = limpiarRespuesta(respuestaModelo) || "*Se queda en silencio.*";
     await agregarMensaje(codigo, personaje.id, { id: nuevoId(), de: "personaje", texto: respuesta, hora: Date.now() });
     return Response.json({ ok: true });
   } catch (e) {

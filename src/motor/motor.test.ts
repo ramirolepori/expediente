@@ -4,7 +4,7 @@ import { CasoSchema } from "@/casos/schema";
 import { validarCaso } from "./validador";
 import { aplicar, ErrorDeJuego, revelarHecho } from "./reductor";
 import { vistaPara } from "./vista";
-import { construirInstrucciones, resolverRevelacion } from "./interrogatorio";
+import { construirInstrucciones, limpiarRespuesta, resolverRevelacion } from "./interrogatorio";
 import { CONFIG_POR_DEFECTO, type EstadoPartida } from "./tipos";
 
 const caso = CasoSchema.parse(datos);
@@ -87,6 +87,13 @@ describe("Hotel Aurora", () => {
     s = aplicar(s, { tipo: "abrirSobre", sobre: "s2_registros" }, "a", caso);
     expect(resolverRevelacion(caso, personaje("duarte"), s, "duarte_confiesa_visita")).toEqual({ ok: true, hecho: "duarte_visita" });
     expect(resolverRevelacion(caso, personaje("duarte"), s, "clave_inventada").ok).toBe(false);
+  });
+
+  it("limpia las marcas internas que el modelo copie en la respuesta", () => {
+    expect(limpiarRespuesta("¡Yo no fui! Esa hora ya estaba en mi casa, [clave: matias_no_estaba] me fui a las 19.")).toBe(
+      "¡Yo no fui! Esa hora ya estaba en mi casa, me fui a las 19.",
+    );
+    expect(limpiarRespuesta("(BLOQUEADO) No sé nada.")).toBe("No sé nada.");
   });
 
   it("cada personaje recibe solo su ficha", () => {
