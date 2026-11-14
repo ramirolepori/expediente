@@ -11,7 +11,7 @@
     "inspiracion": "Transformación de 'El Asesinato del Hotel Aurora' (PDF propio), con la verdad reescrita para que sea jugable y coherente."
   },
   "ambientacion": "noir",
-  "introduccion": "**Lunes, 02:41. Hotel Aurora, Plaza San Martín.**\n\nLlueve desde la medianoche. A las 02:14 el huésped de la 609 llamó a recepción porque una ventana golpeaba sin parar en la habitación de al lado y nadie respondía. La recepcionista subió con el cerrajero y abrió la 607.\n\nAdentro estaba **Julia Romero**, 36 años, contadora. Muerta.\n\nUstedes son el equipo de investigación de la Comisaría Norte. El gerente les cedió una sala de reuniones en la planta baja. Tienen el primer sobre del expediente y a varias personas del hotel esperando para declarar.\n\nObjetivo: descubrir **quién mató a Julia, quién lo ayudó, quién dio la orden y por qué**.",
+  "introduccion": "**Lunes, 02:41. Hotel Aurora, Plaza San Martín.**\n\nLlueve desde la medianoche. A las 02:14 el huésped de la 609 llamó a recepción porque una ventana golpeaba sin parar en la habitación de al lado y nadie respondía. La recepcionista subió con el cerrajero y abrió la 607.\n\nAdentro estaba **Julia Romero**, 36 años, contadora. Muerta.\n\nUstedes son el equipo de investigación de la Comisaría Norte. El gerente les cedió una sala de reuniones en la planta baja. Tienen el primer sobre del expediente y a varias personas del hotel esperando para declarar.\n\nObjetivo: descubrir **qué pasó en la habitación 607 y quiénes son responsables**.",
   "verdad": {
     "resumen": "Julia Romero auditaba al Hotel Aurora y descubrió un esquema de doble facturación con proveedores pantalla (carpeta ECLIPSE) que lavaba dinero hacia H.O. Group, la empresa panameña de Hernán Olazábal, presidente del directorio. MD Global, la importadora de su esposo Martín Duarte, era uno de los proveedores pantalla. Julia iba a entregar todo a la periodista Valentina Núñez (alias Arcimboldo) el lunes a las 9:00. Olazábal le ordenó al gerente Alberto Mansilla 'recuperar todo antes del lunes, sin ruido'. Mansilla cortó las cámaras del pasillo, imprimió la lista de huéspedes del piso 6 y le dio a su hijo Julián, alojado con alias en la 605, la tarjeta maestra duplicada AU-0008. Julián entró a la 607 a las 23:19 para quitarle el pendrive y las copias. Julia se resistió, forcejearon y él la estranguló cerca de las 23:30. Después montó una escena: rompió una copa, adelantó el reloj a las 11:37, escribió un mensaje con el labial de Julia en el espejo y abrió la ventana. No encontró el pendrive, porque Julia se lo había dejado a su amiga Carla el sábado.",
     "culpables": [
@@ -404,7 +404,10 @@
       "sobre": "s1_escena",
       "contenido": "Desbloqueado por el forense con la huella de la víctima.",
       "celular": {
-        "bloqueo": "Batería 1 %. Lunes 02:52.",
+        "hora": "02:52",
+        "fecha": "lunes",
+        "bateria": 1,
+        "dueno": "Julia",
         "chats": [
           {
             "contacto": "Arcimboldo",
@@ -632,11 +635,11 @@
   "resolucion": {
     "preguntas": [
       { "id": "autor", "texto": "¿Quién mató a Julia Romero?", "tipo": "personaje", "respuesta": "julian", "puntos": 30, "explicacion": "Julián Mansilla entró a la 607 a las 23:19 con la AU-0008 (video de la mirilla, registro de cerraduras), dejó su ADN bajo las uñas de Julia (familiar directo de Alberto) y una fibra de su corbata dorada en la copa." },
-      { "id": "complice", "texto": "¿Quién le facilitó el acceso y cubrió el crimen?", "tipo": "personaje", "respuesta": "alberto", "puntos": 20, "explicacion": "Alberto Mansilla cortó las cámaras con el usuario MLEON desde recepción, imprimió la lista de huéspedes y subió a la 605 a las 23:06 para darle a su hijo la AU-0008." },
-      { "id": "orden", "texto": "¿Quién dio la orden?", "tipo": "personaje", "respuesta": "olazabal", "puntos": 20, "explicacion": "Hernán Olazábal le escribió a Mansilla a las 22:20: 'Recuperá todo lo de Romero antes de las 9'. H.O. Group es el beneficiario final de ECLIPSE." },
+      { "id": "complice", "texto": "¿Alguien ayudó al asesino o lo encubrió? ¿Quién?", "tipo": "personaje", "permiteNadie": true, "respuesta": "alberto", "puntos": 20, "explicacion": "Alberto Mansilla cortó las cámaras con el usuario MLEON desde recepción, imprimió la lista de huéspedes y subió a la 605 a las 23:06 para darle a su hijo la AU-0008." },
+      { "id": "orden", "texto": "¿Alguien más estaba detrás y dio la orden? ¿Quién?", "tipo": "personaje", "permiteNadie": true, "respuesta": "olazabal", "puntos": 20, "explicacion": "Hernán Olazábal le escribió a Mansilla a las 22:20: 'Recuperá todo lo de Romero antes de las 9'. H.O. Group es el beneficiario final de ECLIPSE." },
       {
         "id": "movil",
-        "texto": "¿Por qué la mataron?",
+        "texto": "¿Cuál fue el móvil del crimen?",
         "tipo": "opcion",
         "opciones": [
           { "id": "celos", "texto": "Por celos y la separación" },

@@ -198,3 +198,9 @@ body {
   .ambiente-fx { display: none; }
   .cursor-maquina::after { display: none; }
 }
+
+/* celular: las apps entran deslizándose como en iOS */
+@keyframes cel-app { from { transform: translateX(100%); } to { transform: none; } }
+.cel-app { animation: cel-app 0.32s cubic-bezier(0.25, 0.8, 0.3, 1) both; }
+@keyframes cel-entrar { from { opacity: 0; transform: scale(1.08); } to { opacity: 1; transform: none; } }
+.cel-entrar { animation: cel-entrar 0.35s ease-out both; }

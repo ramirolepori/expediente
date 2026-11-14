@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
-import { Markdown, Punto, Reloj } from "./comunes";
+import { BotonSalir, Markdown, Punto, Reloj } from "./comunes";
 import { Documento, iconoPrueba } from "./Documento";
 import { Avisos } from "./Avisos";
 import { Interrogatorio } from "./Interrogatorio";
@@ -34,11 +34,23 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
     return (
       <>
         <Lobby vista={vista} onIniciar={() => sala.accion({ tipo: "iniciar" })} />
+        <div className="pb-6 text-center">
+          <BotonSalir onSalir={sala.salir} />
+        </div>
         {sala.error && <p className="pb-6 text-center text-sm text-acento">{sala.error}</p>}
       </>
     );
   }
-  if (vista.fase === "terminada") return <Resultado vista={vista} />;
+  if (vista.fase === "terminada") {
+    return (
+      <>
+        <Resultado vista={vista} />
+        <div className="pb-10 text-center">
+          <BotonSalir onSalir={sala.salir} pedirConfirmacion={false} className="rounded-xl border border-borde px-4 py-2" />
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
@@ -77,6 +89,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
           <div className="flex items-center gap-4 text-sm text-suave">
             {vista.recursosRestantes !== null && <span title="Horas de investigación">🕰 {vista.recursosRestantes} h</span>}
             <Reloj iniciada={vista.iniciada} limiteMin={vista.config.temporizadorMin} />
+            <BotonSalir onSalir={sala.salir} />
           </div>
         </header>
         {sala.error && (
@@ -330,7 +343,9 @@ function Resolver({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
         <fieldset key={p.id} className="rounded-xl border border-borde bg-panel p-4">
           <legend className="px-1 font-semibold">{p.texto}</legend>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {(p.tipo === "personaje" ? vista.personajes.filter((x) => x.disponible).map((x) => ({ id: x.id, texto: x.nombre })) : (p.opciones ?? [])).map((o) => {
+            {(p.tipo === "personaje"
+              ? [...vista.personajes.filter((x) => x.disponible).map((x) => ({ id: x.id, texto: x.nombre })), ...(p.permiteNadie ? [{ id: "nadie", texto: "Nadie" }] : [])]
+              : (p.opciones ?? [])).map((o) => {
               const quienes = jugadores.filter((j) => vista.votos[j.id]?.[p.id] === o.id);
               return (
                 <label key={o.id} className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${respuestas[p.id] === o.id ? "border-acento bg-panel-2" : "border-borde"}`}>

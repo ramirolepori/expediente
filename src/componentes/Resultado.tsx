@@ -44,7 +44,7 @@ export function Resultado({ vista, grande }: { vista: VistaPartida; grande?: boo
   }, [puntajeFinal, paso, total, puntos]);
 
   if (!a || !vista.verdad) return null;
-  const nombre = (id: string) => vista.personajes.find((p) => p.id === id)?.nombre ?? id;
+  const nombre = (id: string) => (id === "nadie" ? "Nadie" : (vista.personajes.find((p) => p.id === id)?.nombre ?? id));
   const terminado = paso >= total;
   const resuelto = a.puntaje >= a.maximo * 0.7;
 

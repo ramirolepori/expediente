@@ -62,6 +62,13 @@ describe("Hotel Aurora", () => {
     expect(JSON.stringify(v)).not.toContain("Olazábal");
   });
 
+  it("al salir el anfitrión, el rol pasa a otro jugador", () => {
+    const s = aplicar(partida(), { tipo: "salir" }, "a", caso);
+    expect(s.conexiones.a).toBeUndefined();
+    expect(s.conexiones.b.anfitrion).toBe(true);
+    expect(aplicar(s, { tipo: "salir" }, "tv", caso).conexiones.tv).toBeUndefined();
+  });
+
   it("las notas privadas solo las ve su autor", () => {
     let s = partida();
     s = aplicar(s, { tipo: "nota", texto: "sospecho del gerente", visibilidad: "privada" }, "a", caso);

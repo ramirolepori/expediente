@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import QRCode from "qrcode";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -89,4 +90,34 @@ export function Maquina({ texto, animar, className = "" }: { texto: string; anim
     return () => clearInterval(id);
   }, [animar, texto]);
   return <span className={`${className} ${n < texto.length ? "cursor-maquina" : ""}`}>{texto.slice(0, n)}</span>;
+}
+
+/** Botón para irse de la partida, con confirmación en el lugar (sin diálogos del navegador). */
+export function BotonSalir({ onSalir, pedirConfirmacion = true, className = "" }: { onSalir: () => Promise<void>; pedirConfirmacion?: boolean; className?: string }) {
+  const router = useRouter();
+  const [confirmando, setConfirmando] = useState(false);
+  const [saliendo, setSaliendo] = useState(false);
+  const irse = async () => {
+    setSaliendo(true);
+    await onSalir();
+    router.push("/");
+  };
+  if (confirmando) {
+    return (
+      <span className={`flex items-center gap-2 text-sm ${className}`}>
+        <span className="text-suave">¿Salir de la partida?</span>
+        <button onClick={irse} disabled={saliendo} className="rounded-md bg-acento px-2 py-1 font-semibold text-acento-texto">
+          {saliendo ? "Saliendo…" : "Sí, salir"}
+        </button>
+        <button onClick={() => setConfirmando(false)} className="rounded-md border border-borde px-2 py-1">
+          No
+        </button>
+      </span>
+    );
+  }
+  return (
+    <button onClick={() => (pedirConfirmacion ? setConfirmando(true) : irse())} className={`text-sm text-suave hover:text-acento ${className}`}>
+      ⎋ Salir
+    </button>
+  );
 }

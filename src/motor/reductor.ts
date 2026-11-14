@@ -25,6 +25,7 @@ export function recursosRestantes(estado: EstadoPartida): number | null {
  */
 export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, caso: Caso): EstadoPartida {
   const autor = estado.conexiones[autorId];
+  if (accion.tipo === "salir" && autor) return salir(estado, autorId);
   if (!autor || autor.tipo !== "jugador") throw new ErrorDeJuego("Solo los jugadores pueden hacer eso");
   const s: EstadoPartida = structuredClone(estado);
   const log = (t: string) => s.eventos.push(evento(t));
@@ -126,6 +127,21 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
       break;
     }
   }
+  s.version++;
+  return s;
+}
+
+/** Saca una conexión de la sala. Si era el anfitrión, el rol pasa al jugador que entró primero. */
+function salir(estado: EstadoPartida, id: string): EstadoPartida {
+  const s: EstadoPartida = structuredClone(estado);
+  const quien = s.conexiones[id];
+  delete s.conexiones[id];
+  if (s.votos) delete s.votos[id];
+  if (quien.anfitrion) {
+    const siguiente = Object.values(s.conexiones).find((c) => c.tipo === "jugador");
+    if (siguiente) siguiente.anfitrion = true;
+  }
+  s.eventos.push(evento(quien.tipo === "pantalla" ? "Se desconectó una pantalla compartida" : `${quien.apodo} salió de la partida`));
   s.version++;
   return s;
 }

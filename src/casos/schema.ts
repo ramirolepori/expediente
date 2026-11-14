@@ -42,7 +42,11 @@ const MensajeChat = z.object({
 });
 
 export const CelularSchema = z.object({
-  bloqueo: z.string().optional().describe("texto de la pantalla de bloqueo"),
+  bloqueo: z.string().optional().describe("texto extra de la pantalla de bloqueo"),
+  hora: z.string().default("00:00").describe("hora que muestra el teléfono"),
+  fecha: z.string().optional().describe("fecha de la pantalla de bloqueo, ej. 'lunes 15 de abril'"),
+  bateria: z.number().int().min(0).max(100).default(50),
+  dueno: z.string().optional().describe("nombre que aparece como dueño, ej. 'Julia'"),
   chats: z.array(z.object({ contacto: z.string(), mensajes: z.array(MensajeChat) })).default([]),
   llamadas: z
     .array(
@@ -161,7 +165,9 @@ export const PreguntaSchema = z.object({
   texto: z.string(),
   tipo: z.enum(["personaje", "opcion"]),
   opciones: z.array(z.object({ id: Id, texto: z.string() })).optional(),
-  /** id de personaje u opción correcta */
+  /** en preguntas de personaje, ofrece "Nadie" como respuesta (para no adelantar que hubo cómplices) */
+  permiteNadie: z.boolean().default(false),
+  /** id de personaje u opción correcta ("nadie" si corresponde) */
   respuesta: Id,
   puntos: z.number().int().positive(),
   explicacion: z.string(),

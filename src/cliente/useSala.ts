@@ -185,5 +185,18 @@ export function useSala(codigo: string, tipo: TipoConexion) {
     [codigo, token, refrescar],
   );
 
-  return { listo, token, vista, conectado, error, setError, unirse, accion, interrogar };
+  const salir = useCallback(async () => {
+    if (token) {
+      await fetch(`/api/salas/${codigo}/accion`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, accion: { tipo: "salir" } }),
+      }).catch(() => {});
+    }
+    try {
+      sessionStorage.removeItem(clave(codigo, tipo));
+    } catch {}
+  }, [codigo, tipo, token]);
+
+  return { listo, token, vista, conectado, error, setError, unirse, accion, interrogar, salir };
 }

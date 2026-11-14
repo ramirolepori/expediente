@@ -94,6 +94,7 @@ export interface EstadoPartida {
 
 export type Accion =
   | { tipo: "iniciar" }
+  | { tipo: "salir" }
   | { tipo: "abrirSobre"; sobre: string }
   | { tipo: "probarCandado"; candado: string; codigo: string }
   | { tipo: "pedirAyuda" }

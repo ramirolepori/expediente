@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import type { VistaPartida } from "@/motor/vista";
-import { Maquina, Punto, QR, Reloj, useUrlSala } from "./comunes";
+import { BotonSalir, Maquina, Punto, QR, Reloj, useUrlSala } from "./comunes";
 import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
 
 /** Lo que se ve en la tele: nada privado, todo grande y legible a distancia. */
-export function PantallaCompartida({ vista }: { vista: VistaPartida }) {
+export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; onSalir: () => Promise<void> }) {
+  const salir = <BotonSalir onSalir={onSalir} className="fixed top-3 right-4 z-40 opacity-40 hover:opacity-100" />;
   const jugadores = vista.conexiones.filter((c) => c.tipo === "jugador");
   const url = useUrlSala(vista.codigo);
   // lo que ya estaba cuando se abrió la tele no se anima
@@ -16,6 +17,7 @@ export function PantallaCompartida({ vista }: { vista: VistaPartida }) {
   if (vista.fase === "lobby") {
     return (
       <main className="flex min-h-dvh flex-col items-center justify-center gap-8 p-8 text-center">
+        {salir}
         <h1 className="text-4xl font-bold md:text-6xl">{vista.caso.meta.titulo}</h1>
         <div className="flex flex-col items-center gap-8 md:flex-row">
           <div className="rounded-3xl bg-white p-4">
@@ -36,7 +38,14 @@ export function PantallaCompartida({ vista }: { vista: VistaPartida }) {
       </main>
     );
   }
-  if (vista.fase === "terminada") return <Resultado vista={vista} grande />;
+  if (vista.fase === "terminada") {
+    return (
+      <>
+        {salir}
+        <Resultado vista={vista} grande />
+      </>
+    );
+  }
 
   // el interrogatorio más reciente es el protagonista de la pantalla
   const activo = Object.entries(vista.interrogatorios)
@@ -48,6 +57,7 @@ export function PantallaCompartida({ vista }: { vista: VistaPartida }) {
   return (
     <main className="grid min-h-dvh grid-rows-[auto_1fr] gap-6 p-6 lg:p-10">
       <Avisos vista={vista} grande />
+      {salir}
       <header className="flex items-end justify-between gap-6">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-acento">Sala {vista.codigo}</p>

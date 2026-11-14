@@ -27,7 +27,7 @@ export function Sala({ codigo, tipo }: { codigo: string; tipo: TipoConexion }) {
       )}
       <div className="capa-juego flex min-h-dvh flex-col">
         {!sala.conectado && <div className="bg-acento py-1 text-center text-xs text-acento-texto">Reconectando…</div>}
-        {tipo === "pantalla" ? <PantallaCompartida vista={vista} /> : <PanelJugador sala={sala} vista={vista} />}
+        {tipo === "pantalla" ? <PantallaCompartida vista={vista} onSalir={sala.salir} /> : <PanelJugador sala={sala} vista={vista} />}
       </div>
     </div>
   );

@@ -54,6 +54,7 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
       texto: p.texto,
       tipo: p.tipo,
       opciones: p.opciones,
+      permiteNadie: p.permiteNadie,
       ...(terminada ? { respuesta: p.respuesta, explicacion: p.explicacion } : {}),
     })),
     votos: estado.votos ?? {},

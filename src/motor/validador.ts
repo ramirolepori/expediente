@@ -81,7 +81,9 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
     if (!ids.personaje.has(c.personaje)) errores.push(`verdad: culpable inexistente "${c.personaje}"`);
   });
   caso.resolucion.preguntas.forEach((q) => {
-    if (q.tipo === "personaje" && !ids.personaje.has(q.respuesta)) errores.push(`pregunta ${q.id}: respuesta no es un personaje`);
+    if (q.tipo === "personaje" && !ids.personaje.has(q.respuesta) && !(q.permiteNadie && q.respuesta === "nadie")) {
+      errores.push(`pregunta ${q.id}: respuesta no es un personaje`);
+    }
     if (q.tipo === "opcion" && !q.opciones?.some((o) => o.id === q.respuesta)) errores.push(`pregunta ${q.id}: respuesta no está entre las opciones`);
   });
   if (caso.sobres[0]?.requisito.tipo !== "siempre") errores.push("el primer sobre tiene que tener requisito 'siempre'");
