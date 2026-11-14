@@ -12,9 +12,11 @@ export function Resultado({ vista, grande }: { vista: VistaPartida; grande?: boo
   const [paso, setPaso] = useState(total);
   const [puntos, setPuntos] = useState(a?.puntaje ?? 0);
 
+  // depende de la hora (un número) y no del objeto: cada vista nueva trae otro objeto y reiniciaría la revelación
+  const horaAcusacion = a?.hora;
   useEffect(() => {
-    if (!a) return;
-    const reciente = Date.now() - a.hora < 90000;
+    if (!horaAcusacion) return;
+    const reciente = Date.now() - horaAcusacion < 90000;
     const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reciente || reducir) return;
     let actual = 0;
@@ -31,14 +33,15 @@ export function Resultado({ vista, grande }: { vista: VistaPartida; grande?: boo
       clearTimeout(inicio);
       clearInterval(id);
     };
-  }, [a, total]);
+  }, [horaAcusacion, total]);
 
   // el puntaje sube como un contador cuando terminan de revelarse las respuestas
+  const puntajeFinal = a?.puntaje ?? 0;
   useEffect(() => {
-    if (!a || paso < total || puntos >= a.puntaje) return;
-    const id = setInterval(() => setPuntos((p) => Math.min(a.puntaje, p + Math.max(1, Math.ceil(a.puntaje / 30)))), 30);
+    if (paso < total || puntos >= puntajeFinal) return;
+    const id = setInterval(() => setPuntos((p) => Math.min(puntajeFinal, p + Math.max(1, Math.ceil(puntajeFinal / 30)))), 30);
     return () => clearInterval(id);
-  }, [a, paso, total, puntos]);
+  }, [puntajeFinal, paso, total, puntos]);
 
   if (!a || !vista.verdad) return null;
   const nombre = (id: string) => vista.personajes.find((p) => p.id === id)?.nombre ?? id;
