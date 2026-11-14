@@ -56,6 +56,7 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
       opciones: p.opciones,
       ...(terminada ? { respuesta: p.respuesta, explicacion: p.explicacion } : {}),
     })),
+    votos: estado.votos ?? {},
     acusacion: estado.acusacion,
     verdad: terminada ? caso.verdad : null,
   };

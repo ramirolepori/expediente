@@ -85,6 +85,8 @@ export interface EstadoPartida {
   intentosCandado: number;
   notas: Nota[];
   interrogatorios: Record<string, MensajeInterrogatorio[]>;
+  /** votos de acusación: conexión → respuestas (opcional para salas creadas antes de la votación) */
+  votos?: Record<string, Record<string, string>>;
   acusacion: ResultadoAcusacion | null;
   eventos: Evento[];
   version: number;
@@ -97,5 +99,7 @@ export type Accion =
   | { tipo: "pedirAyuda" }
   | { tipo: "nota"; texto: string; visibilidad: "privada" | "equipo" }
   | { tipo: "borrarNota"; id: string }
-  | { tipo: "acusar"; respuestas: Record<string, string> }
+  | { tipo: "votar"; respuestas: Record<string, string> }
+  | { tipo: "retirarVoto" }
+  | { tipo: "cerrarVotacion" }
   | { tipo: "configurar"; config: Partial<ConfigPartida> };

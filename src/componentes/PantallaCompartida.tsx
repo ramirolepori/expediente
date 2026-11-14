@@ -2,6 +2,7 @@
 
 import type { VistaPartida } from "@/motor/vista";
 import { Punto, QR, Reloj, useUrlSala } from "./comunes";
+import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
 
 /** Lo que se ve en la tele: nada privado, todo grande y legible a distancia. */
@@ -43,6 +44,7 @@ export function PantallaCompartida({ vista }: { vista: VistaPartida }) {
 
   return (
     <main className="grid min-h-dvh grid-rows-[auto_1fr] gap-6 p-6 lg:p-10">
+      <Avisos vista={vista} grande />
       <header className="flex items-end justify-between gap-6">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-acento">Sala {vista.codigo}</p>

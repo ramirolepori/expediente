@@ -99,13 +99,27 @@ describe("Hotel Aurora", () => {
     expect(julian).toContain("(BLOQUEADO)");
   });
 
-  it("la acusación puntúa y revela la verdad", () => {
-    const s = aplicar(partida(), {
-      tipo: "acusar",
-      respuestas: { autor: "julian", complice: "alberto", orden: "olazabal", movil: "auditoria", duarte: "mato", copa: "valentina" },
-    }, "a", caso);
+  it("la acusación se decide por votación", () => {
+    const base = { autor: "julian", complice: "alberto", orden: "olazabal", movil: "auditoria", duarte: "ultimatum", copa: "valentina" };
+    let s = aplicar(partida(), { tipo: "votar", respuestas: { ...base, duarte: "mato" } }, "a", caso);
+    expect(s.fase).toBe("jugando");
+    expect(() => aplicar(s, { tipo: "cerrarVotacion" }, "b", caso)).toThrow(ErrorDeJuego);
+    // Beto vota distinto en "duarte": empate 1 a 1, desempata la anfitriona (Ana)
+    s = aplicar(s, { tipo: "votar", respuestas: base }, "b", caso);
+    expect(s.fase).toBe("terminada");
+    expect(s.acusacion?.respuestas.duarte).toBe("mato");
     expect(s.acusacion?.puntaje).toBe(90);
-    expect(s.acusacion?.maximo).toBe(100);
     expect(vistaPara(caso, s, "a").verdad?.culpables).toHaveLength(3);
+  });
+
+  it("el anfitrión puede cerrar con la mitad de los votos", () => {
+    const r = { autor: "julian", complice: "alberto", orden: "olazabal", movil: "auditoria", duarte: "ultimatum", copa: "valentina" };
+    let s = aplicar(partida(), { tipo: "votar", respuestas: r }, "b", caso);
+    s = aplicar(s, { tipo: "cerrarVotacion" }, "a", caso);
+    expect(s.acusacion?.puntaje).toBe(100);
+  });
+
+  it("no se puede votar con preguntas sin responder", () => {
+    expect(() => aplicar(partida(), { tipo: "votar", respuestas: { autor: "julian" } }, "a", caso)).toThrow(ErrorDeJuego);
   });
 });

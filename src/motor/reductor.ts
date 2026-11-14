@@ -100,24 +100,71 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
       s.notas = s.notas.filter((n) => n.id !== accion.id);
       break;
     }
-    case "acusar": {
-      let puntaje = 0;
-      let maximo = 0;
-      const detalle = caso.resolucion.preguntas.map((p) => {
-        const correcta = accion.respuestas[p.id] === p.respuesta;
-        maximo += p.puntos;
-        if (correcta) puntaje += p.puntos;
-        return { pregunta: p.id, correcta, puntos: correcta ? p.puntos : 0 };
-      });
-      if (s.config.puntaje && s.config.ayudas === "limitadas") puntaje -= s.ayudasUsadas.length * 3;
-      s.acusacion = { respuestas: accion.respuestas, autor: autorId, hora: Date.now(), puntaje: Math.max(0, puntaje), maximo, detalle };
-      s.fase = "terminada";
-      log(`${autor.apodo} presentó la acusación final`);
+    case "votar": {
+      const faltan = caso.resolucion.preguntas.filter((p) => !accion.respuestas[p.id]);
+      if (faltan.length) throw new ErrorDeJuego("Respondé todas las preguntas antes de votar");
+      s.votos = { ...(s.votos ?? {}), [autorId]: accion.respuestas };
+      log(`🗳️ ${autor.apodo} votó la acusación`);
+      const jugadores = Object.values(s.conexiones).filter((c) => c.tipo === "jugador");
+      if (jugadores.every((j) => s.votos![j.id])) resolverAcusacion(s, caso, log);
+      break;
+    }
+    case "retirarVoto": {
+      if (!s.votos?.[autorId]) return estado;
+      const { [autorId]: _, ...resto } = s.votos;
+      void _;
+      s.votos = resto;
+      log(`${autor.apodo} retiró su voto`);
+      break;
+    }
+    case "cerrarVotacion": {
+      if (!autor.anfitrion) throw new ErrorDeJuego("Solo el anfitrión puede cerrar la votación");
+      const jugadores = Object.values(s.conexiones).filter((c) => c.tipo === "jugador").length;
+      const votos = Object.keys(s.votos ?? {}).length;
+      if (votos < Math.ceil(jugadores / 2)) throw new ErrorDeJuego("Tiene que votar al menos la mitad del equipo");
+      resolverAcusacion(s, caso, log);
       break;
     }
   }
   s.version++;
   return s;
+}
+
+/**
+ * Cierra la votación: por cada pregunta gana la respuesta más votada.
+ * Si hay empate, desempata el voto del anfitrión (o el primero que votó).
+ */
+function resolverAcusacion(s: EstadoPartida, caso: Caso, log: (t: string) => void) {
+  const votos = s.votos ?? {};
+  const anfitrion = Object.values(s.conexiones).find((c) => c.anfitrion)?.id;
+  const orden = Object.keys(votos).sort((a, b) => (a === anfitrion ? -1 : b === anfitrion ? 1 : 0));
+  const respuestas: Record<string, string> = {};
+  for (const p of caso.resolucion.preguntas) {
+    const cuenta = new Map<string, number>();
+    for (const v of orden) cuenta.set(votos[v][p.id], (cuenta.get(votos[v][p.id]) ?? 0) + 1);
+    let mejor = "";
+    let max = 0;
+    for (const v of orden) {
+      const r = votos[v][p.id];
+      if ((cuenta.get(r) ?? 0) > max) {
+        max = cuenta.get(r)!;
+        mejor = r;
+      }
+    }
+    respuestas[p.id] = mejor;
+  }
+  let puntaje = 0;
+  let maximo = 0;
+  const detalle = caso.resolucion.preguntas.map((p) => {
+    const correcta = respuestas[p.id] === p.respuesta;
+    maximo += p.puntos;
+    if (correcta) puntaje += p.puntos;
+    return { pregunta: p.id, correcta, puntos: correcta ? p.puntos : 0 };
+  });
+  if (s.config.puntaje && s.config.ayudas === "limitadas") puntaje -= s.ayudasUsadas.length * 3;
+  s.acusacion = { respuestas, autor: anfitrion ?? orden[0], hora: Date.now(), puntaje: Math.max(0, puntaje), maximo, detalle };
+  s.fase = "terminada";
+  log("⚖️ El equipo presentó la acusación final");
 }
 
 /** Usado solo por el servidor de interrogatorios, después de validar la condición del secreto. */

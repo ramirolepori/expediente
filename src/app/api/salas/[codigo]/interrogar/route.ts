@@ -10,6 +10,8 @@ import { autenticar, ErrorSala, respuestaError } from "@/servidor/salas";
 
 export const maxDuration = 60;
 
+const LIMITES = { esperaMs: 3000, preguntasPorPartida: 300 };
+
 function agregarMensaje(codigo: string, personajeId: string, m: MensajeInterrogatorio) {
   return almacen.actualizar(codigo, (s): Sala => {
     const estado = structuredClone(s.estado);
@@ -32,6 +34,17 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
     if (!evaluar(personaje.disponible, sala.estado, caso)) throw new ErrorSala("Todavía no tienen motivos para citar a esa persona");
     const pregunta = String(texto ?? "").trim().slice(0, 800);
     if (!pregunta && !prueba) throw new ErrorSala("Escribí una pregunta");
+    // límites de uso: protegen la cuota gratuita del modelo
+    const todos = Object.values(sala.estado.interrogatorios).flat();
+    const ahora = Date.now();
+    const ultimoMio = todos.filter((m) => m.de === "jugador" && m.autor === conexionId).at(-1);
+    if (ultimoMio && ahora - ultimoMio.hora < LIMITES.esperaMs) throw new ErrorSala("Esperá unos segundos antes de la próxima pregunta", 429);
+    const ultimoAca = sala.estado.interrogatorios[personaje.id]?.at(-1);
+    if (ultimoAca?.de === "jugador" && ahora - ultimoAca.hora < 60000) throw new ErrorSala(`${personaje.nombre} todavía está respondiendo`, 429);
+    if (todos.filter((m) => m.de === "jugador").length >= LIMITES.preguntasPorPartida) {
+      throw new ErrorSala("Llegaron al máximo de preguntas de la partida", 429);
+    }
+
     const anexoPrueba = prueba ? textoPrueba(caso, sala.estado, String(prueba)) : null;
     if (prueba && !anexoPrueba) throw new ErrorSala("Esa prueba no está en el expediente");
 

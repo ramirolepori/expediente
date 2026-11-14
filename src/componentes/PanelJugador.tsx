@@ -5,6 +5,7 @@ import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
 import { Markdown, Punto, Reloj } from "./comunes";
 import { Documento, iconoPrueba } from "./Documento";
+import { Avisos } from "./Avisos";
 import { Interrogatorio } from "./Interrogatorio";
 import { Lobby } from "./Lobby";
 import { Resultado } from "./Resultado";
@@ -22,6 +23,12 @@ const PESTANAS: { id: Pestana; nombre: string; icono: string }[] = [
 
 export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
   const [pestana, setPestana] = useState<Pestana>("expediente");
+  // pruebas que el jugador ya vio con la pestaña Expediente abierta (para el contador)
+  const [pruebasVistas, setPruebasVistas] = useState<string[]>([]);
+  if (pestana === "expediente" && vista.pruebas.some((p) => !pruebasVistas.includes(p.id))) {
+    setPruebasVistas(vista.pruebas.map((p) => p.id));
+  }
+  const sinVer = vista.pruebas.filter((p) => !pruebasVistas.includes(p.id)).length;
 
   if (vista.fase === "lobby") {
     return (
@@ -35,6 +42,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
+      <Avisos vista={vista} />
       {/* barra lateral en pantallas grandes, barra inferior en celulares */}
       <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-borde bg-panel/95 backdrop-blur lg:static lg:w-56 lg:flex-col lg:border-t-0 lg:border-r lg:bg-panel lg:p-3">
         <div className="hidden px-2 pb-4 lg:block">
@@ -49,7 +57,12 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
               pestana === p.id ? "text-acento lg:bg-panel-2" : "text-suave"
             }`}
           >
-            <span className="text-lg lg:text-base">{p.icono}</span>
+            <span className="relative text-lg lg:text-base">
+              {p.icono}
+              {p.id === "expediente" && sinVer > 0 && pestana !== "expediente" && (
+                <span className="absolute -top-1.5 -right-2.5 min-w-4 rounded-full bg-acento px-1 text-center text-[10px] leading-4 font-bold text-acento-texto">{sinVer}</span>
+              )}
+            </span>
             {p.nombre}
           </button>
         ))}
@@ -287,42 +300,74 @@ function Notas({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
 }
 
 function Resolver({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
-  const [respuestas, setRespuestas] = useState<Record<string, string>>({});
-  const [confirmar, setConfirmar] = useState(false);
+  const yo = vista.yo?.id ?? "";
+  const miVoto = vista.votos[yo];
+  const [respuestas, setRespuestas] = useState<Record<string, string>>(miVoto ?? {});
+  const jugadores = vista.conexiones.filter((c) => c.tipo === "jugador");
+  const votaron = jugadores.filter((j) => vista.votos[j.id]);
   const completas = vista.preguntas.every((p) => respuestas[p.id]);
+  const cambiado = JSON.stringify(respuestas) !== JSON.stringify(miVoto ?? {});
+  const puedeCerrar = vista.yo?.anfitrion && votaron.length >= Math.ceil(jugadores.length / 2);
   return (
     <div className="space-y-4">
-      <p className="text-sm text-suave">La acusación es una sola y termina la partida para todos. Pónganse de acuerdo antes de enviarla.</p>
+      <div className="rounded-xl border border-borde bg-panel p-4">
+        <p className="text-sm text-suave">
+          Cada uno vota su acusación. Cuando votan todos, se presenta la respuesta más votada de cada pregunta (si hay empate, desempata el anfitrión).
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {jugadores.map((j) => (
+            <span key={j.id} className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${vista.votos[j.id] ? "bg-panel-2" : "border border-dashed border-borde text-suave"}`}>
+              <Punto color={j.color} /> {j.apodo} {vista.votos[j.id] ? "✓" : "…"}
+            </span>
+          ))}
+        </div>
+      </div>
       {vista.preguntas.map((p) => (
         <fieldset key={p.id} className="rounded-xl border border-borde bg-panel p-4">
           <legend className="px-1 font-semibold">{p.texto}</legend>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {(p.tipo === "personaje" ? vista.personajes.filter((x) => x.disponible).map((x) => ({ id: x.id, texto: x.nombre })) : (p.opciones ?? [])).map((o) => (
-              <label key={o.id} className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${respuestas[p.id] === o.id ? "border-acento bg-panel-2" : "border-borde"}`}>
-                <input type="radio" name={p.id} className="accent-[var(--acento)]" checked={respuestas[p.id] === o.id} onChange={() => setRespuestas((r) => ({ ...r, [p.id]: o.id }))} />
-                {o.texto}
-              </label>
-            ))}
+            {(p.tipo === "personaje" ? vista.personajes.filter((x) => x.disponible).map((x) => ({ id: x.id, texto: x.nombre })) : (p.opciones ?? [])).map((o) => {
+              const quienes = jugadores.filter((j) => vista.votos[j.id]?.[p.id] === o.id);
+              return (
+                <label key={o.id} className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${respuestas[p.id] === o.id ? "border-acento bg-panel-2" : "border-borde"}`}>
+                  <input type="radio" name={p.id} className="accent-[var(--acento)]" checked={respuestas[p.id] === o.id} onChange={() => setRespuestas((r) => ({ ...r, [p.id]: o.id }))} />
+                  <span className="flex-1">{o.texto}</span>
+                  <span className="flex gap-0.5" title={quienes.map((q) => q.apodo).join(", ")}>
+                    {quienes.map((q) => (
+                      <Punto key={q.id} color={q.color} />
+                    ))}
+                  </span>
+                </label>
+              );
+            })}
           </div>
         </fieldset>
       ))}
-      {!confirmar ? (
-        <button disabled={!completas} onClick={() => setConfirmar(true)} className="w-full rounded-xl bg-acento py-3 font-semibold text-acento-texto disabled:opacity-40">
-          Presentar acusación
-        </button>
-      ) : (
-        <div className="rounded-xl border border-acento p-4 text-center">
-          <p className="font-semibold">¿Seguros? No hay vuelta atrás.</p>
-          <div className="mt-3 flex justify-center gap-2">
-            <button onClick={() => setConfirmar(false)} className="rounded-lg border border-borde px-4 py-2">
-              Volver
+      <div className="sticky bottom-20 flex flex-col gap-2 rounded-xl border border-borde bg-bg/95 p-3 backdrop-blur lg:bottom-4">
+        <div className="flex gap-2">
+          <button
+            disabled={!completas || (!!miVoto && !cambiado)}
+            onClick={() => sala.accion({ tipo: "votar", respuestas })}
+            className="flex-1 rounded-xl bg-acento py-3 font-semibold text-acento-texto disabled:opacity-40"
+          >
+            {miVoto ? (cambiado ? "Cambiar mi voto" : "Ya votaste ✓") : completas ? "Votar esta acusación" : "Respondé todas las preguntas"}
+          </button>
+          {miVoto && (
+            <button onClick={() => sala.accion({ tipo: "retirarVoto" })} className="rounded-xl border border-borde px-4 text-sm">
+              Retirar
             </button>
-            <button onClick={() => sala.accion({ tipo: "acusar", respuestas })} className="rounded-lg bg-acento px-4 py-2 font-semibold text-acento-texto">
-              Sí, acusar
-            </button>
-          </div>
+          )}
         </div>
-      )}
+        {vista.yo?.anfitrion && (
+          <button
+            disabled={!puedeCerrar}
+            onClick={() => sala.accion({ tipo: "cerrarVotacion" })}
+            className="rounded-xl border border-acento py-2 text-sm text-acento disabled:opacity-40"
+          >
+            Cerrar votación ahora ({votaron.length}/{jugadores.length} votos)
+          </button>
+        )}
+      </div>
     </div>
   );
 }

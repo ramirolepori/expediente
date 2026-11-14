@@ -16,6 +16,9 @@ interface CasoResumen {
   modos: string[];
 }
 
+/** modos con lógica implementada; el resto no se ofrece todavía */
+const MODOS_LISTOS = ["cooperativo"];
+
 const NOMBRE_AMBIENTACION: Record<string, string> = {
   noir: "Noir",
   policial: "Policial",
@@ -30,6 +33,7 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
   const [elegido, setElegido] = useState<string | null>(casos[0]?.id ?? null);
   const [config, setConfig] = useState<ConfigPartida>(CONFIG_POR_DEFECTO);
   const [cargando, setCargando] = useState(false);
+  const [apodo, setApodo] = useState("");
   const [error, setError] = useState<string | null>(null);
   const caso = casos.find((c) => c.id === elegido);
 
@@ -43,8 +47,22 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
       body: JSON.stringify({ casoId: elegido, config }),
     });
     const d = await r.json();
-    setCargando(false);
-    if (!r.ok) return setError(d.error);
+    if (!r.ok) {
+      setCargando(false);
+      return setError(d.error);
+    }
+    // el anfitrión entra directo al lobby, sin pasar por la pantalla de apodo
+    const u = await fetch(`/api/salas/${d.codigo}/unirse`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ apodo, tipo: "jugador" }),
+    });
+    const datos = await u.json();
+    if (u.ok) {
+      try {
+        sessionStorage.setItem(`expediente:${d.codigo}:jugador`, datos.token);
+      } catch {}
+    }
     router.push(`/sala/${d.codigo}`);
   }
 
@@ -114,9 +132,17 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
           <div className="h-fit rounded-2xl border border-borde bg-panel p-5">
             <h3 className="font-semibold">Configuración</h3>
             <div className="mt-4 space-y-4 text-sm">
+              <Campo etiqueta="Tu apodo">
+                <input
+                  value={apodo}
+                  onChange={(e) => setApodo(e.target.value.slice(0, 24))}
+                  placeholder="Ej.: Ramiro"
+                  className="sel"
+                />
+              </Campo>
               <Campo etiqueta="Modo">
                 <select className="sel" value={config.modo} onChange={(e) => set("modo", e.target.value as ConfigPartida["modo"])}>
-                  {(caso?.modos ?? ["cooperativo"]).map((m) => (
+                  {(caso?.modos ?? ["cooperativo"]).filter((m) => MODOS_LISTOS.includes(m)).map((m) => (
                     <option key={m} value={m}>
                       {m[0].toUpperCase() + m.slice(1)}
                     </option>
@@ -147,21 +173,12 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
                 </select>
               </Campo>
               <Interruptor etiqueta="Sistema de puntos" valor={config.puntaje} onChange={(v) => set("puntaje", v)} />
-              <Interruptor etiqueta="Interrogatorios por voz" valor={config.voz} onChange={(v) => set("voz", v)} />
-              {config.voz && (
-                <Campo etiqueta="Dónde suenan las voces">
-                  <select className="sel" value={config.audioEn} onChange={(e) => set("audioEn", e.target.value as ConfigPartida["audioEn"])}>
-                    <option value="compartida">Pantalla compartida</option>
-                    <option value="interrogador">Quien interroga</option>
-                    <option value="todos">Todos, sincronizado</option>
-                  </select>
-                </Campo>
-              )}
+              <Interruptor etiqueta="Preguntar por micrófono" valor={config.voz} onChange={(v) => set("voz", v)} />
             </div>
             {error && <p className="mt-4 text-sm text-acento">{error}</p>}
             <button
               onClick={crear}
-              disabled={!elegido || cargando}
+              disabled={!elegido || cargando || !apodo.trim()}
               className="mt-6 w-full rounded-xl bg-acento py-3 font-semibold text-acento-texto disabled:opacity-40"
             >
               {cargando ? "Creando…" : "Crear sala"}

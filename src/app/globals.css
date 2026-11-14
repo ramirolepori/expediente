@@ -105,3 +105,6 @@ body {
 
 @keyframes aparecer { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .aparecer { animation: aparecer 0.35s ease-out both; }
+
+@keyframes aviso { 0% { opacity: 0; transform: translateY(-12px) scale(0.96); } 60% { transform: translateY(2px) scale(1.01); } 100% { opacity: 1; transform: none; } }
+.aviso { animation: aviso 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
