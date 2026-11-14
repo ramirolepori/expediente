@@ -66,3 +66,27 @@ export function useUrlSala(codigo: string) {
 export function Punto({ color }: { color: string }) {
   return <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: color }} />;
 }
+
+/**
+ * Texto que se escribe solo, como una máquina de escribir.
+ * Tarda como mucho unos 2,5 segundos aunque el texto sea largo, y respeta "reducir movimiento".
+ */
+export function Maquina({ texto, animar, className = "" }: { texto: string; animar: boolean; className?: string }) {
+  const [n, setN] = useState(animar ? 0 : texto.length);
+  useEffect(() => {
+    if (!animar) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const t = setTimeout(() => setN(texto.length), 0);
+      return () => clearTimeout(t);
+    }
+    const paso = Math.max(1, Math.ceil(texto.length / 120));
+    const id = setInterval(() => {
+      setN((x) => {
+        if (x + paso >= texto.length) clearInterval(id);
+        return Math.min(texto.length, x + paso);
+      });
+    }, 20);
+    return () => clearInterval(id);
+  }, [animar, texto]);
+  return <span className={`${className} ${n < texto.length ? "cursor-maquina" : ""}`}>{texto.slice(0, n)}</span>;
+}

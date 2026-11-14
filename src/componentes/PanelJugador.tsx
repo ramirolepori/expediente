@@ -123,23 +123,27 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
                 <h2 className="font-titulo text-xl">{s.titulo}</h2>
                 <p className="text-sm text-suave">{s.descripcion}</p>
               </div>
-              {!s.abierto && (
-                <button
-                  disabled={!s.sePuedeAbrir}
-                  onClick={() => sala.accion({ tipo: "abrirSobre", sobre: s.id })}
-                  className="shrink-0 rounded-lg bg-acento px-3 py-2 text-sm font-semibold text-acento-texto disabled:opacity-30"
-                >
-                  {s.sePuedeAbrir ? "Abrir sobre" : "🔒 Cerrado"}
-                </button>
-              )}
             </div>
+            {!s.abierto && (
+              <button
+                disabled={!s.sePuedeAbrir}
+                onClick={() => sala.accion({ tipo: "abrirSobre", sobre: s.id })}
+                className="sobre flex h-28 w-full max-w-sm items-end justify-between px-4 pb-3 text-left font-doc"
+              >
+                <span className="relative text-sm">{s.titulo.split(":")[0]}</span>
+                <span className="relative rounded bg-acento px-2 py-1 font-ui text-xs font-semibold text-acento-texto">
+                  {s.sePuedeAbrir ? "Abrir sobre" : "🔒 Cerrado"}
+                </span>
+              </button>
+            )}
             {s.abierto && (
               <div className="grid gap-2 sm:grid-cols-2">
-                {pruebas.map((p) => (
+                {pruebas.map((p, i) => (
                   <button
                     key={p.id}
                     onClick={() => setAbierta(abierta === p.id ? null : p.id)}
-                    className={`rounded-xl border px-4 py-3 text-left text-sm transition ${abierta === p.id ? "border-acento bg-panel-2" : "border-borde bg-panel hover:border-suave"}`}
+                    style={{ animationDelay: `${Math.min(i, 10) * 60}ms` }}
+                    className={`papel-entrar rounded-xl border px-4 py-3 text-left text-sm transition ${abierta === p.id ? "border-acento bg-panel-2" : "border-borde bg-panel hover:border-suave"}`}
                   >
                     {iconoPrueba(p.tipo)} {p.titulo}
                   </button>
@@ -160,9 +164,9 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
           <h2 className="mb-3 font-titulo text-xl">Candados</h2>
           <div className="space-y-2">
             {vista.candados.map((c) => (
-              <div key={c.id} className="rounded-xl border border-borde bg-panel p-4">
+              <div key={`${c.id}-${fallidos[c.id] ?? 0}`} className={`rounded-xl border border-borde bg-panel p-4 ${!c.abierto && (fallidos[c.id] ?? 0) > 0 ? "temblar" : ""}`}>
                 <p className="font-semibold">
-                  {c.abierto ? "🔓" : "🔒"} {c.titulo}
+                  {c.abierto ? <span className="abrir-candado">🔓</span> : "🔒"} {c.titulo}
                 </p>
                 <p className="text-sm text-suave">{c.descripcion}</p>
                 {!c.abierto && (
@@ -225,7 +229,7 @@ function Pizarra({ vista }: { vista: VistaPartida }) {
         {vista.descubrimientos.length === 0 && <p className="text-sm text-suave">Todavía nada. Lo que confiesen o cuenten los interrogados aparece acá.</p>}
         <div className="grid gap-3 sm:grid-cols-2">
           {vista.descubrimientos.map((h, i) => (
-            <div key={h.id} className="papel aparecer rounded-sm p-3 text-sm" style={{ transform: `rotate(${((i * 37) % 5) - 2}deg)` }}>
+            <div key={h.id} className="papel chincheta rounded-sm p-3 text-sm" style={{ "--r": `${((i * 37) % 5) - 2}deg` } as React.CSSProperties}>
               📌 {h.texto}
             </div>
           ))}

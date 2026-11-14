@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
-import { Punto } from "./comunes";
+import { Maquina, Punto } from "./comunes";
 
 type Sala = ReturnType<typeof useSala>;
 
@@ -65,6 +65,8 @@ export function Interrogatorio({ sala, vista }: { sala: Sala; vista: VistaPartid
 function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: VistaPartida; personajeId: string; onVolver: () => void }) {
   const personaje = vista.personajes.find((p) => p.id === personajeId)!;
   const mensajes = vista.interrogatorios[personajeId] ?? [];
+  // los mensajes que ya estaban al abrir el chat no se animan
+  const [previos] = useState(() => new Set(mensajes.map((m) => m.id)));
   const [texto, setTexto] = useState("");
   const [prueba, setPrueba] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -140,7 +142,7 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
                   </p>
                 )}
                 {m.prueba && <p className="mb-1 text-xs text-acento">📎 Muestra: {vista.pruebas.find((p) => p.id === m.prueba)?.titulo}</p>}
-                <p className="whitespace-pre-wrap text-[0.95rem]">{m.texto}</p>
+                <p className="whitespace-pre-wrap text-[0.95rem]">{delPersonaje ? <Maquina texto={m.texto} animar={!previos.has(m.id)} /> : m.texto}</p>
               </div>
             </div>
           );

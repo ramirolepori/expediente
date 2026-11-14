@@ -18,8 +18,17 @@ export function Sala({ codigo, tipo }: { codigo: string; tipo: TipoConexion }) {
   const ambientacion = vista.fase === "lobby" ? undefined : vista.caso.ambientacion;
   return (
     <div data-ambientacion={ambientacion} className="ambiente flex min-h-dvh flex-col">
-      {!sala.conectado && <div className="bg-acento py-1 text-center text-xs text-acento-texto">Reconectando…</div>}
-      {tipo === "pantalla" ? <PantallaCompartida vista={vista} /> : <PanelJugador sala={sala} vista={vista} />}
+      {ambientacion && (
+        <div className="ambiente-fx" aria-hidden>
+          <div className="lluvia" />
+          <div className="grano" />
+          <div className="vineta" />
+        </div>
+      )}
+      <div className="capa-juego flex min-h-dvh flex-col">
+        {!sala.conectado && <div className="bg-acento py-1 text-center text-xs text-acento-texto">Reconectando…</div>}
+        {tipo === "pantalla" ? <PantallaCompartida vista={vista} /> : <PanelJugador sala={sala} vista={vista} />}
+      </div>
     </div>
   );
 }

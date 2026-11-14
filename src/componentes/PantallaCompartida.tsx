@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import type { VistaPartida } from "@/motor/vista";
-import { Punto, QR, Reloj, useUrlSala } from "./comunes";
+import { Maquina, Punto, QR, Reloj, useUrlSala } from "./comunes";
 import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
 
@@ -9,6 +10,8 @@ import { Resultado } from "./Resultado";
 export function PantallaCompartida({ vista }: { vista: VistaPartida }) {
   const jugadores = vista.conexiones.filter((c) => c.tipo === "jugador");
   const url = useUrlSala(vista.codigo);
+  // lo que ya estaba cuando se abrió la tele no se anima
+  const [previos] = useState(() => new Set(Object.values(vista.interrogatorios).flat().map((m) => m.id)));
 
   if (vista.fase === "lobby") {
     return (
@@ -67,7 +70,7 @@ export function PantallaCompartida({ vista }: { vista: VistaPartida }) {
                 {activo.ms.slice(-6).map((m) =>
                   m.de === "personaje" ? (
                     <p key={m.id} className="papel aparecer rounded-sm p-4 text-2xl leading-snug">
-                      {m.texto}
+                      <Maquina texto={m.texto} animar={!previos.has(m.id)} />
                     </p>
                   ) : m.de === "jugador" ? (
                     <p key={m.id} className="aparecer flex items-center gap-2 text-xl text-suave">
