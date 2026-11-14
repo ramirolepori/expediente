@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Expediente
 
-## Getting Started
+Plataforma web para resolver casos de investigación en grupo, en el mismo lugar, cada uno con su dispositivo. Diseño completo en [docs/propuesta-plataforma.md](docs/propuesta-plataforma.md).
 
-First, run the development server:
+## Correr en local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # y pegar la clave de Gemini
+npm run dev -- -H 0.0.0.0
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrí `http://localhost:3000`. Los celulares en la misma WiFi entran escaneando el QR del lobby (usa la IP de la red automáticamente).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Comandos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm test` | Tests del motor (reglas, guardrails, vista filtrada) |
+| `npm run validar` | Valida todos los casos de `casos/` (schema, referencias, que se pueda resolver) |
+| `npm run lint` | ESLint |
 
-## Learn More
+## Estructura
 
-To learn more about Next.js, take a look at the following resources:
+| Carpeta | Qué hay |
+|---|---|
+| `casos/<caso>/caso.json` | Los casos. Tienen que cumplir `src/casos/schema.ts` |
+| `src/casos/` | Schema del contrato de caso y registro del catálogo |
+| `src/motor/` | Lógica pura del juego: condiciones, reductor de acciones, vista filtrada por jugador, validador, prompts de interrogatorio |
+| `src/servidor/` | Almacén de salas (hoy en memoria), servicio de salas y proveedor de LLM |
+| `src/app/api/` | API: crear sala, unirse, acciones, eventos (SSE) e interrogar |
+| `src/componentes/` | Interfaz: inicio, lobby, panel del jugador, pantalla compartida |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Sumar un caso
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Crear `casos/<id>/caso.json` siguiendo el schema.
+2. Registrarlo en `src/casos/registro.ts`.
+3. `npm run validar` hasta que dé ✅.
 
-## Deploy on Vercel
+## Despliegue (Vercel + Supabase)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. En Supabase, abrir **SQL Editor**, pegar [supabase/esquema.sql](supabase/esquema.sql) y ejecutarlo.
+2. Completar en `.env.local` las tres variables de Supabase (ver `.env.example`).
+3. `npx vercel login` (una sola vez).
+4. Cargar las variables en Vercel y desplegar: `npx vercel deploy --prod`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Con Supabase configurado, las salas se guardan en Postgres y el tiempo real usa Supabase Realtime: el servidor solo avisa "hubo un cambio" y cada dispositivo pide su vista filtrada, así la solución nunca viaja por el canal público.

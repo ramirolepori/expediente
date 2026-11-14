@@ -1,26 +1,107 @@
 @import "tailwindcss";
 
+/* Tokens de la interfaz neutra (lobby, configuración) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --bg: #f4f2ee;
+  --panel: #ffffff;
+  --panel-2: #ebe8e2;
+  --texto: #1d1c1a;
+  --suave: #6b675f;
+  --borde: #d9d4ca;
+  --acento: #b23a2e;
+  --acento-texto: #ffffff;
+  --papel: #fbf8f1;
+  --tinta: #24211c;
+  --ok: #2f7d4f;
+  --fuente-ui: var(--font-inter), system-ui, sans-serif;
+  --fuente-titulo: var(--font-inter), system-ui, sans-serif;
+  --fuente-doc: var(--font-inter), system-ui, sans-serif;
+  --fondo-textura: none;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-tema="claro"]) {
+    --bg: #141414;
+    --panel: #1e1e1e;
+    --panel-2: #272727;
+    --texto: #ece9e2;
+    --suave: #9a958b;
+    --borde: #333;
+    --papel: #f1ebdc;
+    --tinta: #24211c;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Ambientación noir: se activa con data-ambientacion en el contenedor de la partida */
+[data-ambientacion="noir"] {
+  --bg: #0f0f10;
+  --panel: #19191b;
+  --panel-2: #232326;
+  --texto: #e9e4d8;
+  --suave: #9c968a;
+  --borde: #34322f;
+  --acento: #c0392b;
+  --acento-texto: #fff;
+  --papel: #efe6d0;
+  --tinta: #2a241b;
+  --ok: #7fae74;
+  --fuente-titulo: var(--font-titular), Georgia, serif;
+  --fuente-doc: var(--font-maquina), "Courier New", monospace;
+  --fondo-textura: radial-gradient(ellipse at top, rgba(192, 57, 43, 0.08), transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(255, 255, 255, 0.03), transparent 50%);
 }
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-texto: var(--texto);
+  --color-suave: var(--suave);
+  --color-borde: var(--borde);
+  --color-acento: var(--acento);
+  --color-acento-texto: var(--acento-texto);
+  --color-papel: var(--papel);
+  --color-tinta: var(--tinta);
+  --color-ok: var(--ok);
+  --font-ui: var(--fuente-ui);
+  --font-titulo: var(--fuente-titulo);
+  --font-doc: var(--fuente-doc);
+}
+
+body {
+  background: var(--bg);
+  color: var(--texto);
+  font-family: var(--fuente-ui);
+}
+
+.ambiente {
+  background: var(--fondo-textura), var(--bg);
+  color: var(--texto);
+}
+
+/* Documento en papel */
+.papel {
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--fuente-doc);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.25);
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0, 0, 0, 0.035) 28px);
+}
+
+.papel table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.5rem 0; }
+.papel th, .papel td { border-bottom: 1px dashed rgba(0, 0, 0, 0.25); padding: 0.3rem 0.4rem; text-align: left; vertical-align: top; }
+.papel pre { background: rgba(0, 0, 0, 0.06); padding: 0.6rem; overflow-x: auto; font-size: 0.8rem; white-space: pre-wrap; }
+.papel ul { list-style: disc; padding-left: 1.2rem; }
+.papel p, .papel ul, .papel blockquote { margin: 0.5rem 0; }
+.papel blockquote { border-left: 3px solid rgba(0, 0, 0, 0.3); padding-left: 0.7rem; font-style: italic; }
+.papel strong { color: #000; }
+
+.sello {
+  border: 2px solid var(--acento);
+  color: var(--acento);
+  transform: rotate(-6deg);
+  letter-spacing: 0.15em;
+}
+
+@keyframes aparecer { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.aparecer { animation: aparecer 0.35s ease-out both; }
