@@ -47,7 +47,7 @@ export function Lobby({ vista, onIniciar }: { vista: VistaPartida; onIniciar: ()
 
         <div className="mt-6 rounded-xl bg-panel-2 p-3 text-xs text-suave">
           Modo {vista.config.modo} · {vista.config.recursos ? `${vista.config.recursos} horas` : "sin límite de horas"} · ayudas {vista.config.ayudas}
-          {vista.config.temporizadorMin ? ` · ${vista.config.temporizadorMin} min` : ""} · voz {vista.config.voz ? "sí" : "no"}
+          {vista.config.temporizadorMin ? ` · ${vista.config.temporizadorMin} min` : ""} · micrófono {vista.config.voz ? "sí" : "no"}
         </div>
 
         {vista.yo?.anfitrion ? (

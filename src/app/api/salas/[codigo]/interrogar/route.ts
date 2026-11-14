@@ -34,32 +34,32 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
     if (!evaluar(personaje.disponible, sala.estado, caso)) throw new ErrorSala("Todavía no tienen motivos para citar a esa persona");
     const pregunta = String(texto ?? "").trim().slice(0, 800);
     if (!pregunta && !prueba) throw new ErrorSala("Escribí una pregunta");
-    // límites de uso: protegen la cuota gratuita del modelo
-    const todos = Object.values(sala.estado.interrogatorios).flat();
-    const ahora = Date.now();
-    const ultimoMio = todos.filter((m) => m.de === "jugador" && m.autor === conexionId).at(-1);
-    if (ultimoMio && ahora - ultimoMio.hora < LIMITES.esperaMs) throw new ErrorSala("Esperá unos segundos antes de la próxima pregunta", 429);
-    const ultimoAca = sala.estado.interrogatorios[personaje.id]?.at(-1);
-    if (ultimoAca?.de === "jugador" && ahora - ultimoAca.hora < 60000) throw new ErrorSala(`${personaje.nombre} todavía está respondiendo`, 429);
-    if (todos.filter((m) => m.de === "jugador").length >= LIMITES.preguntasPorPartida) {
-      throw new ErrorSala("Llegaron al máximo de preguntas de la partida", 429);
-    }
-
     const anexoPrueba = prueba ? textoPrueba(caso, sala.estado, String(prueba)) : null;
     if (prueba && !anexoPrueba) throw new ErrorSala("Esa prueba no está en el expediente");
 
-    // recursos: hablar con alguien nuevo cuesta una hora de investigación
-    await almacen.actualizar(codigo, (s) => {
-      if (s.estado.personajesVisitados.includes(personaje.id)) return s;
-      const restantes = recursosRestantes(s.estado);
-      if (restantes !== null && restantes <= 0) throw new ErrorSala("No quedan horas de investigación para citar a alguien nuevo");
-      const estado = structuredClone(s.estado);
-      estado.personajesVisitados.push(personaje.id);
-      return { ...s, estado };
-    });
-
-    const actual = await agregarMensaje(codigo, personaje.id, {
-      id: nuevoId(), de: "jugador", autor: conexionId, texto: pregunta, prueba: prueba || undefined, hora: Date.now(),
+    // validar límites, cobrar la hora y registrar la pregunta en una sola escritura atómica,
+    // así dos preguntas simultáneas no pueden saltarse los límites
+    const actual = await almacen.actualizar(codigo, (sl): Sala => {
+      const todos = Object.values(sl.estado.interrogatorios).flat();
+      const ahora = Date.now();
+      const ultimoMio = todos.filter((m) => m.de === "jugador" && m.autor === conexionId).at(-1);
+      if (ultimoMio && ahora - ultimoMio.hora < LIMITES.esperaMs) throw new ErrorSala("Esperá unos segundos antes de la próxima pregunta", 429);
+      const ultimoAca = sl.estado.interrogatorios[personaje.id]?.at(-1);
+      if (ultimoAca?.de === "jugador" && ahora - ultimoAca.hora < 60000) throw new ErrorSala(`${personaje.nombre} todavía está respondiendo`, 429);
+      if (todos.filter((m) => m.de === "jugador").length >= LIMITES.preguntasPorPartida) {
+        throw new ErrorSala("Llegaron al máximo de preguntas de la partida", 429);
+      }
+      const estado = structuredClone(sl.estado);
+      if (!estado.personajesVisitados.includes(personaje.id)) {
+        const restantes = recursosRestantes(estado);
+        if (restantes !== null && restantes <= 0) throw new ErrorSala("No quedan horas de investigación para citar a alguien nuevo");
+        estado.personajesVisitados.push(personaje.id);
+      }
+      (estado.interrogatorios[personaje.id] ??= []).push({
+        id: nuevoId(), de: "jugador", autor: conexionId, texto: pregunta, prueba: prueba || undefined, hora: ahora,
+      });
+      estado.version++;
+      return { ...sl, estado };
     });
 
     const modelos = modelosInterrogatorio();
