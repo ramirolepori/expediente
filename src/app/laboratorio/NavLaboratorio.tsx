@@ -7,6 +7,7 @@ const PAGINAS = [
   { href: "/laboratorio", nombre: "Índice" },
   { href: "/laboratorio/personaje", nombre: "Personaje animado" },
   { href: "/laboratorio/ambientaciones", nombre: "Ambientaciones" },
+  { href: "/laboratorio/minijuegos", nombre: "Minijuegos" },
 ];
 
 export function NavLaboratorio() {

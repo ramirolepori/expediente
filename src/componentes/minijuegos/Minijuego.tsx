@@ -12,6 +12,8 @@ type Pieza = { id: string; texto: string };
 const ICONO: Record<Datos["tipo"], string> = { rompecabezas: "🧩", linea_tiempo: "🕰️", cifrado: "🔐", personalizado: "🎲" };
 
 /** Tarjeta del minijuego dentro del sobre; al tocarla se abre a pantalla completa. */
+export const ICONO_MINIJUEGO = ICONO;
+
 export function TarjetaMinijuego({ datos, sala, vista }: { datos: Datos; sala: Sala; vista: VistaPartida }) {
   const [abierto, setAbierto] = useState(false);
   const quien = vista.conexiones.find((c) => c.id === datos.resueltoPor);
@@ -58,25 +60,55 @@ function PanelMinijuego({ datos, sala, vista, onCerrar }: { datos: Datos; sala: 
       </div>
       <div className="flex-1 overflow-y-auto px-4 py-5">
         <div className="mx-auto max-w-2xl">
-          {resuelto && (
-            <p className="aparecer mb-4 rounded-xl border border-ok/60 bg-panel p-3 text-center font-semibold text-ok">
-              ✓ ¡Resuelto! Lo que destrabó ya está en el expediente.
-            </p>
-          )}
-          {fallo && (
-            <p key={intento?.version} className="temblar mb-4 rounded-xl border border-acento/60 bg-panel p-3 text-center text-acento">
-              ✕ No salió. Revisá y probá de nuevo.
-            </p>
-          )}
-          {datos.tipo === "rompecabezas" && <Reordenar piezas={(datos.config as { piezas: Pieza[] }).piezas} estilo="papel" resuelto={resuelto} onEnviar={enviar} />}
-          {datos.tipo === "linea_tiempo" && <Reordenar piezas={(datos.config as { piezas: Pieza[] }).piezas} estilo="linea" resuelto={resuelto} onEnviar={enviar} />}
-          {datos.tipo === "cifrado" && <Cifrado config={datos.config as { mensaje: string; pista?: string }} resuelto={resuelto} onEnviar={enviar} />}
-          {datos.tipo === "personalizado" && (
-            <Personalizado config={datos.config as { pagina: string; alto: number }} ambientacion={vista.caso.ambientacion} apodo={vista.yo?.apodo ?? ""} resuelto={resuelto} onEnviar={enviar} />
-          )}
+          <JuegoMinijuego
+            tipo={datos.tipo}
+            config={datos.config}
+            resuelto={resuelto}
+            fallo={fallo}
+            intentoClave={intento?.version}
+            ambientacion={vista.caso.ambientacion}
+            apodo={vista.yo?.apodo ?? ""}
+            onEnviar={enviar}
+          />
         </div>
       </div>
     </div>
+  );
+}
+
+/** El juego en sí, sin sala: lo usa el panel del juego y el laboratorio. */
+export function JuegoMinijuego({
+  tipo,
+  config,
+  resuelto,
+  fallo,
+  intentoClave,
+  ambientacion,
+  apodo,
+  onEnviar,
+}: {
+  tipo: Datos["tipo"];
+  config: Datos["config"];
+  resuelto: boolean;
+  fallo: boolean;
+  intentoClave?: number | string;
+  ambientacion: string;
+  apodo: string;
+  onEnviar: (respuesta: string) => void;
+}) {
+  return (
+    <>
+      {resuelto && <p className="aparecer mb-4 rounded-xl border border-ok/60 bg-panel p-3 text-center font-semibold text-ok">✓ ¡Resuelto! Lo que destrabó ya está en el expediente.</p>}
+      {fallo && (
+        <p key={intentoClave} className="temblar mb-4 rounded-xl border border-acento/60 bg-panel p-3 text-center text-acento">
+          ✕ No salió. Revisá y probá de nuevo.
+        </p>
+      )}
+      {tipo === "rompecabezas" && <Reordenar piezas={(config as { piezas: Pieza[] }).piezas} estilo="papel" resuelto={resuelto} onEnviar={onEnviar} />}
+      {tipo === "linea_tiempo" && <Reordenar piezas={(config as { piezas: Pieza[] }).piezas} estilo="linea" resuelto={resuelto} onEnviar={onEnviar} />}
+      {tipo === "cifrado" && <Cifrado config={config as { mensaje: string; pista?: string }} resuelto={resuelto} onEnviar={onEnviar} />}
+      {tipo === "personalizado" && <Personalizado config={config as { pagina: string; alto: number }} ambientacion={ambientacion} apodo={apodo} resuelto={resuelto} onEnviar={onEnviar} />}
+    </>
   );
 }
 

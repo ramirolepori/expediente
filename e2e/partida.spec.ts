@@ -239,3 +239,18 @@ test("pizarra: corcho con hilos, línea de tiempo y la tele", async ({ page: ana
   await tele.screenshot({ path: "test-results/pizarra-tele.png" });
   await ana.screenshot({ path: "test-results/pizarra-jugador.png" });
 });
+
+test("laboratorio: los minijuegos se juegan sueltos", async ({ page }) => {
+  await page.goto("/laboratorio/minijuegos");
+  await page.getByRole("button", { name: /Nota cifrada en el saco de Julián/ }).click();
+  await page.getByRole("button", { name: "👁 Ver solución" }).click();
+  await expect(page.getByText("Destraba: Nota descifrada")).toBeVisible();
+  await page.getByPlaceholder("Mensaje descifrado").fill("nada que ver");
+  await page.getByRole("button", { name: "Comprobar" }).click();
+  await expect(page.getByText("No salió")).toBeVisible();
+  await page.getByPlaceholder("Mensaje descifrado").fill("Recupera todo antes de las nueve sin ruido");
+  await page.getByRole("button", { name: "Comprobar" }).click();
+  await expect(page.getByText("¡Resuelto!")).toBeVisible();
+  await page.getByRole("button", { name: "↺ Reiniciar" }).click();
+  await expect(page.getByText("¡Resuelto!")).toBeHidden();
+});
