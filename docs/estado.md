@@ -12,14 +12,13 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 - La tele muestra las pruebas recién desbloqueadas durante 25 s (o hasta que alguien pregunte) y una lista del expediente con las más nuevas arriba. Las del primer sobre y las que llegan con una respuesta no se destacan, solo se resaltan en la lista.
 - Pizarra compartida con hilos y línea de tiempo, notas personales y de equipo, votación y revelación final paso a paso.
 - Voces de los personajes con Piper en el navegador (ADR 0009): una sola pista, en la tele o en el anfitrión (o en quien pregunta), elegidas al crear la sala (por defecto, sin voces) y activadas con un botón. Respaldo con la voz del navegador mientras bajan los modelos.
-- Limpieza de salas viejas: un cron diario de Vercel (8:00 UTC, `vercel.json`) llama a `/api/cron/limpiar`, que borra las salas sin escrituras hace más de 24 h (columna `actualizada`). Pide `CRON_SECRET` cargada en Vercel; sin esa variable la ruta rechaza todo.
+- Limpieza de salas viejas: un cron diario de Vercel (8:00 UTC, `vercel.json`) llama a `/api/cron/limpiar`, que borra las salas sin escrituras hace más de 24 h (columna `actualizada`). Pide `CRON_SECRET` cargada en Vercel; sin esa variable la ruta rechaza todo. La misma consulta diaria mantiene activo Supabase Free, que pausa a los 7 días sin actividad: no hace falta un ping aparte.
 - Laboratorio: personaje, ambientaciones, minijuegos, pizarra y voces.
 - Documentación para autores: [contrato-de-caso.md](contrato-de-caso.md) y [prompt-autor-de-casos.md](prompt-autor-de-casos.md).
 
 ## Pendiente, en orden
 
-1. Ping semanal a Supabase para que no se pause.
-2. Tecla de pulsar para hablar (accesibilidad).
+1. Tecla de pulsar para hablar (accesibilidad).
 
 Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
 
