@@ -187,6 +187,21 @@ export const VerdadSchema = z.object({
   cronologia: z.array(z.object({ hora: z.string(), hecho: z.string() })),
 });
 
+/** Rol secreto del modo traidor: un jugador recibe esta ficha y juega en contra del equipo. */
+export const TraidorSchema = z.object({
+  rol: z.string().describe("quién es en la historia, en segunda persona"),
+  objetivo: z.object({
+    texto: z.string(),
+    /** pregunta de la resolución que el traidor quiere torcer */
+    pregunta: Id,
+    /** respuesta que el traidor quiere que el equipo vote */
+    respuesta: Id,
+  }),
+  /** hechos que conoce desde el arranque */
+  sabe: z.array(Id).default([]),
+  consejos: z.array(z.string()).default([]),
+});
+
 export const CasoSchema = z.object({
   version: z.literal(1),
   meta: z.object({
@@ -210,6 +225,7 @@ export const CasoSchema = z.object({
   ayudas: z.array(AyudaSchema).default([]),
   resolucion: z.object({ preguntas: z.array(PreguntaSchema).min(1) }),
   modos: z.array(z.enum(["cooperativo", "competitivo", "traidor"])).default(["cooperativo"]),
+  traidor: TraidorSchema.optional(),
 });
 
 export type Caso = z.infer<typeof CasoSchema>;

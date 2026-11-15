@@ -69,6 +69,32 @@ describe("Hotel Aurora", () => {
     expect(aplicar(s, { tipo: "salir" }, "tv", caso).conexiones.tv).toBeUndefined();
   });
 
+  it("modo traidor: uno solo recibe la ficha y la votación decide quién gana", () => {
+    const ahora = Date.now();
+    let s = partida();
+    // sala nueva en modo traidor con tres jugadores
+    s = { ...s, fase: "lobby", sobresAbiertos: [], config: { ...s.config, modo: "traidor" } };
+    s.conexiones.c = { id: "c", tipo: "jugador", apodo: "Caro", color: "#00f", anfitrion: false, ultimaVez: ahora };
+    s = aplicar(s, { tipo: "iniciar" }, "a", caso);
+    const traidor = s.traidor!;
+    expect(["a", "b", "c"]).toContain(traidor);
+    const conFicha = ["a", "b", "c", "tv"].filter((id) => vistaPara(caso, s, id).fichaTraidor);
+    expect(conFicha).toEqual([traidor]);
+    expect(JSON.stringify(vistaPara(caso, s, "tv"))).not.toContain(caso.traidor!.rol);
+
+    const base = { autor: "duarte", complice: "alberto", orden: "olazabal", movil: "auditoria", duarte: "ultimatum", copa: "valentina" };
+    const inocente = ["a", "b", "c"].find((x) => x !== traidor)!;
+    expect(() => aplicar(s, { tipo: "votar", respuestas: base }, "a", caso)).toThrow(ErrorDeJuego);
+    for (const id of ["a", "b", "c"]) s = aplicar(s, { tipo: "votar", respuestas: { ...base, traidor: inocente } }, id, caso);
+    expect(s.acusacion?.traidor).toMatchObject({ id: traidor, descubierto: false, cumplio: true, gana: "traidor" });
+    expect(vistaPara(caso, s, "a").traidorRevelado).toBe(traidor);
+  });
+
+  it("modo traidor necesita tres jugadores", () => {
+    const s = { ...partida(), fase: "lobby" as const, config: { ...CONFIG_POR_DEFECTO, modo: "traidor" as const } };
+    expect(() => aplicar(s, { tipo: "iniciar" }, "a", caso)).toThrow(ErrorDeJuego);
+  });
+
   it("las notas privadas solo las ve su autor", () => {
     let s = partida();
     s = aplicar(s, { tipo: "nota", texto: "sospecho del gerente", visibilidad: "privada" }, "a", caso);

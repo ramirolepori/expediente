@@ -17,7 +17,7 @@ interface CasoResumen {
 }
 
 /** modos con lógica implementada; el resto no se ofrece todavía */
-const MODOS_LISTOS = ["cooperativo"];
+const MODOS_LISTOS = ["cooperativo", "traidor"];
 
 const NOMBRE_AMBIENTACION: Record<string, string> = {
   noir: "Noir",
@@ -144,7 +144,7 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
                 <select className="sel" value={config.modo} onChange={(e) => set("modo", e.target.value as ConfigPartida["modo"])}>
                   {(caso?.modos ?? ["cooperativo"]).filter((m) => MODOS_LISTOS.includes(m)).map((m) => (
                     <option key={m} value={m}>
-                      {m[0].toUpperCase() + m.slice(1)}
+                      {m === "traidor" ? "Traidor (3 o más jugadores)" : m[0].toUpperCase() + m.slice(1)}
                     </option>
                   ))}
                 </select>

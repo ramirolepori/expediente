@@ -116,3 +116,42 @@ test("celular: el panel se adapta y la barra inferior navega", async ({ browser 
   await pagina.getByRole("button", { name: "Guardar" }).click();
   await expect(pagina.getByText("El reloj fue adelantado")).toBeVisible();
 });
+
+test("modo traidor: uno solo ve la ficha y el cierre lo revela", async ({ page: anfitrion, browser }) => {
+  await anfitrion.goto("/");
+  await anfitrion.getByPlaceholder("Ej.: Ramiro").fill("Ana");
+  await anfitrion.getByLabel("Modo").selectOption("traidor");
+  await anfitrion.getByRole("button", { name: "Crear sala" }).click();
+  await anfitrion.waitForURL(/\/sala\/[A-Z]{4}$/);
+  const codigo = anfitrion.url().split("/").pop()!;
+
+  const beto = await unirJugador(browser, codigo, "Beto");
+  // con dos jugadores todavía no se puede arrancar
+  await expect(anfitrion.getByRole("button", { name: /mínimo 3/ })).toBeDisabled();
+  const caro = await unirJugador(browser, codigo, "Caro");
+  await anfitrion.getByRole("button", { name: "Abrir el caso" }).click();
+
+  const jugadores = [anfitrion, beto, caro];
+  for (const j of jugadores) await expect(j.getByRole("heading", { name: "Sobre 1: La escena" })).toBeVisible();
+  const conFicha = [];
+  for (const j of jugadores) if (await j.getByRole("button", { name: /rol secreto/i }).count()) conFicha.push(j);
+  expect(conFicha).toHaveLength(1);
+
+  // la ficha se ve solo mientras se mantiene apretada
+  const boton = conFicha[0].getByRole("button", { name: /rol secreto/i });
+  await boton.hover();
+  await conFicha[0].mouse.down();
+  await expect(conFicha[0].getByText("Sos el traidor")).toBeVisible();
+  await conFicha[0].mouse.up();
+  await expect(conFicha[0].getByText("Sos el traidor")).toBeHidden();
+
+  for (const j of jugadores) {
+    await j.getByRole("button", { name: "Resolver" }).click();
+    for (const fieldset of await j.locator("fieldset").all()) await fieldset.locator("label").first().click();
+    await j.getByRole("button", { name: "Votar esta acusación" }).click();
+  }
+  await expect(anfitrion.getByText("Caso cerrado")).toBeVisible();
+  await anfitrion.getByRole("button", { name: "Saltar al resultado" }).click();
+  await expect(anfitrion.getByText("El traidor era")).toBeVisible();
+  await expect(anfitrion.getByText(/Gana el (equipo|traidor)/)).toBeVisible();
+});

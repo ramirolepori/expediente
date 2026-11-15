@@ -6,6 +6,7 @@ import type { VistaPartida } from "@/motor/vista";
 import { BotonSalir, Markdown, Punto, Reloj } from "./comunes";
 import { Documento, iconoPrueba } from "./Documento";
 import { Avisos } from "./Avisos";
+import { FichaSecreta } from "./FichaSecreta";
 import { Interrogatorio } from "./Interrogatorio";
 import { Lobby } from "./Lobby";
 import { Resultado } from "./Resultado";
@@ -87,6 +88,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
             <span className="truncate text-sm">{vista.yo?.apodo}</span>
           </div>
           <div className="flex items-center gap-4 text-sm text-suave">
+            {vista.fichaTraidor && <FichaSecreta ficha={vista.fichaTraidor} />}
             {vista.recursosRestantes !== null && <span title="Horas de investigación">🕰 {vista.recursosRestantes} h</span>}
             <Reloj iniciada={vista.iniciada} limiteMin={vista.config.temporizadorMin} />
             <BotonSalir onSalir={sala.salir} />
@@ -322,7 +324,7 @@ function Resolver({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
   const [respuestas, setRespuestas] = useState<Record<string, string>>(miVoto ?? {});
   const jugadores = vista.conexiones.filter((c) => c.tipo === "jugador");
   const votaron = jugadores.filter((j) => vista.votos[j.id]);
-  const completas = vista.preguntas.every((p) => respuestas[p.id]);
+  const completas = vista.preguntas.every((p) => respuestas[p.id]) && (!vista.hayTraidor || !!respuestas.traidor);
   const cambiado = JSON.stringify(respuestas) !== JSON.stringify(miVoto ?? {});
   const puedeCerrar = vista.yo?.anfitrion && votaron.length >= Math.ceil(jugadores.length / 2);
   return (
@@ -362,6 +364,30 @@ function Resolver({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
           </div>
         </fieldset>
       ))}
+      {vista.hayTraidor && (
+        <fieldset className="rounded-xl border border-acento/60 bg-panel p-4">
+          <legend className="px-1 font-semibold">🎭 ¿Quién es el traidor?</legend>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            {jugadores
+              .filter((j) => j.id !== yo)
+              .map((j) => {
+                const quienes = jugadores.filter((x) => vista.votos[x.id]?.traidor === j.id);
+                return (
+                  <label key={j.id} className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${respuestas.traidor === j.id ? "border-acento bg-panel-2" : "border-borde"}`}>
+                    <input type="radio" name="traidor" className="accent-[var(--acento)]" checked={respuestas.traidor === j.id} onChange={() => setRespuestas((r) => ({ ...r, traidor: j.id }))} />
+                    <Punto color={j.color} />
+                    <span className="flex-1">{j.apodo}</span>
+                    <span className="flex gap-0.5">
+                      {quienes.map((q) => (
+                        <Punto key={q.id} color={q.color} />
+                      ))}
+                    </span>
+                  </label>
+                );
+              })}
+          </div>
+        </fieldset>
+      )}
       <div className="sticky bottom-20 flex flex-col gap-2 rounded-xl border border-borde bg-bg/95 p-3 backdrop-blur lg:bottom-4">
         <div className="flex gap-2">
           <button

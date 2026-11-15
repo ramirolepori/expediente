@@ -62,6 +62,7 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-acento">Sala {vista.codigo}</p>
           <h1 className="font-titulo text-4xl lg:text-5xl">{vista.caso.meta.titulo}</h1>
+          {vista.hayTraidor && <p className="mt-1 text-lg text-acento">🎭 Hay un traidor entre ustedes</p>}
         </div>
         <div className="flex items-center gap-8 text-suave">
           {vista.recursosRestantes !== null && <span className="text-3xl">🕰 {vista.recursosRestantes} h</span>}

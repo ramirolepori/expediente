@@ -46,6 +46,12 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
       if (!autor.anfitrion) throw new ErrorDeJuego("Solo el anfitrión abre el caso");
       const jugadores = Object.values(s.conexiones).filter((c) => c.tipo === "jugador").length;
       if (jugadores < caso.meta.jugadores.min) throw new ErrorDeJuego(`Hacen falta al menos ${caso.meta.jugadores.min} jugadores`);
+      if (s.config.modo === "traidor") {
+        if (!caso.traidor) throw new ErrorDeJuego("Este caso no tiene modo traidor");
+        if (jugadores < 3) throw new ErrorDeJuego("El modo traidor necesita al menos 3 jugadores");
+        const candidatos = Object.values(s.conexiones).filter((c) => c.tipo === "jugador");
+        s.traidor = candidatos[Math.floor(Math.random() * candidatos.length)].id;
+      }
       s.fase = "jugando";
       s.iniciada = Date.now();
       for (const sobre of caso.sobres) {
@@ -104,6 +110,7 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
     case "votar": {
       const faltan = caso.resolucion.preguntas.filter((p) => !accion.respuestas[p.id]);
       if (faltan.length) throw new ErrorDeJuego("Respondé todas las preguntas antes de votar");
+      if (s.traidor && !accion.respuestas.traidor) throw new ErrorDeJuego("Votá también quién es el traidor");
       s.votos = { ...(s.votos ?? {}), [autorId]: accion.respuestas };
       log(`🗳️ ${autor.apodo} votó la acusación`);
       const jugadores = Object.values(s.conexiones).filter((c) => c.tipo === "jugador");
@@ -179,6 +186,23 @@ function resolverAcusacion(s: EstadoPartida, caso: Caso, log: (t: string) => voi
   });
   if (s.config.puntaje && s.config.ayudas === "limitadas") puntaje -= s.ayudasUsadas.length * 3;
   s.acusacion = { respuestas, autor: anfitrion ?? orden[0], hora: Date.now(), puntaje: Math.max(0, puntaje), maximo, detalle };
+  if (s.traidor && caso.traidor) {
+    // el traidor gana si el equipo votó lo que él buscaba y no lo descubrieron
+    const cuenta = new Map<string, number>();
+    for (const v of orden) if (votos[v].traidor) cuenta.set(votos[v].traidor, (cuenta.get(votos[v].traidor) ?? 0) + 1);
+    let votado = "";
+    let max = 0;
+    for (const v of orden) {
+      const r = votos[v].traidor;
+      if (r && (cuenta.get(r) ?? 0) > max) {
+        max = cuenta.get(r)!;
+        votado = r;
+      }
+    }
+    const descubierto = votado === s.traidor;
+    const cumplio = respuestas[caso.traidor.objetivo.pregunta] === caso.traidor.objetivo.respuesta;
+    s.acusacion.traidor = { id: s.traidor, votado, descubierto, cumplio, gana: cumplio && !descubierto ? "traidor" : "equipo" };
+  }
   s.fase = "terminada";
   log("⚖️ El equipo presentó la acusación final");
 }

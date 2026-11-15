@@ -58,6 +58,18 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
       ...(terminada ? { respuesta: p.respuesta, explicacion: p.explicacion } : {}),
     })),
     votos: estado.votos ?? {},
+    // la ficha secreta solo le llega al traidor; el resto ni sabe quién es hasta el final
+    fichaTraidor:
+      caso.traidor && estado.traidor && conexionId === estado.traidor
+        ? {
+            rol: caso.traidor.rol,
+            objetivo: caso.traidor.objetivo.texto,
+            sabe: caso.traidor.sabe.map((h) => caso.hechos.find((x) => x.id === h)?.texto ?? h),
+            consejos: caso.traidor.consejos,
+          }
+        : null,
+    hayTraidor: !!estado.traidor,
+    traidorRevelado: terminada ? (estado.traidor ?? null) : null,
     acusacion: estado.acusacion,
     verdad: terminada ? caso.verdad : null,
   };

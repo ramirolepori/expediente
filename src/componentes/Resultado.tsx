@@ -99,6 +99,19 @@ export function Resultado({ vista, grande }: { vista: VistaPartida; grande?: boo
         })}
       </div>
 
+      {terminado && a.traidor && (
+        <section className={`revelar mt-8 rounded-2xl border-2 p-6 text-center ${a.traidor.gana === "traidor" ? "border-acento" : "border-ok"}`}>
+          <p className={`uppercase tracking-[0.3em] text-suave ${grande ? "text-lg" : "text-xs"}`}>El traidor era</p>
+          <p className={`font-titulo ${grande ? "text-6xl" : "text-4xl"}`}>🎭 {vista.conexiones.find((c) => c.id === a.traidor!.id)?.apodo ?? "alguien que se fue"}</p>
+          <p className={`mt-3 ${grande ? "text-2xl" : ""}`}>
+            {a.traidor.descubierto ? "El equipo lo descubrió." : "Nadie lo descubrió."} {a.traidor.cumplio ? "Consiguió torcer la acusación." : "No logró torcer la acusación."}
+          </p>
+          <p className={`mt-2 font-bold ${grande ? "text-4xl" : "text-2xl"} ${a.traidor.gana === "traidor" ? "text-acento" : "text-ok"}`}>
+            {a.traidor.gana === "traidor" ? "Gana el traidor" : "Gana el equipo"}
+          </p>
+        </section>
+      )}
+
       {terminado && (
         <section className="papel revelar mt-8 rounded-sm p-6">
           <h2 className={grande ? "text-3xl" : "text-xl"}>Lo que realmente pasó</h2>

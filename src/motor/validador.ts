@@ -87,6 +87,17 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
     if (q.tipo === "opcion" && !q.opciones?.some((o) => o.id === q.respuesta)) errores.push(`pregunta ${q.id}: respuesta no está entre las opciones`);
   });
   if (caso.sobres[0]?.requisito.tipo !== "siempre") errores.push("el primer sobre tiene que tener requisito 'siempre'");
+  if (caso.modos.includes("traidor") && !caso.traidor) errores.push("el caso ofrece el modo traidor pero no define la ficha 'traidor'");
+  if (caso.traidor) {
+    const t = caso.traidor;
+    t.sabe.forEach((h) => !ids.hecho.has(h) && errores.push(`traidor: hecho inexistente "${h}"`));
+    const q = caso.resolucion.preguntas.find((p) => p.id === t.objetivo.pregunta);
+    if (!q) errores.push(`traidor: la pregunta objetivo "${t.objetivo.pregunta}" no existe`);
+    else if (q.respuesta === t.objetivo.respuesta) errores.push("traidor: su objetivo no puede ser la respuesta correcta");
+    else if (q.tipo === "personaje" ? !ids.personaje.has(t.objetivo.respuesta) : !q.opciones?.some((o) => o.id === t.objetivo.respuesta)) {
+      errores.push("traidor: la respuesta objetivo no es una opción válida de esa pregunta");
+    }
+  }
 
   // hechos que se usan en condiciones tienen que poder revelarse vía algún secreto
   const usados = new Set<string>();

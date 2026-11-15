@@ -60,6 +60,8 @@ export interface ResultadoAcusacion {
   puntaje: number;
   maximo: number;
   detalle: { pregunta: string; correcta: boolean; puntos: number }[];
+  /** solo en modo traidor */
+  traidor?: { id: string; votado: string; descubierto: boolean; cumplio: boolean; gana: "equipo" | "traidor" };
 }
 
 export interface Evento {
@@ -87,6 +89,8 @@ export interface EstadoPartida {
   interrogatorios: Record<string, MensajeInterrogatorio[]>;
   /** votos de acusación: conexión → respuestas (opcional para salas creadas antes de la votación) */
   votos?: Record<string, Record<string, string>>;
+  /** conexión que juega de traidor (modo traidor) */
+  traidor?: string | null;
   acusacion: ResultadoAcusacion | null;
   eventos: Evento[];
   version: number;

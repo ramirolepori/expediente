@@ -6,7 +6,8 @@ import { Punto, QR, useUrlSala } from "./comunes";
 export function Lobby({ vista, onIniciar }: { vista: VistaPartida; onIniciar: () => void }) {
   const jugadores = vista.conexiones.filter((c) => c.tipo === "jugador");
   const pantallas = vista.conexiones.filter((c) => c.tipo === "pantalla");
-  const { min, max } = vista.caso.meta.jugadores;
+  const { max } = vista.caso.meta.jugadores;
+  const min = vista.config.modo === "traidor" ? Math.max(3, vista.caso.meta.jugadores.min) : vista.caso.meta.jugadores.min;
   const url = useUrlSala(vista.codigo);
   return (
     <main className="mx-auto grid w-full max-w-4xl gap-6 px-4 py-8 md:grid-cols-2">
@@ -46,7 +47,7 @@ export function Lobby({ vista, onIniciar }: { vista: VistaPartida; onIniciar: ()
         {pantallas.length > 0 && <p className="mt-3 text-sm text-suave">📺 {pantallas.length} pantalla(s) compartida(s) conectada(s)</p>}
 
         <div className="mt-6 rounded-xl bg-panel-2 p-3 text-xs text-suave">
-          Modo {vista.config.modo} · {vista.config.recursos ? `${vista.config.recursos} horas` : "sin límite de horas"} · ayudas {vista.config.ayudas}
+          Modo {vista.config.modo === "traidor" ? "traidor 🎭 (uno de ustedes juega en contra)" : vista.config.modo} · {vista.config.recursos ? `${vista.config.recursos} horas` : "sin límite de horas"} · ayudas {vista.config.ayudas}
           {vista.config.temporizadorMin ? ` · ${vista.config.temporizadorMin} min` : ""} · micrófono {vista.config.voz ? "sí" : "no"}
         </div>
 

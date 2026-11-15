@@ -6,8 +6,13 @@
     "sinopsis": "Una contadora que auditaba las cuentas de un hotel antiguo frente a Plaza San Martín aparece muerta en la habitación 607. Todo parece una escena armada. Alguien en ese edificio sabe lo que pasó entre las 23:00 y la medianoche.",
     "duracionMin": 90,
     "dificultad": "media",
-    "jugadores": { "min": 2, "max": 6 },
-    "advertencias": ["Muerte violenta (estrangulamiento)"],
+    "jugadores": {
+      "min": 2,
+      "max": 6
+    },
+    "advertencias": [
+      "Muerte violenta (estrangulamiento)"
+    ],
     "inspiracion": "Transformación de 'El Asesinato del Hotel Aurora' (PDF propio), con la verdad reescrita para que sea jugable y coherente."
   },
   "ambientacion": "noir",
@@ -15,73 +20,256 @@
   "verdad": {
     "resumen": "Julia Romero auditaba al Hotel Aurora y descubrió un esquema de doble facturación con proveedores pantalla (carpeta ECLIPSE) que lavaba dinero hacia H.O. Group, la empresa panameña de Hernán Olazábal, presidente del directorio. MD Global, la importadora de su esposo Martín Duarte, era uno de los proveedores pantalla. Julia iba a entregar todo a la periodista Valentina Núñez (alias Arcimboldo) el lunes a las 9:00. Olazábal le ordenó al gerente Alberto Mansilla 'recuperar todo antes del lunes, sin ruido'. Mansilla cortó las cámaras del pasillo, imprimió la lista de huéspedes del piso 6 y le dio a su hijo Julián, alojado con alias en la 605, la tarjeta maestra duplicada AU-0008. Julián entró a la 607 a las 23:19 para quitarle el pendrive y las copias. Julia se resistió, forcejearon y él la estranguló cerca de las 23:30. Después montó una escena: rompió una copa, adelantó el reloj a las 11:37, escribió un mensaje con el labial de Julia en el espejo y abrió la ventana. No encontró el pendrive, porque Julia se lo había dejado a su amiga Carla el sábado.",
     "culpables": [
-      { "personaje": "julian", "papel": "autor", "detalle": "Estranguló a Julia durante el forcejeo y montó la escena." },
-      { "personaje": "alberto", "papel": "complice", "detalle": "Cortó las cámaras, imprimió la lista de huéspedes y le entregó a su hijo la tarjeta AU-0008." },
-      { "personaje": "olazabal", "papel": "autor_intelectual", "detalle": "Ordenó recuperar las pruebas de Julia 'sin ruido' para proteger el esquema ECLIPSE." }
+      {
+        "personaje": "julian",
+        "papel": "autor",
+        "detalle": "Estranguló a Julia durante el forcejeo y montó la escena."
+      },
+      {
+        "personaje": "alberto",
+        "papel": "complice",
+        "detalle": "Cortó las cámaras, imprimió la lista de huéspedes y le entregó a su hijo la tarjeta AU-0008."
+      },
+      {
+        "personaje": "olazabal",
+        "papel": "autor_intelectual",
+        "detalle": "Ordenó recuperar las pruebas de Julia 'sin ruido' para proteger el esquema ECLIPSE."
+      }
     ],
     "movil": "Silenciar la auditoría que exponía el lavado de dinero del esquema ECLIPSE.",
     "medio": "Estrangulamiento (asfixia mixta) tras un forcejeo.",
     "cronologia": [
-      { "hora": "Sáb 08:10", "hecho": "Julia corre con Carla y le deja un sobre con un pendrive azul 'por si me pasa algo'." },
-      { "hora": "Dom 19:07", "hecho": "Julia imprime 20 páginas en la Copistería Mitre: una copia para Duarte." },
-      { "hora": "Dom 20:05", "hecho": "Check-in de Valentina Núñez, habitación 606." },
-      { "hora": "Dom 21:15", "hecho": "Julián Mansilla llega desde Santiago con Felipe Rojas." },
-      { "hora": "Dom 21:18", "hecho": "Julia pide cambiarse a la 607. Rocío lo anota a mano." },
-      { "hora": "Dom 21:30", "hecho": "Alberto Mansilla lee la nota del cambio en recepción." },
-      { "hora": "Dom 21:47", "hecho": "Julia escribe a Arcimboldo: 'Traigo trazabilidad completa. Si pasa algo, sobre con Carla.'" },
-      { "hora": "Dom 21:48", "hecho": "Check-in de 'Juan D.' (Julián) en la 605, en efectivo, sin DNI." },
-      { "hora": "Dom 22:05", "hecho": "El auto gris de Duarte sale de su edificio." },
-      { "hora": "Dom 22:20", "hecho": "Olazábal escribe a Mansilla: 'Recuperá todo lo de Romero antes de las 9. Sin ruido.'" },
-      { "hora": "Dom 22:36", "hecho": "Duarte llega a la 607. Julia le da la copia impresa como ultimátum." },
-      { "hora": "Dom 22:45", "hecho": "Duarte baja con una carpeta negra. Valentina lo ve de espaldas en el ascensor." },
-      { "hora": "Dom 22:50", "hecho": "Valentina golpea la 607 y Julia la deja pasar. Comparten una copa de vino." },
-      { "hora": "Dom 22:55", "hecho": "Esteban sube hielo a la 607. Ve a Julia con una mujer y, al salir, a un hombre de corbata dorada en la 605." },
-      { "hora": "Dom 22:59", "hecho": "Mansilla desactiva las cámaras 605-609 con el usuario MLEON desde el teclado de recepción." },
-      { "hora": "Dom 23:00", "hecho": "Mansilla imprime la lista de huéspedes del piso 6 en la impresora de recepción." },
-      { "hora": "Dom 23:02", "hecho": "Valentina vuelve a la 606." },
-      { "hora": "Dom 23:04", "hecho": "Julia baja a recepción a pedir un cargador." },
-      { "hora": "Dom 23:05", "hecho": "Valentina baja a fumar." },
-      { "hora": "Dom 23:06", "hecho": "Mansilla sube al piso 6. A las 23:08 abre la 605 con su maestra AU-0007 y le da a Julián la AU-0008 y la lista." },
-      { "hora": "Dom 23:12", "hecho": "Julia vuelve a entrar a la 607 con su tarjeta." },
-      { "hora": "Dom 23:17", "hecho": "Mansilla baja." },
-      { "hora": "Dom 23:18", "hecho": "Valentina vuelve a su habitación." },
-      { "hora": "Dom 23:19", "hecho": "Julián entra a la 607 con la AU-0008. Valentina lo filma por la mirilla." },
-      { "hora": "Dom 23:30", "hecho": "Forcejeo y estrangulamiento." },
-      { "hora": "Dom 23:30-23:40", "hecho": "Julián monta la escena y abre la ventana." },
-      { "hora": "Dom 23:41", "hecho": "Julián vuelve a la 605." },
-      { "hora": "Dom 23:46", "hecho": "Las cámaras se reactivan desde la terminal del gerente." },
-      { "hora": "Lun 02:14", "hecho": "El huésped de la 609 se queja de la ventana que golpea. Se descubre el cuerpo." },
-      { "hora": "Lun 06:30", "hecho": "'Juan D.' deja la 605 pagando en efectivo." }
+      {
+        "hora": "Sáb 08:10",
+        "hecho": "Julia corre con Carla y le deja un sobre con un pendrive azul 'por si me pasa algo'."
+      },
+      {
+        "hora": "Dom 19:07",
+        "hecho": "Julia imprime 20 páginas en la Copistería Mitre: una copia para Duarte."
+      },
+      {
+        "hora": "Dom 20:05",
+        "hecho": "Check-in de Valentina Núñez, habitación 606."
+      },
+      {
+        "hora": "Dom 21:15",
+        "hecho": "Julián Mansilla llega desde Santiago con Felipe Rojas."
+      },
+      {
+        "hora": "Dom 21:18",
+        "hecho": "Julia pide cambiarse a la 607. Rocío lo anota a mano."
+      },
+      {
+        "hora": "Dom 21:30",
+        "hecho": "Alberto Mansilla lee la nota del cambio en recepción."
+      },
+      {
+        "hora": "Dom 21:47",
+        "hecho": "Julia escribe a Arcimboldo: 'Traigo trazabilidad completa. Si pasa algo, sobre con Carla.'"
+      },
+      {
+        "hora": "Dom 21:48",
+        "hecho": "Check-in de 'Juan D.' (Julián) en la 605, en efectivo, sin DNI."
+      },
+      {
+        "hora": "Dom 22:05",
+        "hecho": "El auto gris de Duarte sale de su edificio."
+      },
+      {
+        "hora": "Dom 22:20",
+        "hecho": "Olazábal escribe a Mansilla: 'Recuperá todo lo de Romero antes de las 9. Sin ruido.'"
+      },
+      {
+        "hora": "Dom 22:36",
+        "hecho": "Duarte llega a la 607. Julia le da la copia impresa como ultimátum."
+      },
+      {
+        "hora": "Dom 22:45",
+        "hecho": "Duarte baja con una carpeta negra. Valentina lo ve de espaldas en el ascensor."
+      },
+      {
+        "hora": "Dom 22:50",
+        "hecho": "Valentina golpea la 607 y Julia la deja pasar. Comparten una copa de vino."
+      },
+      {
+        "hora": "Dom 22:55",
+        "hecho": "Esteban sube hielo a la 607. Ve a Julia con una mujer y, al salir, a un hombre de corbata dorada en la 605."
+      },
+      {
+        "hora": "Dom 22:59",
+        "hecho": "Mansilla desactiva las cámaras 605-609 con el usuario MLEON desde el teclado de recepción."
+      },
+      {
+        "hora": "Dom 23:00",
+        "hecho": "Mansilla imprime la lista de huéspedes del piso 6 en la impresora de recepción."
+      },
+      {
+        "hora": "Dom 23:02",
+        "hecho": "Valentina vuelve a la 606."
+      },
+      {
+        "hora": "Dom 23:04",
+        "hecho": "Julia baja a recepción a pedir un cargador."
+      },
+      {
+        "hora": "Dom 23:05",
+        "hecho": "Valentina baja a fumar."
+      },
+      {
+        "hora": "Dom 23:06",
+        "hecho": "Mansilla sube al piso 6. A las 23:08 abre la 605 con su maestra AU-0007 y le da a Julián la AU-0008 y la lista."
+      },
+      {
+        "hora": "Dom 23:12",
+        "hecho": "Julia vuelve a entrar a la 607 con su tarjeta."
+      },
+      {
+        "hora": "Dom 23:17",
+        "hecho": "Mansilla baja."
+      },
+      {
+        "hora": "Dom 23:18",
+        "hecho": "Valentina vuelve a su habitación."
+      },
+      {
+        "hora": "Dom 23:19",
+        "hecho": "Julián entra a la 607 con la AU-0008. Valentina lo filma por la mirilla."
+      },
+      {
+        "hora": "Dom 23:30",
+        "hecho": "Forcejeo y estrangulamiento."
+      },
+      {
+        "hora": "Dom 23:30-23:40",
+        "hecho": "Julián monta la escena y abre la ventana."
+      },
+      {
+        "hora": "Dom 23:41",
+        "hecho": "Julián vuelve a la 605."
+      },
+      {
+        "hora": "Dom 23:46",
+        "hecho": "Las cámaras se reactivan desde la terminal del gerente."
+      },
+      {
+        "hora": "Lun 02:14",
+        "hecho": "El huésped de la 609 se queja de la ventana que golpea. Se descubre el cuerpo."
+      },
+      {
+        "hora": "Lun 06:30",
+        "hecho": "'Juan D.' deja la 605 pagando en efectivo."
+      }
     ]
   },
   "hechos": [
-    { "id": "julia_auditoria", "texto": "Julia auditaba al Hotel Aurora y había encontrado doble facturación con proveedores sin dirección física." },
-    { "id": "reunion_arcimboldo", "texto": "Julia iba a reunirse el lunes a las 9:00 con alguien llamado 'Arcimboldo' para entregarle pruebas." },
-    { "id": "julia_ansiosa", "texto": "El sábado Julia estaba ansiosa, miraba para atrás todo el tiempo y habló de 'un cierre grande el lunes'." },
-    { "id": "carla_sobre", "texto": "El sábado Julia le dejó a Carla un sobre con un pendrive azul y le dijo: 'si me pasa algo, dáselo a la policía, no a cualquiera'." },
-    { "id": "cambio_607", "texto": "A las 21:18 Julia pidió cambiarse a la 607 'por vista y silencio'. Rocío lo anotó a mano en un papel del mostrador." },
-    { "id": "mansilla_leyo_nota", "texto": "Cerca de las 21:30 el gerente Mansilla pasó por el mostrador y leyó la nota del cambio de habitación de Julia." },
-    { "id": "juan_d_contacto_gerente", "texto": "Mansilla le dijo a Rocío que el huésped 'Juan D.' de la 605 era de confianza y que no le pidiera DNI." },
-    { "id": "mansilla_imprimio_lista", "texto": "A las 23:00 Mansilla le pidió a Rocío que le alcanzara una hoja que salió de la impresora de recepción: la lista de huéspedes del piso 6." },
-    { "id": "julia_baja_2304", "texto": "A las 23:04 Julia bajó a recepción a pedir un cargador de celular y volvió a subir cerca de las 23:10. Estaba tranquila pero apurada." },
-    { "id": "hielo_2255", "texto": "A las 22:55 Esteban llevó hielo a la 607. Julia estaba con una mujer de vestido oscuro y había dos copas servidas." },
-    { "id": "hombre_605", "texto": "Al salir de la 607, un hombre joven en la puerta de la 605, de camisa blanca y corbata dorada, le preguntó a Esteban si también le podía subir hielo. Parecía nervioso." },
-    { "id": "mansilla_usa_mleon", "texto": "El gerente Mansilla conoce la clave del usuario MLEON y lo usa a veces 'para mantenimiento'." },
-    { "id": "matias_no_estaba", "texto": "Matías León se fue del hotel a las 19:00 del domingo y no tocó el sistema esa noche." },
-    { "id": "duarte_visita", "texto": "Martín Duarte estuvo en la 607 entre las 22:36 y las 22:44. Julia le dio 20 páginas impresas y le dijo que se entregara antes del lunes. Cuando él se fue, Julia estaba viva." },
-    { "id": "duarte_lavado", "texto": "MD Global, la empresa de Duarte, es uno de los proveedores pantalla del esquema de facturas." },
-    { "id": "duarte_borro_celular", "texto": "Duarte restauró su celular de fábrica para borrar los mensajes con Mansilla." },
-    { "id": "valentina_es_arcimboldo", "texto": "Valentina Núñez es 'Arcimboldo', la persona a la que Julia le iba a entregar las pruebas." },
-    { "id": "valentina_visita", "texto": "Valentina estuvo en la 607 de 22:50 a 23:02. Tomó una copa de vino con Julia y vio algunas páginas de la auditoría." },
-    { "id": "valentina_vio_duarte", "texto": "A las 22:45 Valentina vio de espaldas a un hombre con una carpeta negra bajando en el ascensor desde el piso 6. Por la ropa y el perfume cree que era Duarte." },
-    { "id": "valentina_filmo", "texto": "A las 23:19 Valentina filmó con el celular por la mirilla a un hombre que entraba a la 607 con una tarjeta dorada. Minutos después escuchó a través de la pared 'No podés hacer esto' y una voz de hombre: 'Ya es tarde'." },
-    { "id": "mansilla_subio", "texto": "Mansilla subió al piso 6 a las 23:06 y le dio a su hijo Julián, en la 605, la tarjeta maestra AU-0008 y la lista de huéspedes." },
-    { "id": "mansilla_corto_camaras", "texto": "Mansilla desactivó las cámaras del pasillo 605-609 de 22:59 a 23:46." },
-    { "id": "orden_recuperar", "texto": "Hernán Olazábal le ordenó a Mansilla 'recuperar todo lo de Romero antes de las 9, sin ruido'." },
-    { "id": "julian_hijo", "texto": "Julián Mansilla, de 24 años, es hijo del gerente y trabaja en MD Global gestionando proveedores internacionales." },
-    { "id": "julian_mato", "texto": "Julián entró a la 607 a las 23:19 para quitarle a Julia el pendrive y las copias. Ella se resistió, forcejearon y él la estranguló. Después rompió una copa, puso el reloj en 11:37, escribió el mensaje del espejo con el labial de Julia y abrió la ventana." },
-    { "id": "olazabal_ho", "texto": "H.O. Group, con sede en Panamá, es de Hernán Olazábal y es el beneficiario final del esquema ECLIPSE." },
-    { "id": "olazabal_admite_orden", "texto": "Olazábal admite que pidió 'recuperar los documentos' de Julia, aunque sostiene que nunca ordenó lastimarla." }
+    {
+      "id": "julia_auditoria",
+      "texto": "Julia auditaba al Hotel Aurora y había encontrado doble facturación con proveedores sin dirección física."
+    },
+    {
+      "id": "reunion_arcimboldo",
+      "texto": "Julia iba a reunirse el lunes a las 9:00 con alguien llamado 'Arcimboldo' para entregarle pruebas."
+    },
+    {
+      "id": "julia_ansiosa",
+      "texto": "El sábado Julia estaba ansiosa, miraba para atrás todo el tiempo y habló de 'un cierre grande el lunes'."
+    },
+    {
+      "id": "carla_sobre",
+      "texto": "El sábado Julia le dejó a Carla un sobre con un pendrive azul y le dijo: 'si me pasa algo, dáselo a la policía, no a cualquiera'."
+    },
+    {
+      "id": "cambio_607",
+      "texto": "A las 21:18 Julia pidió cambiarse a la 607 'por vista y silencio'. Rocío lo anotó a mano en un papel del mostrador."
+    },
+    {
+      "id": "mansilla_leyo_nota",
+      "texto": "Cerca de las 21:30 el gerente Mansilla pasó por el mostrador y leyó la nota del cambio de habitación de Julia."
+    },
+    {
+      "id": "juan_d_contacto_gerente",
+      "texto": "Mansilla le dijo a Rocío que el huésped 'Juan D.' de la 605 era de confianza y que no le pidiera DNI."
+    },
+    {
+      "id": "mansilla_imprimio_lista",
+      "texto": "A las 23:00 Mansilla le pidió a Rocío que le alcanzara una hoja que salió de la impresora de recepción: la lista de huéspedes del piso 6."
+    },
+    {
+      "id": "julia_baja_2304",
+      "texto": "A las 23:04 Julia bajó a recepción a pedir un cargador de celular y volvió a subir cerca de las 23:10. Estaba tranquila pero apurada."
+    },
+    {
+      "id": "hielo_2255",
+      "texto": "A las 22:55 Esteban llevó hielo a la 607. Julia estaba con una mujer de vestido oscuro y había dos copas servidas."
+    },
+    {
+      "id": "hombre_605",
+      "texto": "Al salir de la 607, un hombre joven en la puerta de la 605, de camisa blanca y corbata dorada, le preguntó a Esteban si también le podía subir hielo. Parecía nervioso."
+    },
+    {
+      "id": "mansilla_usa_mleon",
+      "texto": "El gerente Mansilla conoce la clave del usuario MLEON y lo usa a veces 'para mantenimiento'."
+    },
+    {
+      "id": "matias_no_estaba",
+      "texto": "Matías León se fue del hotel a las 19:00 del domingo y no tocó el sistema esa noche."
+    },
+    {
+      "id": "duarte_visita",
+      "texto": "Martín Duarte estuvo en la 607 entre las 22:36 y las 22:44. Julia le dio 20 páginas impresas y le dijo que se entregara antes del lunes. Cuando él se fue, Julia estaba viva."
+    },
+    {
+      "id": "duarte_lavado",
+      "texto": "MD Global, la empresa de Duarte, es uno de los proveedores pantalla del esquema de facturas."
+    },
+    {
+      "id": "duarte_borro_celular",
+      "texto": "Duarte restauró su celular de fábrica para borrar los mensajes con Mansilla."
+    },
+    {
+      "id": "valentina_es_arcimboldo",
+      "texto": "Valentina Núñez es 'Arcimboldo', la persona a la que Julia le iba a entregar las pruebas."
+    },
+    {
+      "id": "valentina_visita",
+      "texto": "Valentina estuvo en la 607 de 22:50 a 23:02. Tomó una copa de vino con Julia y vio algunas páginas de la auditoría."
+    },
+    {
+      "id": "valentina_vio_duarte",
+      "texto": "A las 22:45 Valentina vio de espaldas a un hombre con una carpeta negra bajando en el ascensor desde el piso 6. Por la ropa y el perfume cree que era Duarte."
+    },
+    {
+      "id": "valentina_filmo",
+      "texto": "A las 23:19 Valentina filmó con el celular por la mirilla a un hombre que entraba a la 607 con una tarjeta dorada. Minutos después escuchó a través de la pared 'No podés hacer esto' y una voz de hombre: 'Ya es tarde'."
+    },
+    {
+      "id": "mansilla_subio",
+      "texto": "Mansilla subió al piso 6 a las 23:06 y le dio a su hijo Julián, en la 605, la tarjeta maestra AU-0008 y la lista de huéspedes."
+    },
+    {
+      "id": "mansilla_corto_camaras",
+      "texto": "Mansilla desactivó las cámaras del pasillo 605-609 de 22:59 a 23:46."
+    },
+    {
+      "id": "orden_recuperar",
+      "texto": "Hernán Olazábal le ordenó a Mansilla 'recuperar todo lo de Romero antes de las 9, sin ruido'."
+    },
+    {
+      "id": "julian_hijo",
+      "texto": "Julián Mansilla, de 24 años, es hijo del gerente y trabaja en MD Global gestionando proveedores internacionales."
+    },
+    {
+      "id": "julian_mato",
+      "texto": "Julián entró a la 607 a las 23:19 para quitarle a Julia el pendrive y las copias. Ella se resistió, forcejearon y él la estranguló. Después rompió una copa, puso el reloj en 11:37, escribió el mensaje del espejo con el labial de Julia y abrió la ventana."
+    },
+    {
+      "id": "olazabal_ho",
+      "texto": "H.O. Group, con sede en Panamá, es de Hernán Olazábal y es el beneficiario final del esquema ECLIPSE."
+    },
+    {
+      "id": "olazabal_admite_orden",
+      "texto": "Olazábal admite que pidió 'recuperar los documentos' de Julia, aunque sostiene que nunca ordenó lastimarla."
+    }
   ],
   "personajes": [
     {
@@ -92,24 +280,60 @@
       "descripcion": "Socio de MD Global, una importadora de electrónica 'reacondicionada'. Separado de hecho de Julia, sin papeles. Viaja seguido a Chile y Miami. Calza 43.",
       "personalidad": "Frío, controlado, condescendiente. Cuida su imagen por encima de todo. Si lo acorralan con pruebas, se quiebra hacia el autoengaño: 'yo no la maté, yo me fui'.",
       "formaDeHablar": "Frases cortas, tono de empresario. Pausas largas antes de responder. Usa 'detective' con algo de ironía.",
-      "sabe": ["julia_auditoria", "duarte_lavado", "duarte_visita", "duarte_borro_celular"],
+      "sabe": [
+        "julia_auditoria",
+        "duarte_lavado",
+        "duarte_visita",
+        "duarte_borro_celular"
+      ],
       "secretos": [
         {
           "id": "duarte_confiesa_visita",
           "hecho": "duarte_visita",
-          "cuando": { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "camaras_edificio_duarte" }, { "tipo": "prueba", "prueba": "registro_bluetooth" }, { "tipo": "hecho", "hecho": "valentina_vio_duarte" }] },
+          "cuando": {
+            "tipo": "alguna",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "camaras_edificio_duarte"
+              },
+              {
+                "tipo": "prueba",
+                "prueba": "registro_bluetooth"
+              },
+              {
+                "tipo": "hecho",
+                "hecho": "valentina_vio_duarte"
+              }
+            ]
+          },
           "como": "Admite que fue al hotel porque Julia lo citó. Ella le dio una carpeta con 20 páginas y le dijo que tenía hasta el lunes para entregarse. Discutieron. Se fue a las 22:44 y ella estaba viva, 'gritándome, bien viva'. Entrega la carpeta negra."
         },
         {
           "id": "duarte_confiesa_lavado",
           "hecho": "duarte_lavado",
-          "cuando": { "tipo": "todas", "condiciones": [{ "tipo": "hecho", "hecho": "duarte_visita" }, { "tipo": "prueba", "prueba": "carpeta_negra" }] },
+          "cuando": {
+            "tipo": "todas",
+            "condiciones": [
+              {
+                "tipo": "hecho",
+                "hecho": "duarte_visita"
+              },
+              {
+                "tipo": "prueba",
+                "prueba": "carpeta_negra"
+              }
+            ]
+          },
           "como": "Con la carpeta sobre la mesa, reconoce a regañadientes que MD Global facturaba servicios que no existían. Dice que él 'solo firmaba' y que las órdenes venían 'de arriba del hotel'. No sabe nombres más allá de Mansilla."
         },
         {
           "id": "duarte_confiesa_celular",
           "hecho": "duarte_borro_celular",
-          "cuando": { "tipo": "hecho", "hecho": "duarte_lavado" },
+          "cuando": {
+            "tipo": "hecho",
+            "hecho": "duarte_lavado"
+          },
           "como": "Admite que borró el celular porque tenía mensajes con Mansilla sobre 'ajustes' de facturas."
         }
       ],
@@ -117,18 +341,38 @@
         {
           "tema": "dónde estuvo el domingo a la noche",
           "dice": "Estuvo toda la noche en su departamento de Núñez viendo un partido repetido. El portero lo vio entrar antes de las diez.",
-          "cae": { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "camaras_edificio_duarte" }, { "tipo": "prueba", "prueba": "registro_bluetooth" }] },
+          "cae": {
+            "tipo": "alguna",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "camaras_edificio_duarte"
+              },
+              {
+                "tipo": "prueba",
+                "prueba": "registro_bluetooth"
+              }
+            ]
+          },
           "alCaer": "Se queda en silencio un rato largo y pasa a contar la visita (secreto duarte_confiesa_visita)."
         },
         {
           "tema": "su celular vacío",
           "dice": "Lo restauró porque tenía un virus.",
-          "cae": { "tipo": "hecho", "hecho": "duarte_lavado" },
+          "cae": {
+            "tipo": "hecho",
+            "hecho": "duarte_lavado"
+          },
           "alCaer": "Admite por qué lo borró."
         }
       ],
       "color": "Puede hablar de fútbol, de sus viajes a Miami o de que Julia 'siempre fue demasiado correcta'.",
-      "voz": { "genero": "masculino", "edad": "adulto", "velocidad": 0.95, "tono": "grave y seco" }
+      "voz": {
+        "genero": "masculino",
+        "edad": "adulto",
+        "velocidad": 0.95,
+        "tono": "grave y seco"
+      }
     },
     {
       "id": "alberto",
@@ -138,24 +382,55 @@
       "descripcion": "Ex policía de la brigada de investigaciones, dado de baja por 'reorganización'. Hace once años que gerencia el hotel. Tiene una tarjeta maestra, la AU-0007. Calza 41.",
       "personalidad": "Seguro de sí mismo, desafiante, conoce los interrogatorios desde el otro lado. Defiende a su hijo por encima de todo. Le teme a Olazábal.",
       "formaDeHablar": "Voz grave, jerga de ex policía ('pibe', 'esto no es así'). Contesta con preguntas. Fuma un vapeador de menta.",
-      "sabe": ["julia_auditoria", "mansilla_usa_mleon", "julian_hijo"],
+      "sabe": [
+        "julia_auditoria",
+        "mansilla_usa_mleon",
+        "julian_hijo"
+      ],
       "secretos": [
         {
           "id": "alberto_admite_subida",
           "hecho": "mansilla_subio",
-          "cuando": { "tipo": "todas", "condiciones": [{ "tipo": "prueba", "prueba": "registro_ascensor" }, { "tipo": "prueba", "prueba": "bitacora_mantenimiento" }] },
+          "cuando": {
+            "tipo": "todas",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "registro_ascensor"
+              },
+              {
+                "tipo": "prueba",
+                "prueba": "bitacora_mantenimiento"
+              }
+            ]
+          },
           "como": "Primero dijo que subió por una pérdida de agua en la 605. Cuando la bitácora vacía lo desmiente, admite que subió a llevarle 'unos papeles' a su hijo y le dio la tarjeta AU-0008 'para que pudiera moverse'. Insiste en que nadie tenía que salir lastimado."
         },
         {
           "id": "alberto_admite_camaras",
           "hecho": "mansilla_corto_camaras",
-          "cuando": { "tipo": "todas", "condiciones": [{ "tipo": "prueba", "prueba": "log_camaras" }, { "tipo": "hecho", "hecho": "mansilla_usa_mleon" }] },
+          "cuando": {
+            "tipo": "todas",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "log_camaras"
+              },
+              {
+                "tipo": "hecho",
+                "hecho": "mansilla_usa_mleon"
+              }
+            ]
+          },
           "como": "Reconoce que cortó las cámaras con el usuario de Matías desde recepción. Dice que era para que 'nadie viera a Julián buscando unos papeles'."
         },
         {
           "id": "alberto_admite_orden",
           "hecho": "orden_recuperar",
-          "cuando": { "tipo": "candado", "candado": "carpeta_ho" },
+          "cuando": {
+            "tipo": "candado",
+            "candado": "carpeta_ho"
+          },
           "como": "Frente al mail de la carpeta H.O. se derrumba: Olazábal le ordenó recuperar todo antes de las 9. 'Si no lo hacía yo, lo hacía otro. Y el otro no iba a ser mi hijo con una tarjeta: iba a ser alguien con un arma.'"
         }
       ],
@@ -163,24 +438,47 @@
         {
           "tema": "si subió al piso 6",
           "dice": "No recuerda haber subido. La maestra la usa también el personal de mantenimiento.",
-          "cae": { "tipo": "prueba", "prueba": "registro_ascensor" },
+          "cae": {
+            "tipo": "prueba",
+            "prueba": "registro_ascensor"
+          },
           "alCaer": "Cambia la versión: subió por una pérdida de agua en la 605. Esta segunda mentira cae con la bitácora de mantenimiento."
         },
         {
           "tema": "quién es 'Juan D.' de la 605",
           "dice": "Un proveedor frecuente, no recuerda el apellido.",
-          "cae": { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "registro_migratorio" }, { "tipo": "hecho", "hecho": "julian_hijo" }] },
+          "cae": {
+            "tipo": "alguna",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "registro_migratorio"
+              },
+              {
+                "tipo": "hecho",
+                "hecho": "julian_hijo"
+              }
+            ]
+          },
           "alCaer": "Admite que es su hijo y pide que lo dejen afuera."
         },
         {
           "tema": "la auditoría de Julia",
           "dice": "Era una clienta exigente que 'revisaba papeles que no eran suyos'. Nunca pidió frenar la auditoría.",
-          "cae": { "tipo": "prueba", "prueba": "planilla_auditoria" },
+          "cae": {
+            "tipo": "prueba",
+            "prueba": "planilla_auditoria"
+          },
           "alCaer": "Admite que pidió en el directorio 'pausar' la auditoría porque 'molestaba a los proveedores'."
         }
       ],
       "color": "Puede hablar de sus años en la brigada, de la historia del hotel y de la lluvia.",
-      "voz": { "genero": "masculino", "edad": "mayor", "velocidad": 0.9, "tono": "ronco" }
+      "voz": {
+        "genero": "masculino",
+        "edad": "mayor",
+        "velocidad": 0.9,
+        "tono": "ronco"
+      }
     },
     {
       "id": "valentina",
@@ -190,30 +488,67 @@
       "descripcion": "Columnista de investigación económica. Hizo el check-in el domingo a las 20:05 'para entrevistar a una fuente anónima'. Usa labial rojo intenso.",
       "personalidad": "Inteligente, desconfiada de la policía, protege a sus fuentes. Se siente culpable por haber dejado sola a Julia.",
       "formaDeHablar": "Voz suave pero firme, precisa. Responde con frases como 'no puedo confirmar ni negar'.",
-      "sabe": ["valentina_es_arcimboldo", "valentina_visita", "valentina_vio_duarte", "valentina_filmo", "reunion_arcimboldo", "julia_auditoria"],
+      "sabe": [
+        "valentina_es_arcimboldo",
+        "valentina_visita",
+        "valentina_vio_duarte",
+        "valentina_filmo",
+        "reunion_arcimboldo",
+        "julia_auditoria"
+      ],
       "secretos": [
         {
           "id": "valentina_admite_arcimboldo",
           "hecho": "valentina_es_arcimboldo",
-          "cuando": { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "analisis_labial" }, { "tipo": "prueba", "prueba": "celular_julia" }] },
+          "cuando": {
+            "tipo": "alguna",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "analisis_labial"
+              },
+              {
+                "tipo": "prueba",
+                "prueba": "celular_julia"
+              }
+            ]
+          },
           "como": "Si le preguntan directamente por Arcimboldo o por el correo de Julia, primero esquiva. Si insisten o le muestran el labial de la copa, admite que ella es Arcimboldo."
         },
         {
           "id": "valentina_admite_visita",
           "hecho": "valentina_visita",
-          "cuando": { "tipo": "alguna", "condiciones": [{ "tipo": "hecho", "hecho": "valentina_es_arcimboldo" }, { "tipo": "hecho", "hecho": "hielo_2255" }] },
+          "cuando": {
+            "tipo": "alguna",
+            "condiciones": [
+              {
+                "tipo": "hecho",
+                "hecho": "valentina_es_arcimboldo"
+              },
+              {
+                "tipo": "hecho",
+                "hecho": "hielo_2255"
+              }
+            ]
+          },
           "como": "Admite que no aguantó hasta el lunes y fue a la 607 a las 22:50. Tomaron una copa y Julia le mostró algunas páginas. Se fue a las 23:02."
         },
         {
           "id": "valentina_cuenta_duarte",
           "hecho": "valentina_vio_duarte",
-          "cuando": { "tipo": "hecho", "hecho": "valentina_visita" },
+          "cuando": {
+            "tipo": "hecho",
+            "hecho": "valentina_visita"
+          },
           "como": "Cuenta que antes de golpear la 607 vio a un hombre de espaldas con una carpeta negra en el ascensor, a las 22:45. Por el perfume y el traje cree que era Duarte."
         },
         {
           "id": "valentina_entrega_video",
           "hecho": "valentina_filmo",
-          "cuando": { "tipo": "hecho", "hecho": "valentina_visita" },
+          "cuando": {
+            "tipo": "hecho",
+            "hecho": "valentina_visita"
+          },
           "como": "Confiesa que a las 23:19 escuchó pasos, miró por la mirilla y filmó unos segundos con el celular: un hombre joven, camisa blanca, corbata dorada, maletín negro, que abrió la 607 con una tarjeta dorada. Después escuchó a través de la pared 'No podés hacer esto' y una voz de hombre que dijo 'Ya es tarde'. No llamó a nadie por miedo, y eso la persigue. Entrega el video."
         }
       ],
@@ -221,12 +556,29 @@
         {
           "tema": "qué hizo el domingo a la noche",
           "dice": "Estuvo en su habitación trabajando y salió una sola vez a fumar. No vio nada.",
-          "cae": { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "analisis_labial" }, { "tipo": "hecho", "hecho": "hielo_2255" }] },
+          "cae": {
+            "tipo": "alguna",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "analisis_labial"
+              },
+              {
+                "tipo": "hecho",
+                "hecho": "hielo_2255"
+              }
+            ]
+          },
           "alCaer": "Admite la visita a la 607 (secreto valentina_admite_visita)."
         }
       ],
       "color": "Puede hablar de periodismo, de la lluvia y de fuentes en general sin dar nombres.",
-      "voz": { "genero": "femenino", "edad": "adulto", "velocidad": 1.0, "tono": "suave y firme" }
+      "voz": {
+        "genero": "femenino",
+        "edad": "adulto",
+        "velocidad": 1.0,
+        "tono": "suave y firme"
+      }
     },
     {
       "id": "esteban",
@@ -236,11 +588,19 @@
       "descripcion": "Hace los servicios a las habitaciones en el turno noche. Llevó hielo a la 607 a las 22:55.",
       "personalidad": "Amable, charlatán, nervioso con la policía. Quiere ayudar.",
       "formaDeHablar": "Muy porteño, informal ('mirá', 'te juro'). Se va por las ramas y hay que volverlo al tema.",
-      "sabe": ["hielo_2255", "hombre_605"],
+      "sabe": [
+        "hielo_2255",
+        "hombre_605"
+      ],
       "secretos": [],
       "mentiras": [],
       "color": "Puede contar chismes del hotel, que el reloj de fichaje está adelantado 4 minutos y que el gerente 'es medio milico'.",
-      "voz": { "genero": "masculino", "edad": "joven", "velocidad": 1.1, "tono": "alegre" }
+      "voz": {
+        "genero": "masculino",
+        "edad": "joven",
+        "velocidad": 1.1,
+        "tono": "alegre"
+      }
     },
     {
       "id": "rocio",
@@ -250,24 +610,38 @@
       "descripcion": "Estudiante de turismo. Atendía recepción el domingo de 20:00 a 06:00. Fue la que abrió la 607 con el cerrajero.",
       "personalidad": "Prolija, responsable, impresionada por lo que vio. Le tiene miedo al gerente.",
       "formaDeHablar": "Educada, trata de usted. Duda antes de hablar mal de Mansilla.",
-      "sabe": ["cambio_607", "julia_baja_2304", "mansilla_imprimio_lista"],
+      "sabe": [
+        "cambio_607",
+        "julia_baja_2304",
+        "mansilla_imprimio_lista"
+      ],
       "secretos": [
         {
           "id": "rocio_nota",
           "hecho": "mansilla_leyo_nota",
-          "cuando": { "tipo": "siempre" },
+          "cuando": {
+            "tipo": "siempre"
+          },
           "como": "Solo lo cuenta si le preguntan quién pudo saber que Julia se cambió a la 607: el gerente pasó a las 21:30 y leyó la nota del mostrador."
         },
         {
           "id": "rocio_juan_d",
           "hecho": "juan_d_contacto_gerente",
-          "cuando": { "tipo": "prueba", "prueba": "reserva_605" },
+          "cuando": {
+            "tipo": "prueba",
+            "prueba": "reserva_605"
+          },
           "como": "Avergonzada, admite que no le pidió DNI a 'Juan D.' porque el gerente le dijo que era de confianza."
         }
       ],
       "mentiras": [],
       "color": "Puede hablar de la facultad, de los huéspedes raros y de lo antiguo que es el hotel.",
-      "voz": { "genero": "femenino", "edad": "joven", "velocidad": 1.05, "tono": "nervioso" }
+      "voz": {
+        "genero": "femenino",
+        "edad": "joven",
+        "velocidad": 1.05,
+        "tono": "nervioso"
+      }
     },
     {
       "id": "matias",
@@ -277,18 +651,37 @@
       "descripcion": "Administra las cámaras CamVision 3000, las cerraduras KeyLock PRO y la red del hotel. Su usuario es MLEON.",
       "personalidad": "Tímido, técnico, asustado de que lo culpen. Muy colaborador si lo tratan bien.",
       "formaDeHablar": "Habla rápido y con términos técnicos. No mira a los ojos.",
-      "sabe": ["matias_no_estaba"],
+      "sabe": [
+        "matias_no_estaba"
+      ],
       "secretos": [
         {
           "id": "matias_usuario",
           "hecho": "mansilla_usa_mleon",
-          "cuando": { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "log_camaras" }, { "tipo": "prueba", "prueba": "log_impresion" }] },
+          "cuando": {
+            "tipo": "alguna",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "log_camaras"
+              },
+              {
+                "tipo": "prueba",
+                "prueba": "log_impresion"
+              }
+            ]
+          },
           "como": "Ante los logs con su usuario, se desespera y aclara que él no estaba y que el gerente conoce su clave y la usa a veces 'para mantenimiento'."
         }
       ],
       "mentiras": [],
       "color": "Puede explicar cómo funcionan las cámaras, las cerraduras y los teclados de recepción.",
-      "voz": { "genero": "masculino", "edad": "joven", "velocidad": 1.15, "tono": "agitado" }
+      "voz": {
+        "genero": "masculino",
+        "edad": "joven",
+        "velocidad": 1.15,
+        "tono": "agitado"
+      }
     },
     {
       "id": "carla",
@@ -298,18 +691,28 @@
       "descripcion": "Amiga de Julia desde la facultad y compañera de running.",
       "personalidad": "Emotiva, leal, enojada con el mundo por lo que pasó.",
       "formaDeHablar": "Habla con la voz quebrada, se emociona, a veces se enoja.",
-      "sabe": ["julia_ansiosa", "reunion_arcimboldo"],
+      "sabe": [
+        "julia_ansiosa",
+        "reunion_arcimboldo"
+      ],
       "secretos": [
         {
           "id": "carla_entrega_sobre",
           "hecho": "carla_sobre",
-          "cuando": { "tipo": "siempre" },
+          "cuando": {
+            "tipo": "siempre"
+          },
           "como": "Solo lo cuenta si le preguntan si Julia le dejó algo, si mencionan un sobre o el correo 'sobre con Carla'. Entrega el pendrive azul."
         }
       ],
       "mentiras": [],
       "color": "Puede hablar de Julia como persona, de las carreras de 10K y de la separación con Duarte.",
-      "voz": { "genero": "femenino", "edad": "adulto", "velocidad": 0.95, "tono": "quebrado" }
+      "voz": {
+        "genero": "femenino",
+        "edad": "adulto",
+        "velocidad": 0.95,
+        "tono": "quebrado"
+      }
     },
     {
       "id": "julian",
@@ -319,13 +722,48 @@
       "descripcion": "Trabaja en MD Global en 'gestión de proveedores internacionales'. Volvió de Santiago el domingo a la noche. Calza 43.",
       "personalidad": "Arrogante al principio, por debajo aterrado. Culpa y miedo a Olazábal. Si lo acorralan con pruebas físicas, se quiebra.",
       "formaDeHablar": "Contesta seco, a la defensiva. Cuando se quiebra, habla entrecortado.",
-      "disponible": { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "reserva_605" }, { "tipo": "prueba", "prueba": "registro_migratorio" }] },
-      "sabe": ["julian_hijo"],
+      "disponible": {
+        "tipo": "alguna",
+        "condiciones": [
+          {
+            "tipo": "prueba",
+            "prueba": "reserva_605"
+          },
+          {
+            "tipo": "prueba",
+            "prueba": "registro_migratorio"
+          }
+        ]
+      },
+      "sabe": [
+        "julian_hijo"
+      ],
       "secretos": [
         {
           "id": "julian_confiesa",
           "hecho": "julian_mato",
-          "cuando": { "tipo": "todas", "condiciones": [{ "tipo": "prueba", "prueba": "informe_adn" }, { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "video_mirilla" }, { "tipo": "prueba", "prueba": "hallazgo_605" }] }] },
+          "cuando": {
+            "tipo": "todas",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "informe_adn"
+              },
+              {
+                "tipo": "alguna",
+                "condiciones": [
+                  {
+                    "tipo": "prueba",
+                    "prueba": "video_mirilla"
+                  },
+                  {
+                    "tipo": "prueba",
+                    "prueba": "hallazgo_605"
+                  }
+                ]
+              }
+            ]
+          },
           "como": "Se quiebra. Fue a buscar un archivo y las copias. Ella no quería dárselo, le arañó la cara, la agarró del cuello para que dejara de gritar 'y cuando la solté ya no...'. Después armó todo para que pareciera otra cosa. Dice que su padre le dio la tarjeta. Si le preguntan quién dio la orden, escribe 'H.O.' con la uña en la mesa: tiene miedo de decir el nombre."
         }
       ],
@@ -333,12 +771,29 @@
         {
           "tema": "si conocía a Julia o entró a la 607",
           "dice": "No la conocía. Vino a ver a su viejo y se quedó en la 605 porque era tarde.",
-          "cae": { "tipo": "alguna", "condiciones": [{ "tipo": "prueba", "prueba": "video_mirilla" }, { "tipo": "prueba", "prueba": "hallazgo_605" }] },
+          "cae": {
+            "tipo": "alguna",
+            "condiciones": [
+              {
+                "tipo": "prueba",
+                "prueba": "video_mirilla"
+              },
+              {
+                "tipo": "prueba",
+                "prueba": "hallazgo_605"
+              }
+            ]
+          },
           "alCaer": "Admite que entró a 'buscar un archivo' pero dice que Julia estaba viva cuando se fue. Esta segunda mentira cae con el ADN."
         }
       ],
       "color": "Puede hablar de Santiago, de su trabajo y de su padre, con resentimiento.",
-      "voz": { "genero": "masculino", "edad": "joven", "velocidad": 1.05, "tono": "tenso" }
+      "voz": {
+        "genero": "masculino",
+        "edad": "joven",
+        "velocidad": 1.05,
+        "tono": "tenso"
+      }
     },
     {
       "id": "olazabal",
@@ -348,13 +803,30 @@
       "descripcion": "Empresario. Nunca aparece por el hotel. Su nombre figura en la sociedad panameña H.O. Group.",
       "personalidad": "Calmo, educado, intimidante. Se sabe protegido. Nunca pierde la compostura del todo.",
       "formaDeHablar": "Formal, paternalista, irónico. Llama 'muchachos' a los investigadores.",
-      "disponible": { "tipo": "candado", "candado": "carpeta_ho" },
-      "sabe": ["olazabal_ho"],
+      "disponible": {
+        "tipo": "candado",
+        "candado": "carpeta_ho"
+      },
+      "sabe": [
+        "olazabal_ho"
+      ],
       "secretos": [
         {
           "id": "olazabal_admite",
           "hecho": "olazabal_admite_orden",
-          "cuando": { "tipo": "todas", "condiciones": [{ "tipo": "candado", "candado": "carpeta_ho" }, { "tipo": "hecho", "hecho": "julian_mato" }] },
+          "cuando": {
+            "tipo": "todas",
+            "condiciones": [
+              {
+                "tipo": "candado",
+                "candado": "carpeta_ho"
+              },
+              {
+                "tipo": "hecho",
+                "hecho": "julian_mato"
+              }
+            ]
+          },
           "como": "Frente al mail y a la confesión de Julián, admite que pidió 'recuperar los documentos', pero sostiene que nunca ordenó lastimar a nadie y que 'los Mansilla se excedieron'. Pide un abogado."
         }
       ],
@@ -362,18 +834,49 @@
         {
           "tema": "su vínculo con ECLIPSE y H.O. Group",
           "dice": "ECLIPSE es una iniciativa interna de optimización y H.O. Group, una sociedad 'legalmente inobjetable'. No conocía a Julia Romero.",
-          "cae": { "tipo": "candado", "candado": "carpeta_ho" },
+          "cae": {
+            "tipo": "candado",
+            "candado": "carpeta_ho"
+          },
           "alCaer": "Deja de negar el vínculo, pero minimiza: 'mover fondos no es matar a nadie'."
         }
       ],
       "color": "Puede hablar de la historia del hotel, de arte (le gusta Arcimboldo, el pintor) y de negocios en general.",
-      "voz": { "genero": "masculino", "edad": "mayor", "velocidad": 0.85, "tono": "calmo y frío" }
+      "voz": {
+        "genero": "masculino",
+        "edad": "mayor",
+        "velocidad": 0.85,
+        "tono": "calmo y frío"
+      }
     }
   ],
   "sobres": [
-    { "id": "s1_escena", "titulo": "Sobre 1: La escena", "descripcion": "Lo que encontró la primera patrulla, el informe forense preliminar y lo que había en la habitación.", "requisito": { "tipo": "siempre" } },
-    { "id": "s2_registros", "titulo": "Sobre 2: Los registros", "descripcion": "Cerraduras, ascensor, cámaras, impresiones y movimientos de la noche.", "requisito": { "tipo": "sobre", "sobre": "s1_escena" } },
-    { "id": "s3_laboratorio", "titulo": "Sobre 3: Laboratorio y archivo", "descripcion": "Resultados del laboratorio, reservas y lo que se encontró en el piso 6 a la mañana.", "requisito": { "tipo": "sobre", "sobre": "s2_registros" } }
+    {
+      "id": "s1_escena",
+      "titulo": "Sobre 1: La escena",
+      "descripcion": "Lo que encontró la primera patrulla, el informe forense preliminar y lo que había en la habitación.",
+      "requisito": {
+        "tipo": "siempre"
+      }
+    },
+    {
+      "id": "s2_registros",
+      "titulo": "Sobre 2: Los registros",
+      "descripcion": "Cerraduras, ascensor, cámaras, impresiones y movimientos de la noche.",
+      "requisito": {
+        "tipo": "sobre",
+        "sobre": "s1_escena"
+      }
+    },
+    {
+      "id": "s3_laboratorio",
+      "titulo": "Sobre 3: Laboratorio y archivo",
+      "descripcion": "Resultados del laboratorio, reservas y lo que se encontró en el piso 6 a la mañana.",
+      "requisito": {
+        "tipo": "sobre",
+        "sobre": "s2_registros"
+      }
+    }
   ],
   "pruebas": [
     {
@@ -412,37 +915,90 @@
           {
             "contacto": "Arcimboldo",
             "mensajes": [
-              { "hora": "Sáb 22:07", "de": "victima", "texto": "Listo. Tengo lo que pediste. Lunes 9:00." },
-              { "hora": "Sáb 22:10", "de": "contacto", "texto": "No traigas copia. Solo vemos." },
-              { "hora": "Dom 22:48", "de": "contacto", "texto": "Estoy cerca. ¿Puedo pasar un minuto?" },
-              { "hora": "Dom 22:49", "de": "victima", "texto": "Dale. Rápido." }
+              {
+                "hora": "Sáb 22:07",
+                "de": "victima",
+                "texto": "Listo. Tengo lo que pediste. Lunes 9:00."
+              },
+              {
+                "hora": "Sáb 22:10",
+                "de": "contacto",
+                "texto": "No traigas copia. Solo vemos."
+              },
+              {
+                "hora": "Dom 22:48",
+                "de": "contacto",
+                "texto": "Estoy cerca. ¿Puedo pasar un minuto?"
+              },
+              {
+                "hora": "Dom 22:49",
+                "de": "victima",
+                "texto": "Dale. Rápido."
+              }
             ]
           },
           {
             "contacto": "Martín",
             "mensajes": [
-              { "hora": "Dom 11:42", "de": "contacto", "texto": "No hagas una locura. Hablemos." },
-              { "hora": "Dom 18:30", "de": "victima", "texto": "Hoy 22:30. Hotel Aurora, 607. Venís solo." },
-              { "hora": "Dom 18:31", "de": "contacto", "texto": "Ok." }
+              {
+                "hora": "Dom 11:42",
+                "de": "contacto",
+                "texto": "No hagas una locura. Hablemos."
+              },
+              {
+                "hora": "Dom 18:30",
+                "de": "victima",
+                "texto": "Hoy 22:30. Hotel Aurora, 607. Venís solo."
+              },
+              {
+                "hora": "Dom 18:31",
+                "de": "contacto",
+                "texto": "Ok."
+              }
             ]
           },
           {
             "contacto": "Carla",
             "mensajes": [
-              { "hora": "Sáb 12:15", "de": "contacto", "texto": "Lo guardé donde te dije. Cuidate, por favor." },
-              { "hora": "Sáb 12:16", "de": "victima", "texto": "Gracias. El lunes termina todo." }
+              {
+                "hora": "Sáb 12:15",
+                "de": "contacto",
+                "texto": "Lo guardé donde te dije. Cuidate, por favor."
+              },
+              {
+                "hora": "Sáb 12:16",
+                "de": "victima",
+                "texto": "Gracias. El lunes termina todo."
+              }
             ]
           }
         ],
         "llamadas": [
-          { "hora": "Dom 11:30", "contacto": "Martín", "tipo": "entrante", "duracion": "6 min" },
-          { "hora": "Dom 21:02", "contacto": "Hotel Aurora - Gerencia", "tipo": "perdida" }
+          {
+            "hora": "Dom 11:30",
+            "contacto": "Martín",
+            "tipo": "entrante",
+            "duracion": "6 min"
+          },
+          {
+            "hora": "Dom 21:02",
+            "contacto": "Hotel Aurora - Gerencia",
+            "tipo": "perdida"
+          }
         ],
         "correos": [
-          { "hora": "Dom 21:47", "para": "arcimboldo@posteo.net", "asunto": "Cierre lunes", "cuerpo": "Traigo trazabilidad completa. Si pasa algo, sobre con Carla." }
+          {
+            "hora": "Dom 21:47",
+            "para": "arcimboldo@posteo.net",
+            "asunto": "Cierre lunes",
+            "cuerpo": "Traigo trazabilidad completa. Si pasa algo, sobre con Carla."
+          }
         ],
         "notas": [
-          { "hora": "Dom 22:58", "texto": "C27 = misma firma." }
+          {
+            "hora": "Dom 22:58",
+            "texto": "C27 = misma firma."
+          }
         ]
       }
     },
@@ -570,7 +1126,10 @@
       "titulo": "Carpeta negra de Duarte",
       "tipo": "documento",
       "sobre": "s1_escena",
-      "desbloqueo": { "tipo": "hecho", "hecho": "duarte_visita" },
+      "desbloqueo": {
+        "tipo": "hecho",
+        "hecho": "duarte_visita"
+      },
       "contenido": "Entregada por Martín Duarte. Veinte páginas impresas, doble faz: la trazabilidad de los pagos de Hotel Aurora S.A. a Lavandería Andina, Servicios Grúa SRL y MD Global SA, y desde ahí a una cuenta en Panamá a nombre de **H.O. Group**.\n\nEn la primera hoja, de puño y letra de Julia: *'Martín: tenés hasta el lunes a las 9 para entregarte vos. Después lo hago yo. J.'*"
     },
     {
@@ -578,7 +1137,10 @@
       "titulo": "Video de la mirilla (celular de Valentina)",
       "tipo": "video",
       "sobre": "s1_escena",
-      "desbloqueo": { "tipo": "hecho", "hecho": "valentina_filmo" },
+      "desbloqueo": {
+        "tipo": "hecho",
+        "hecho": "valentina_filmo"
+      },
       "contenido": "Seis segundos, 23:19. Ojo de pez, pasillo en penumbra.\n\nUn hombre joven, **camisa blanca, corbata dorada, maletín negro**, pasa una **tarjeta dorada** por la cerradura de la 607. La puerta se abre y entra. En el reflejo del marco metálico se alcanza a leer **'AU-0008'**. No se le ve la cara."
     },
     {
@@ -586,7 +1148,10 @@
       "titulo": "Pendrive azul de Julia",
       "tipo": "objeto",
       "sobre": "s1_escena",
-      "desbloqueo": { "tipo": "hecho", "hecho": "carla_sobre" },
+      "desbloqueo": {
+        "tipo": "hecho",
+        "hecho": "carla_sobre"
+      },
       "contenido": "Entregado por Carla Belotti. Pendrive azul con llavero de tela. Tiene un solo archivo cifrado: **'Para quien me encuentre'**. Pide una contraseña. Pista escrita en el llavero: *'Donde empezó todo.'*"
     },
     {
@@ -594,7 +1159,10 @@
       "titulo": "Archivo 'Para quien me encuentre'",
       "tipo": "documento",
       "sobre": "s1_escena",
-      "desbloqueo": { "tipo": "candado", "candado": "pendrive" },
+      "desbloqueo": {
+        "tipo": "candado",
+        "candado": "pendrive"
+      },
       "contenido": "*'Si estás leyendo esto, no llegué al lunes.*\n\n*Todo está en ECLIPSE: el hotel factura servicios que no existen a tres proveedores con el mismo CUIT, y la plata termina en Panamá. Martín firma, pero no decide. Mansilla ejecuta, pero no decide. Hay alguien más arriba, dentro del hotel: las siglas aparecen en cada transferencia final.*\n\n*Confiá solo en lo que puedas probar. J.R.'*\n\nAdjunto: listado de transferencias finales, todas con destino **'H.O.'**"
     },
     {
@@ -602,7 +1170,10 @@
       "titulo": "Carpeta H.O. del servidor",
       "tipo": "documento",
       "sobre": "s3_laboratorio",
-      "desbloqueo": { "tipo": "candado", "candado": "carpeta_ho" },
+      "desbloqueo": {
+        "tipo": "candado",
+        "candado": "carpeta_ho"
+      },
       "contenido": "Correos entre gerencia y el directorio.\n\n**De:** H. Olazábal **Para:** A. Mansilla **Domingo 22:20**\n> Recuperá todo lo de Romero antes de las 9. Sin ruido. Usá a quien tengas que usar.\n\n**De:** A. Mansilla **Para:** H. Olazábal **Domingo 22:31**\n> Entendido. Tengo a Julián en esto. Está en el piso.\n\nContrato adjunto: Hotel Aurora S.A. ↔ **H.O. Group (Panamá)**. Beneficiario final: **Dr. Hernán Olazábal**, presidente del directorio."
     }
   ],
@@ -611,7 +1182,10 @@
       "id": "pendrive",
       "titulo": "Contraseña del pendrive azul",
       "descripcion": "El archivo de Julia está cifrado. En el llavero dice: 'Donde empezó todo.'",
-      "disponible": { "tipo": "prueba", "prueba": "pendrive_azul" },
+      "disponible": {
+        "tipo": "prueba",
+        "prueba": "pendrive_azul"
+      },
       "codigo": "C27",
       "pista": "Julia era contadora. Buscá la celda que menciona en su planilla y en la nota de su celular."
     },
@@ -619,33 +1193,119 @@
       "id": "carpeta_ho",
       "titulo": "Clave de la carpeta H.O.",
       "descripcion": "Carpeta protegida en el servidor del hotel.",
-      "disponible": { "tipo": "prueba", "prueba": "update_log" },
+      "disponible": {
+        "tipo": "prueba",
+        "prueba": "update_log"
+      },
       "codigo": "ECLIPSE07",
       "pista": "El log dice 'palabra + número de la maestra del gerente'. La palabra se repite en el log; la maestra de Mansilla es la AU-0007."
     }
   ],
   "ayudas": [
-    { "id": "a1", "disponible": { "tipo": "sobre", "sobre": "s1_escena" }, "nivel": 1, "texto": "Miren con atención las contradicciones de la escena: el alféizar seco, el reloj, las dos copas. ¿Quién quiso que vieran qué?" },
-    { "id": "a2", "disponible": { "tipo": "sobre", "sobre": "s1_escena" }, "nivel": 2, "texto": "El correo de Julia menciona a Carla. Vale la pena preguntarle si Julia le dejó algo." },
-    { "id": "a3", "disponible": { "tipo": "sobre", "sobre": "s2_registros" }, "nivel": 1, "texto": "Comparen el registro de cerraduras con el del ascensor. ¿Quién estaba en el piso 6 entre las 23:06 y las 23:19?" },
-    { "id": "a4", "disponible": { "tipo": "sobre", "sobre": "s2_registros" }, "nivel": 2, "texto": "Duarte dice que no salió de su casa. Hay dos registros que dicen lo contrario." },
-    { "id": "a5", "disponible": { "tipo": "sobre", "sobre": "s3_laboratorio" }, "nivel": 2, "texto": "El ADN no es de Alberto Mansilla, pero es de alguien de su familia. ¿Quién durmió en la 605?" },
-    { "id": "a6", "disponible": { "tipo": "sobre", "sobre": "s3_laboratorio" }, "nivel": 3, "texto": "Para llegar al que dio la orden, abran la carpeta H.O.: la clave está en el Update_Log y en la tarjeta del gerente." }
+    {
+      "id": "a1",
+      "disponible": {
+        "tipo": "sobre",
+        "sobre": "s1_escena"
+      },
+      "nivel": 1,
+      "texto": "Miren con atención las contradicciones de la escena: el alféizar seco, el reloj, las dos copas. ¿Quién quiso que vieran qué?"
+    },
+    {
+      "id": "a2",
+      "disponible": {
+        "tipo": "sobre",
+        "sobre": "s1_escena"
+      },
+      "nivel": 2,
+      "texto": "El correo de Julia menciona a Carla. Vale la pena preguntarle si Julia le dejó algo."
+    },
+    {
+      "id": "a3",
+      "disponible": {
+        "tipo": "sobre",
+        "sobre": "s2_registros"
+      },
+      "nivel": 1,
+      "texto": "Comparen el registro de cerraduras con el del ascensor. ¿Quién estaba en el piso 6 entre las 23:06 y las 23:19?"
+    },
+    {
+      "id": "a4",
+      "disponible": {
+        "tipo": "sobre",
+        "sobre": "s2_registros"
+      },
+      "nivel": 2,
+      "texto": "Duarte dice que no salió de su casa. Hay dos registros que dicen lo contrario."
+    },
+    {
+      "id": "a5",
+      "disponible": {
+        "tipo": "sobre",
+        "sobre": "s3_laboratorio"
+      },
+      "nivel": 2,
+      "texto": "El ADN no es de Alberto Mansilla, pero es de alguien de su familia. ¿Quién durmió en la 605?"
+    },
+    {
+      "id": "a6",
+      "disponible": {
+        "tipo": "sobre",
+        "sobre": "s3_laboratorio"
+      },
+      "nivel": 3,
+      "texto": "Para llegar al que dio la orden, abran la carpeta H.O.: la clave está en el Update_Log y en la tarjeta del gerente."
+    }
   ],
   "resolucion": {
     "preguntas": [
-      { "id": "autor", "texto": "¿Quién mató a Julia Romero?", "tipo": "personaje", "respuesta": "julian", "puntos": 30, "explicacion": "Julián Mansilla entró a la 607 a las 23:19 con la AU-0008 (video de la mirilla, registro de cerraduras), dejó su ADN bajo las uñas de Julia (familiar directo de Alberto) y una fibra de su corbata dorada en la copa." },
-      { "id": "complice", "texto": "¿Alguien ayudó al asesino o lo encubrió? ¿Quién?", "tipo": "personaje", "permiteNadie": true, "respuesta": "alberto", "puntos": 20, "explicacion": "Alberto Mansilla cortó las cámaras con el usuario MLEON desde recepción, imprimió la lista de huéspedes y subió a la 605 a las 23:06 para darle a su hijo la AU-0008." },
-      { "id": "orden", "texto": "¿Alguien más estaba detrás y dio la orden? ¿Quién?", "tipo": "personaje", "permiteNadie": true, "respuesta": "olazabal", "puntos": 20, "explicacion": "Hernán Olazábal le escribió a Mansilla a las 22:20: 'Recuperá todo lo de Romero antes de las 9'. H.O. Group es el beneficiario final de ECLIPSE." },
+      {
+        "id": "autor",
+        "texto": "¿Quién mató a Julia Romero?",
+        "tipo": "personaje",
+        "respuesta": "julian",
+        "puntos": 30,
+        "explicacion": "Julián Mansilla entró a la 607 a las 23:19 con la AU-0008 (video de la mirilla, registro de cerraduras), dejó su ADN bajo las uñas de Julia (familiar directo de Alberto) y una fibra de su corbata dorada en la copa."
+      },
+      {
+        "id": "complice",
+        "texto": "¿Alguien ayudó al asesino o lo encubrió? ¿Quién?",
+        "tipo": "personaje",
+        "permiteNadie": true,
+        "respuesta": "alberto",
+        "puntos": 20,
+        "explicacion": "Alberto Mansilla cortó las cámaras con el usuario MLEON desde recepción, imprimió la lista de huéspedes y subió a la 605 a las 23:06 para darle a su hijo la AU-0008."
+      },
+      {
+        "id": "orden",
+        "texto": "¿Alguien más estaba detrás y dio la orden? ¿Quién?",
+        "tipo": "personaje",
+        "permiteNadie": true,
+        "respuesta": "olazabal",
+        "puntos": 20,
+        "explicacion": "Hernán Olazábal le escribió a Mansilla a las 22:20: 'Recuperá todo lo de Romero antes de las 9'. H.O. Group es el beneficiario final de ECLIPSE."
+      },
       {
         "id": "movil",
         "texto": "¿Cuál fue el móvil del crimen?",
         "tipo": "opcion",
         "opciones": [
-          { "id": "celos", "texto": "Por celos y la separación" },
-          { "id": "robo", "texto": "Para robar el dinero de la caja fuerte" },
-          { "id": "auditoria", "texto": "Para silenciar la auditoría que exponía el lavado (ECLIPSE)" },
-          { "id": "primicia", "texto": "Por una primicia periodística" }
+          {
+            "id": "celos",
+            "texto": "Por celos y la separación"
+          },
+          {
+            "id": "robo",
+            "texto": "Para robar el dinero de la caja fuerte"
+          },
+          {
+            "id": "auditoria",
+            "texto": "Para silenciar la auditoría que exponía el lavado (ECLIPSE)"
+          },
+          {
+            "id": "primicia",
+            "texto": "Por una primicia periodística"
+          }
         ],
         "respuesta": "auditoria",
         "puntos": 15,
@@ -656,17 +1316,57 @@
         "texto": "¿Qué hizo Martín Duarte esa noche?",
         "tipo": "opcion",
         "opciones": [
-          { "id": "mato", "texto": "La mató" },
-          { "id": "ultimatum", "texto": "Fue a la 607, recibió la copia impresa como ultimátum y se fue con Julia viva" },
-          { "id": "camaras", "texto": "Cortó las cámaras" },
-          { "id": "casa", "texto": "Nunca salió de su casa" }
+          {
+            "id": "mato",
+            "texto": "La mató"
+          },
+          {
+            "id": "ultimatum",
+            "texto": "Fue a la 607, recibió la copia impresa como ultimátum y se fue con Julia viva"
+          },
+          {
+            "id": "camaras",
+            "texto": "Cortó las cámaras"
+          },
+          {
+            "id": "casa",
+            "texto": "Nunca salió de su casa"
+          }
         ],
         "respuesta": "ultimatum",
         "puntos": 10,
         "explicacion": "Estuvo de 22:36 a 22:44 (Bluetooth MD-Sport, cámaras de su edificio). Después lo visitaron Valentina y Esteban, y Julia bajó a recepción a las 23:04: estaba viva."
       },
-      { "id": "copa", "texto": "¿De quién es el labial de la segunda copa?", "tipo": "personaje", "respuesta": "valentina", "puntos": 5, "explicacion": "Valentina Núñez (Arcimboldo) estuvo en la 607 de 22:50 a 23:02. 'Rojo Carmín 47', el mismo tono del pañuelo de la 606." }
+      {
+        "id": "copa",
+        "texto": "¿De quién es el labial de la segunda copa?",
+        "tipo": "personaje",
+        "respuesta": "valentina",
+        "puntos": 5,
+        "explicacion": "Valentina Núñez (Arcimboldo) estuvo en la 607 de 22:50 a 23:02. 'Rojo Carmín 47', el mismo tono del pañuelo de la 606."
+      }
     ]
   },
-  "modos": ["cooperativo", "competitivo"]
+  "modos": [
+    "cooperativo",
+    "traidor"
+  ],
+  "traidor": {
+    "rol": "Sos un oficial de la Comisaría Norte que cobra de Hernán Olazábal desde hace años. Te metieron en este equipo para que la investigación no llegue al hotel ni a sus dueños.",
+    "objetivo": {
+      "texto": "Que el equipo vote a Martín Duarte como el asesino de Julia. Es el chivo expiatorio perfecto: el marido despechado.",
+      "pregunta": "autor",
+      "respuesta": "duarte"
+    },
+    "sabe": [
+      "duarte_visita",
+      "duarte_lavado"
+    ],
+    "consejos": [
+      "Duarte estuvo en la 607 esa noche y mintió: usalo, pero sin que se note que lo empujás.",
+      "Restale importancia a lo que apunta al gerente y a su familia.",
+      "No defiendas a nadie de forma sospechosa: dudá, preguntá y sembrá sospechas.",
+      "En la votación final también se vota quién es el traidor. Si te descubren, perdés aunque culpen a Duarte."
+    ]
+  }
 }
