@@ -155,3 +155,47 @@ test("modo traidor: uno solo ve la ficha y el cierre lo revela", async ({ page: 
   await expect(anfitrion.getByText("El traidor era")).toBeVisible();
   await expect(anfitrion.getByText(/Gana el (equipo|traidor)/)).toBeVisible();
 });
+
+test("minijuegos: descifrar un mensaje y abrir la caja fuerte propia del caso", async ({ page, browser, request }) => {
+  const codigo = await crearSala(page, "Ana");
+  await unirJugador(browser, codigo, "Beto");
+  await page.getByRole("button", { name: "Abrir el caso" }).click();
+  await page.getByRole("button", { name: /Sobre 2.*Abrir sobre/ }).click();
+  await page.getByRole("button", { name: /Sobre 3.*Abrir sobre/ }).click();
+  void request;
+
+  // cifrado César con rueda
+  await page.getByRole("button", { name: /Nota cifrada en el saco de Julián.*tocá para jugar/ }).click();
+  await page.getByRole("slider").fill("7");
+  await expect(page.getByText("RECUPERA TODO ANTES DE LAS NUEVE. SIN RUIDO.")).toBeVisible();
+  await page.getByPlaceholder("Mensaje descifrado").fill("recupera todo antes de las nueve sin ruido");
+  await page.getByRole("button", { name: "Comprobar" }).click();
+  await expect(page.getByText("¡Resuelto!")).toBeVisible();
+  await page.getByRole("button", { name: "Cerrar" }).click();
+  await expect(page.getByRole("button", { name: "📄 Nota descifrada" })).toBeVisible();
+
+  // minijuego personalizado: la página del caso corre en un iframe aislado
+  await page.getByRole("button", { name: /Caja fuerte de gerencia.*tocá para jugar/ }).click();
+  const caja = page.frameLocator('iframe[title="Minijuego"]');
+  const girar = async (boton: string, veces: number) => {
+    for (let i = 0; i < veces; i++) await caja.getByRole("button", { name: boton }).click();
+  };
+  // primero un intento fallido
+  await caja.getByRole("button", { name: "Fijar número" }).click();
+  await caja.getByRole("button", { name: "Fijar número" }).click();
+  await caja.getByRole("button", { name: "Fijar número" }).click();
+  await caja.getByRole("button", { name: "Abrir" }).click();
+  await expect(page.getByText("No salió")).toBeVisible();
+  // ahora la combinación: 41, 08, 07
+  await caja.getByRole("button", { name: "Borrar" }).click();
+  await girar("Girar a la derecha", 41);
+  await caja.getByRole("button", { name: "Fijar número" }).click();
+  await girar("Girar a la izquierda", 33);
+  await caja.getByRole("button", { name: "Fijar número" }).click();
+  await girar("Girar a la izquierda", 1);
+  await caja.getByRole("button", { name: "Fijar número" }).click();
+  await caja.getByRole("button", { name: "Abrir" }).click();
+  await expect(page.getByText("¡Resuelto!")).toBeVisible();
+  await page.getByRole("button", { name: "Cerrar" }).click();
+  await expect(page.getByRole("button", { name: "🧷 Contenido de la caja fuerte de gerencia" })).toBeVisible();
+});

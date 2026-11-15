@@ -29,6 +29,14 @@ function novedades(antes: VistaPartida, ahora: VistaPartida): Aviso[] {
   for (const h of ahora.descubrimientos) {
     if (!hechosAntes.has(h.id)) out.push({ id: `h-${h.id}`, icono: "📌", titulo: "Descubrimiento", texto: h.texto });
   }
+  const minijuegosAntes = new Map(antes.minijuegos.map((m) => [m.id, m.resueltoPor]));
+  for (const m of ahora.minijuegos) {
+    if (!minijuegosAntes.has(m.id)) out.push({ id: `m-${m.id}`, icono: "🎲", titulo: "Nuevo minijuego", texto: m.titulo });
+    else if (m.resueltoPor && !minijuegosAntes.get(m.id)) {
+      const quien = ahora.conexiones.find((c) => c.id === m.resueltoPor)?.apodo ?? "Alguien";
+      out.push({ id: `mr-${m.id}`, icono: "🧩", titulo: `${quien} resolvió un minijuego`, texto: m.titulo });
+    }
+  }
   const abiertosAntes = new Set(antes.candados.filter((c) => c.abierto).map((c) => c.id));
   for (const c of ahora.candados) {
     if (c.abierto && !abiertosAntes.has(c.id)) out.push({ id: `c-${c.id}`, icono: "🔓", titulo: "Candado abierto", texto: c.titulo });

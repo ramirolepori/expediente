@@ -81,6 +81,8 @@ export interface EstadoPartida {
   sobresAbiertos: string[];
   hechosRevelados: string[];
   candadosAbiertos: string[];
+  /** minijuego → conexión que lo resolvió (opcional para salas creadas antes) */
+  minijuegosResueltos?: Record<string, string>;
   ayudasUsadas: string[];
   /** personajes con los que ya se habló (cada nuevo cuesta un recurso) */
   personajesVisitados: string[];
@@ -101,6 +103,7 @@ export type Accion =
   | { tipo: "salir" }
   | { tipo: "abrirSobre"; sobre: string }
   | { tipo: "probarCandado"; candado: string; codigo: string }
+  | { tipo: "resolverMinijuego"; minijuego: string; respuesta: string }
   | { tipo: "pedirAyuda" }
   | { tipo: "nota"; texto: string; visibilidad: "privada" | "equipo" }
   | { tipo: "borrarNota"; id: string }

@@ -1,5 +1,6 @@
 import type { Caso } from "@/casos/schema";
-import { evaluar } from "./condiciones";
+import { evaluar, minijuegoVisible } from "./condiciones";
+import { esRespuestaCorrecta } from "./minijuegos";
 import type { Accion, EstadoPartida, Evento } from "./tipos";
 
 export class ErrorDeJuego extends Error {}
@@ -80,6 +81,18 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
       }
       s.candadosAbiertos.push(candado.id);
       log(`🔓 ${autor.apodo} abrió «${candado.titulo}»`);
+      break;
+    }
+    case "resolverMinijuego": {
+      const m = caso.minijuegos.find((x) => x.id === accion.minijuego);
+      if (!m || !minijuegoVisible(m.id, s, caso)) throw new ErrorDeJuego("Ese minijuego no está disponible");
+      if (s.minijuegosResueltos?.[m.id]) return estado;
+      if (!esRespuestaCorrecta(m, s.codigo, String(accion.respuesta ?? "").slice(0, 2000))) {
+        log(`${autor.apodo} intentó «${m.titulo}» y no salió`);
+        break;
+      }
+      s.minijuegosResueltos = { ...(s.minijuegosResueltos ?? {}), [m.id]: autorId };
+      log(`🧩 ${autor.apodo} resolvió «${m.titulo}»`);
       break;
     }
     case "pedirAyuda": {

@@ -13,6 +13,7 @@ export type Condicion =
   | { tipo: "prueba"; prueba: string }
   | { tipo: "hecho"; hecho: string }
   | { tipo: "candado"; candado: string }
+  | { tipo: "minijuego"; minijuego: string }
   | { tipo: "todas"; condiciones: Condicion[] }
   | { tipo: "alguna"; condiciones: Condicion[] };
 
@@ -23,6 +24,7 @@ export const CondicionSchema: z.ZodType<Condicion> = z.lazy(() =>
     z.object({ tipo: z.literal("prueba"), prueba: z.string() }),
     z.object({ tipo: z.literal("hecho"), hecho: z.string() }),
     z.object({ tipo: z.literal("candado"), candado: z.string() }),
+    z.object({ tipo: z.literal("minijuego"), minijuego: z.string() }),
     z.object({ tipo: z.literal("todas"), condiciones: z.array(CondicionSchema).min(1) }),
     z.object({ tipo: z.literal("alguna"), condiciones: z.array(CondicionSchema).min(1) }),
   ]),
@@ -153,6 +155,54 @@ export const CandadoSchema = z.object({
   pista: z.string(),
 });
 
+/**
+ * Minijuegos: el caso trae los suyos. Los de catálogo solo traen datos; el personalizado trae su propia página.
+ * Al resolverse, cualquier cosa del caso puede depender de { tipo: "minijuego", minijuego: id }.
+ */
+const MinijuegoBase = {
+  id: Id,
+  titulo: z.string(),
+  descripcion: z.string(),
+  sobre: Id,
+  disponible: CondicionSchema.default({ tipo: "siempre" }),
+  /** compartido: todos lo ven resolverse; individual: cada uno lo intenta en su dispositivo */
+  modo: z.enum(["individual", "compartido"]).default("individual"),
+};
+
+export const MinijuegoSchema = z.discriminatedUnion("tipo", [
+  z.object({
+    ...MinijuegoBase,
+    tipo: z.literal("rompecabezas"),
+    /** fragmentos del documento en el orden correcto; la plataforma los mezcla */
+    config: z.object({ fragmentos: z.array(z.string()).min(3) }),
+  }),
+  z.object({
+    ...MinijuegoBase,
+    tipo: z.literal("linea_tiempo"),
+    /** eventos en el orden correcto; la plataforma los mezcla */
+    config: z.object({ eventos: z.array(z.string()).min(3) }),
+  }),
+  z.object({
+    ...MinijuegoBase,
+    tipo: z.literal("cifrado"),
+    config: z.object({
+      cifrado: z.enum(["cesar"]),
+      mensaje: z.string().describe("texto ya cifrado"),
+      pista: z.string().optional(),
+    }),
+    /** texto descifrado esperado */
+    solucion: z.string(),
+  }),
+  z.object({
+    ...MinijuegoBase,
+    tipo: z.literal("personalizado"),
+    /** página propia del caso, servida desde public/ (ej. /casos/hotel-aurora/minijuegos/caja.html) */
+    config: z.object({ pagina: z.string().startsWith("/"), alto: z.number().int().default(520) }),
+    /** respuesta que la página tiene que devolver con postMessage */
+    solucion: z.string(),
+  }),
+]);
+
 export const AyudaSchema = z.object({
   id: Id,
   disponible: CondicionSchema,
@@ -222,6 +272,7 @@ export const CasoSchema = z.object({
   sobres: z.array(SobreSchema).min(1),
   pruebas: z.array(PruebaSchema),
   candados: z.array(CandadoSchema).default([]),
+  minijuegos: z.array(MinijuegoSchema).default([]),
   ayudas: z.array(AyudaSchema).default([]),
   resolucion: z.object({ preguntas: z.array(PreguntaSchema).min(1) }),
   modos: z.array(z.enum(["cooperativo", "competitivo", "traidor"])).default(["cooperativo"]),
@@ -232,3 +283,4 @@ export type Caso = z.infer<typeof CasoSchema>;
 export type Personaje = z.infer<typeof PersonajeSchema>;
 export type Prueba = z.infer<typeof PruebaSchema>;
 export type Ambientacion = (typeof AMBIENTACIONES)[number];
+export type Minijuego = z.infer<typeof MinijuegoSchema>;

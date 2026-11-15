@@ -1,5 +1,6 @@
 import type { Caso } from "@/casos/schema";
-import { evaluar, pruebasVisibles } from "./condiciones";
+import { evaluar, minijuegoVisible, pruebasVisibles } from "./condiciones";
+import { configPublica } from "./minijuegos";
 import { recursosRestantes } from "./reductor";
 import type { EstadoPartida } from "./tipos";
 
@@ -44,6 +45,18 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
     candados: caso.candados
       .filter((c) => evaluar(c.disponible, estado, caso))
       .map((c) => ({ id: c.id, titulo: c.titulo, descripcion: c.descripcion, abierto: estado.candadosAbiertos.includes(c.id) })),
+    minijuegos: caso.minijuegos
+      .filter((m) => estado.fase !== "lobby" && minijuegoVisible(m.id, estado, caso))
+      .map((m) => ({
+        id: m.id,
+        titulo: m.titulo,
+        descripcion: m.descripcion,
+        sobre: m.sobre,
+        modo: m.modo,
+        tipo: m.tipo,
+        config: configPublica(m, estado.codigo),
+        resueltoPor: estado.minijuegosResueltos?.[m.id] ?? null,
+      })),
     ayudas: caso.ayudas.filter((a) => estado.ayudasUsadas.includes(a.id)).map((a) => ({ id: a.id, texto: a.texto })),
     recursosRestantes: recursosRestantes(estado),
     notas: estado.notas.filter((n) => n.visibilidad === "equipo" || n.autor === conexionId),

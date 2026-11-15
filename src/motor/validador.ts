@@ -30,6 +30,7 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
     hecho: new Set(caso.hechos.map((x) => x.id)),
     candado: new Set(caso.candados.map((x) => x.id)),
     personaje: new Set(caso.personajes.map((x) => x.id)),
+    minijuego: new Set(caso.minijuegos.map((x) => x.id)),
   };
 
   // ids duplicados
@@ -40,6 +41,7 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
     candados: caso.candados,
     personajes: caso.personajes,
     ayudas: caso.ayudas,
+    minijuegos: caso.minijuegos,
     preguntas: caso.resolucion.preguntas,
   })) {
     const vistos = new Set<string>();
@@ -58,6 +60,11 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
   caso.sobres.forEach((s) => chequear(s.requisito, `sobre ${s.id}`));
   caso.candados.forEach((c) => chequear(c.disponible, `candado ${c.id}`));
   caso.ayudas.forEach((a) => chequear(a.disponible, `ayuda ${a.id}`));
+  caso.minijuegos.forEach((m) => {
+    if (!ids.sobre.has(m.sobre)) errores.push(`minijuego ${m.id}: sobre inexistente "${m.sobre}"`);
+    chequear(m.disponible, `minijuego ${m.id}`);
+    if (m.tipo === "personalizado" && !m.config.pagina.startsWith("/casos/")) avisos.push(`minijuego ${m.id}: la página debería vivir en public/casos/<caso>/`);
+  });
   caso.pruebas.forEach((p) => {
     if (!ids.sobre.has(p.sobre)) errores.push(`prueba ${p.id}: sobre inexistente "${p.sobre}"`);
     if (p.desbloqueo) chequear(p.desbloqueo, `prueba ${p.id}`);
@@ -105,6 +112,7 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
     ...caso.sobres.map((s) => s.requisito),
     ...caso.pruebas.flatMap((p) => (p.desbloqueo ? [p.desbloqueo] : [])),
     ...caso.candados.map((c) => c.disponible),
+    ...caso.minijuegos.map((m) => m.disponible),
     ...caso.personajes.flatMap((p) => [p.disponible, ...p.secretos.map((s) => s.cuando), ...p.mentiras.map((m) => m.cae)]),
   ];
   todas.forEach((c) => referencias(c).forEach((r) => r.tipo === "hecho" && usados.add(r.id)));
@@ -115,7 +123,7 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
   if (errores.length) return { ok: false, errores, avisos, caso };
 
   // simulación: jugadores perfectos que abren todo lo que pueden
-  const estado = { sobresAbiertos: [] as string[], hechosRevelados: [] as string[], candadosAbiertos: [] as string[] };
+  const estado = { sobresAbiertos: [] as string[], hechosRevelados: [] as string[], candadosAbiertos: [] as string[], minijuegosResueltos: {} as Record<string, string> };
   let cambios = true;
   while (cambios) {
     cambios = false;
@@ -128,6 +136,12 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
     for (const c of caso.candados) {
       if (!estado.candadosAbiertos.includes(c.id) && evaluar(c.disponible, estado, caso)) {
         estado.candadosAbiertos.push(c.id);
+        cambios = true;
+      }
+    }
+    for (const m of caso.minijuegos) {
+      if (!estado.minijuegosResueltos[m.id] && estado.sobresAbiertos.includes(m.sobre) && evaluar(m.disponible, estado, caso)) {
+        estado.minijuegosResueltos[m.id] = "simulado";
         cambios = true;
       }
     }
@@ -150,6 +164,7 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
   caso.sobres.forEach((s) => !estado.sobresAbiertos.includes(s.id) && errores.push(`inalcanzable: sobre ${s.id}`));
   caso.pruebas.forEach((p) => !pruebaVisible(p.id, estado, caso) && errores.push(`inalcanzable: prueba ${p.id}`));
   caso.candados.forEach((c) => !estado.candadosAbiertos.includes(c.id) && errores.push(`inalcanzable: candado ${c.id}`));
+  caso.minijuegos.forEach((m) => !estado.minijuegosResueltos[m.id] && errores.push(`inalcanzable: minijuego ${m.id}`));
   caso.personajes.forEach((p) => {
     if (!evaluar(p.disponible, estado, caso)) errores.push(`inalcanzable: personaje ${p.id}`);
     p.secretos.forEach((s) => !estado.hechosRevelados.includes(s.hecho) && errores.push(`inalcanzable: secreto ${s.id}`));

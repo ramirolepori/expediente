@@ -338,3 +338,8 @@ body {
 .retrato-respira { animation: retrato-respira 4.2s ease-in-out infinite; }
 @keyframes retrato-habla { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(0.3%) rotate(0.3deg); } 75% { transform: translateY(-0.2%) rotate(-0.2deg); } }
 .retrato-habla { animation: retrato-habla 0.5s ease-in-out infinite; }
+
+/* tira de papel rota del rompecabezas */
+.tira-rota {
+  clip-path: polygon(0 8%, 6% 0, 14% 6%, 22% 1%, 31% 7%, 40% 0, 49% 6%, 58% 2%, 67% 8%, 76% 1%, 85% 6%, 94% 0, 100% 7%, 100% 93%, 94% 100%, 85% 94%, 76% 99%, 67% 92%, 58% 98%, 49% 94%, 40% 100%, 31% 93%, 22% 99%, 14% 94%, 6% 100%, 0 92%);
+}

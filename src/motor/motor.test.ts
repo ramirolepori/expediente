@@ -5,6 +5,7 @@ import { validarCaso } from "./validador";
 import { aplicar, ErrorDeJuego, revelarHecho } from "./reductor";
 import { vistaPara } from "./vista";
 import { construirInstrucciones, limpiarRespuesta, resolverRevelacion } from "./interrogatorio";
+import { configPublica, esRespuestaCorrecta } from "./minijuegos";
 import { CONFIG_POR_DEFECTO, type EstadoPartida } from "./tipos";
 
 const caso = CasoSchema.parse(datos);
@@ -93,6 +94,33 @@ describe("Hotel Aurora", () => {
   it("modo traidor necesita tres jugadores", () => {
     const s = { ...partida(), fase: "lobby" as const, config: { ...CONFIG_POR_DEFECTO, modo: "traidor" as const } };
     expect(() => aplicar(s, { tipo: "iniciar" }, "a", caso)).toThrow(ErrorDeJuego);
+  });
+
+  it("minijuegos: el orden correcto no viaja al navegador y el servidor valida", () => {
+    const linea = caso.minijuegos.find((m) => m.id === "reconstruir_noche")!;
+    const publica = configPublica(linea, "ABCD") as { piezas: { id: string; texto: string }[] };
+    const textosCorrectos = linea.tipo === "linea_tiempo" ? linea.config.eventos : [];
+    expect(publica.piezas.map((p) => p.texto)).not.toEqual(textosCorrectos);
+    expect(publica.piezas.every((p) => /^p[0-9a-z]+$/.test(p.id))).toBe(true);
+    const ordenCorrecto = textosCorrectos.map((t) => publica.piezas.find((p) => p.texto === t)!.id).join(",");
+    expect(esRespuestaCorrecta(linea, "ABCD", ordenCorrecto)).toBe(true);
+    expect(esRespuestaCorrecta(linea, "ABCD", publica.piezas.map((p) => p.id).join(","))).toBe(false);
+    // otra sala ve otros ids: no sirve copiar la respuesta de una partida a otra
+    expect(esRespuestaCorrecta(linea, "WXYZ", ordenCorrecto)).toBe(false);
+  });
+
+  it("minijuegos: resolver desbloquea su prueba y la vista no trae la solución", () => {
+    let s = partida();
+    s = aplicar(s, { tipo: "abrirSobre", sobre: "s2_registros" }, "a", caso);
+    s = aplicar(s, { tipo: "abrirSobre", sobre: "s3_laboratorio" }, "a", caso);
+    expect(JSON.stringify(vistaPara(caso, s, "a"))).not.toContain("41-08-07");
+    s = aplicar(s, { tipo: "resolverMinijuego", minijuego: "caja_fuerte", respuesta: "11-22-33" }, "b", caso);
+    expect(s.minijuegosResueltos?.caja_fuerte).toBeUndefined();
+    s = aplicar(s, { tipo: "resolverMinijuego", minijuego: "caja_fuerte", respuesta: "41 08 07" }, "b", caso);
+    expect(s.minijuegosResueltos?.caja_fuerte).toBe("b");
+    expect(vistaPara(caso, s, "a").pruebas.map((p) => p.id)).toContain("caja_gerencia");
+    s = aplicar(s, { tipo: "resolverMinijuego", minijuego: "nota_cifrada", respuesta: "recuperá todo antes de las nueve, sin ruido" }, "a", caso);
+    expect(s.minijuegosResueltos?.nota_cifrada).toBe("a");
   });
 
   it("las notas privadas solo las ve su autor", () => {

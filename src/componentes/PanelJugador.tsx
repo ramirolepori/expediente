@@ -8,6 +8,7 @@ import { Documento, iconoPrueba } from "./Documento";
 import { Avisos } from "./Avisos";
 import { FichaSecreta } from "./FichaSecreta";
 import { Interrogatorio } from "./Interrogatorio";
+import { TarjetaMinijuego } from "./minijuegos/Minijuego";
 import { Lobby } from "./Lobby";
 import { Resultado } from "./Resultado";
 
@@ -163,6 +164,15 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
                     {iconoPrueba(p.tipo)} {p.titulo}
                   </button>
                 ))}
+              </div>
+            )}
+            {s.abierto && vista.minijuegos.some((m) => m.sobre === s.id) && (
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                {vista.minijuegos
+                  .filter((m) => m.sobre === s.id)
+                  .map((m) => (
+                    <TarjetaMinijuego key={m.id} datos={m} sala={sala} vista={vista} />
+                  ))}
               </div>
             )}
             {pruebas.some((p) => p.id === abierta) && (

@@ -1175,6 +1175,50 @@
         "candado": "carpeta_ho"
       },
       "contenido": "Correos entre gerencia y el directorio.\n\n**De:** H. Olazábal **Para:** A. Mansilla **Domingo 22:20**\n> Recuperá todo lo de Romero antes de las 9. Sin ruido. Usá a quien tengas que usar.\n\n**De:** A. Mansilla **Para:** H. Olazábal **Domingo 22:31**\n> Entendido. Tengo a Julián en esto. Está en el piso.\n\nContrato adjunto: Hotel Aurora S.A. ↔ **H.O. Group (Panamá)**. Beneficiario final: **Dr. Hernán Olazábal**, presidente del directorio."
+    },
+    {
+      "id": "reconstruccion_noche",
+      "titulo": "Reconstrucción de la comisaría",
+      "tipo": "informe",
+      "sobre": "s2_registros",
+      "desbloqueo": {
+        "tipo": "minijuego",
+        "minijuego": "reconstruir_noche"
+      },
+      "contenido": "**Comisaría Norte. Reconstrucción del piso 6.**\n\nEntre las **23:06** y las **23:19** alguien preparó el acceso a la 607: el gerente subió, abrió la **605** con su maestra, bajó a las 23:17 y dos minutos después la maestra **AU-0008** abrió la habitación de Julia.\n\nPregunta abierta del oficial a cargo: *¿quién estaba en la 605 esperando?*"
+    },
+    {
+      "id": "pagina_libreta",
+      "titulo": "Página arrancada de la libreta de Julia",
+      "tipo": "documento",
+      "sobre": "s3_laboratorio",
+      "desbloqueo": {
+        "tipo": "minijuego",
+        "minijuego": "papel_roto"
+      },
+      "contenido": "Reconstruida a partir de los pedazos del tacho de la 605. Letra de Julia:\n\n> Lunes 9:00: Arcimboldo (V.N., hab. 606).\n> Llevar la trazabilidad completa. NO llevar copias.\n> Martín: copia impresa. Que se entregue él.\n> Si me pasa algo: sobre con Carla.\n> La cuenta final siempre es la misma: H.O.\n\nQuien la arrancó y la rompió estuvo en la 605."
+    },
+    {
+      "id": "nota_descifrada",
+      "titulo": "Nota descifrada",
+      "tipo": "documento",
+      "sobre": "s3_laboratorio",
+      "desbloqueo": {
+        "tipo": "minijuego",
+        "minijuego": "nota_cifrada"
+      },
+      "contenido": "*'Recuperá todo antes de las nueve. Sin ruido.'*\n\nNo es la letra de Julián: es una orden que le pasaron. Las mismas palabras aparecen, más tarde, en un mail de la carpeta H.O."
+    },
+    {
+      "id": "caja_gerencia",
+      "titulo": "Contenido de la caja fuerte de gerencia",
+      "tipo": "objeto",
+      "sobre": "s3_laboratorio",
+      "desbloqueo": {
+        "tipo": "minijuego",
+        "minijuego": "caja_fuerte"
+      },
+      "contenido": "- El estuche de la tarjeta maestra **AU-0008**, vacío.\n- Un comprobante de transferencia: *'H.O. Group, adelanto gestión Romero, USD 20.000'*, con fecha del domingo y firma de **H. Olazábal**."
     }
   ],
   "candados": [
@@ -1368,5 +1412,68 @@
       "No defiendas a nadie de forma sospechosa: dudá, preguntá y sembrá sospechas.",
       "En la votación final también se vota quién es el traidor. Si te descubren, perdés aunque culpen a Duarte."
     ]
-  }
+  },
+  "minijuegos": [
+    {
+      "id": "reconstruir_noche",
+      "tipo": "linea_tiempo",
+      "titulo": "Reconstruir la noche en el piso 6",
+      "descripcion": "Ordená lo que pasó en el piso 6, del primero al último. Las horas no están: cruzá los registros del sobre 2.",
+      "sobre": "s2_registros",
+      "modo": "compartido",
+      "config": {
+        "eventos": [
+          "Un hombre de traje oscuro sube al piso 6 con una carpeta",
+          "Alguien apaga las cámaras del pasillo con el usuario MLEON",
+          "Alberto Mansilla sube solo al piso 6",
+          "La maestra AU-0007 abre la habitación 605",
+          "Julia vuelve a entrar a la 607 con su tarjeta",
+          "Mansilla baja del piso 6",
+          "La maestra AU-0008 abre la 607"
+        ]
+      }
+    },
+    {
+      "id": "papel_roto",
+      "tipo": "rompecabezas",
+      "titulo": "Papel roto del tacho de la 605",
+      "descripcion": "La mucama encontró una hoja de libreta hecha tiras en el tacho de la 605. Ordená los pedazos para leerla.",
+      "sobre": "s3_laboratorio",
+      "config": {
+        "fragmentos": [
+          "Lunes 9:00: Arcimboldo (V.N., hab. 606).",
+          "Llevar la trazabilidad completa. NO llevar copias.",
+          "Martín: copia impresa. Que se entregue él.",
+          "Si me pasa algo: sobre con Carla.",
+          "La cuenta final siempre es la misma: H.O."
+        ]
+      }
+    },
+    {
+      "id": "nota_cifrada",
+      "tipo": "cifrado",
+      "titulo": "Nota cifrada en el saco de Julián",
+      "descripcion": "En el bolsillo del saco que Julián dejó en la 605 había una nota escrita a máquina, con las letras corridas.",
+      "sobre": "s3_laboratorio",
+      "config": {
+        "cifrado": "cesar",
+        "mensaje": "YLJBWLYH AVKV HTALZ KL RHZ TBLCL. ZOT YBOKV.",
+        "pista": "El número que los Mansilla usan para todo es el de la tarjeta maestra del padre."
+      },
+      "solucion": "RECUPERA TODO ANTES DE LAS NUEVE. SIN RUIDO."
+    },
+    {
+      "id": "caja_fuerte",
+      "tipo": "personalizado",
+      "titulo": "Caja fuerte de gerencia",
+      "descripcion": "En la oficina de Mansilla hay una caja fuerte con dial de tres números. En la tapa hay un papelito: 'mi talle, la que falta, la mía'.",
+      "sobre": "s3_laboratorio",
+      "modo": "compartido",
+      "config": {
+        "pagina": "/casos/hotel-aurora/minijuegos/caja-fuerte.html",
+        "alto": 560
+      },
+      "solucion": "41-08-07"
+    }
+  ]
 }

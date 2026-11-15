@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Caja fuerte de gerencia</title>
+<style>
+  /* Minijuego propio del caso Hotel Aurora. Contrato con la plataforma:
+     recibe  { tipo: "expediente:contexto", resuelto }  y responde  { tipo: "expediente:respuesta", respuesta: "NN-NN-NN" } */
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 20%, #2a2620, #0b0a08 70%); color: #e9e0cc; font-family: Georgia, serif; user-select: none; }
+  .caja { position: relative; width: min(92vw, 420px); padding: 26px; border-radius: 18px; background: linear-gradient(160deg, #4b4d52, #23252a); box-shadow: inset 0 0 0 3px #15161a, 0 30px 60px rgba(0,0,0,.6); }
+  .puerta { transition: transform .9s cubic-bezier(.2,.8,.2,1); transform-origin: left center; }
+  .abierta .puerta { transform: perspective(900px) rotateY(-75deg); }
+  .interior { position: absolute; inset: 26px; border-radius: 10px; background: #0d0c0a; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; color: #c9b88f; font-style: italic; }
+  .marco { position: relative; border-radius: 12px; background: linear-gradient(160deg, #5a5c62, #34363b); padding: 22px; box-shadow: inset 0 2px 0 rgba(255,255,255,.08); }
+  .visor { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; }
+  .slot { width: 64px; height: 48px; border-radius: 8px; background: #0f1012; box-shadow: inset 0 2px 6px #000; display: flex; align-items: center; justify-content: center; font: 600 26px ui-monospace, Menlo, monospace; color: #e8c37a; }
+  .slot.activo { outline: 2px solid #e8c37a; }
+  .dial { position: relative; width: 240px; height: 240px; margin: 0 auto; touch-action: none; cursor: grab; }
+  .dial svg { width: 100%; height: 100%; }
+  .marca { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 16px solid #e8c37a; }
+  .numero { text-align: center; font: 600 34px ui-monospace, Menlo, monospace; margin: 12px 0 4px; color: #f3e6c4; }
+  .botones { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+  button { font: inherit; padding: 10px 14px; border-radius: 10px; border: 1px solid #6c6f76; background: #2b2d32; color: #eee; cursor: pointer; }
+  button.principal { background: #b0832e; border-color: #e8c37a; color: #1a1408; font-weight: bold; }
+  .ayuda { text-align: center; font-size: 13px; opacity: .7; margin-top: 10px; }
+</style>
+</head>
+<body>
+  <div class="caja" id="caja">
+    <div class="interior">La puerta se abrió con un chasquido seco.<br />Lo que había adentro ya está en el expediente.</div>
+    <div class="puerta marco">
+      <div class="visor"><div class="slot" id="s0">--</div><div class="slot" id="s1">--</div><div class="slot" id="s2">--</div></div>
+      <div class="dial" id="dial"><div class="marca"></div><svg viewBox="-120 -120 240 240" id="rueda"></svg></div>
+      <div class="numero" id="numero">00</div>
+      <div class="botones">
+        <button id="menos" aria-label="Girar a la izquierda">◀</button>
+        <button id="fijar">Fijar número</button>
+        <button id="mas" aria-label="Girar a la derecha">▶</button>
+      </div>
+      <div class="botones">
+        <button id="borrar">Borrar</button>
+        <button id="abrir" class="principal">Abrir</button>
+      </div>
+      <p class="ayuda">Girá el dial (arrastrando o con las flechas) y fijá los tres números.</p>
+    </div>
+  </div>
+<script>
+  const rueda = document.getElementById("rueda");
+  const NS = "http://www.w3.org/2000/svg";
+  // dial de 0 a 99
+  let html = '<circle r="112" fill="#1b1c20" stroke="#0a0a0c" stroke-width="4"/><circle r="70" fill="#2c2e33" stroke="#111" stroke-width="3"/>';
+  for (let i = 0; i < 100; i++) {
+    const a = (i / 100) * Math.PI * 2;
+    const largo = i % 10 === 0 ? 14 : i % 5 === 0 ? 9 : 5;
+    const x1 = Math.sin(a) * 108, y1 = -Math.cos(a) * 108, x2 = Math.sin(a) * (108 - largo), y2 = -Math.cos(a) * (108 - largo);
+    html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d8c9a3" stroke-width="${i % 10 === 0 ? 2 : 1}"/>`;
+    if (i % 10 === 0) html += `<text x="${Math.sin(a) * 84}" y="${-Math.cos(a) * 84 + 5}" fill="#d8c9a3" font-size="13" text-anchor="middle" font-family="ui-monospace,monospace">${i}</text>`;
+  }
+  html += '<circle r="18" fill="#8a6a2a" stroke="#e8c37a" stroke-width="2"/>';
+  rueda.innerHTML = html;
+
+  let valor = 0, slots = [null, null, null], activo = 0, resuelto = false;
+  const mostrar = () => {
+    rueda.style.transform = `rotate(${-valor * 3.6}deg)`;
+    rueda.style.transition = arrastrando ? "none" : "transform .15s";
+    document.getElementById("numero").textContent = String(valor).padStart(2, "0");
+    slots.forEach((v, i) => {
+      const el = document.getElementById("s" + i);
+      el.textContent = v === null ? "--" : String(v).padStart(2, "0");
+      el.classList.toggle("activo", i === activo && !resuelto);
+    });
+  };
+  const girar = (d) => { valor = (valor + d + 100) % 100; mostrar(); };
+  document.getElementById("menos").onclick = () => girar(-1);
+  document.getElementById("mas").onclick = () => girar(1);
+  document.getElementById("fijar").onclick = () => { slots[activo] = valor; activo = Math.min(2, activo + 1); mostrar(); };
+  document.getElementById("borrar").onclick = () => { slots = [null, null, null]; activo = 0; mostrar(); };
+  document.getElementById("abrir").onclick = () => {
+    if (slots.some((v) => v === null)) return;
+    const respuesta = slots.map((v) => String(v).padStart(2, "0")).join("-");
+    parent.postMessage({ tipo: "expediente:respuesta", respuesta }, "*");
+  };
+
+  // arrastrar el dial
+  const dial = document.getElementById("dial");
+  let arrastrando = false, anguloPrevio = 0;
+  const angulo = (e) => { const r = dial.getBoundingClientRect(); return Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))) * 180 / Math.PI; };
+  dial.addEventListener("pointerdown", (e) => { arrastrando = true; anguloPrevio = angulo(e); dial.setPointerCapture(e.pointerId); });
+  dial.addEventListener("pointermove", (e) => {
+    if (!arrastrando) return;
+    const a = angulo(e); let d = a - anguloPrevio;
+    if (d > 180) d -= 360; if (d < -180) d += 360;
+    if (Math.abs(d) >= 3.6) { girar(-Math.round(d / 3.6)); anguloPrevio = a; }
+  });
+  dial.addEventListener("pointerup", () => { arrastrando = false; mostrar(); });
+
+  window.addEventListener("message", (e) => {
+    if (e.data && e.data.tipo === "expediente:contexto" && e.data.resuelto) { resuelto = true; document.getElementById("caja").classList.add("abierta"); mostrar(); }
+  });
+  mostrar();
+</script>
+</body>
+</html>
