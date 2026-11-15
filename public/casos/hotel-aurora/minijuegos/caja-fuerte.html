@@ -8,23 +8,26 @@
   /* Minijuego propio del caso Hotel Aurora. Contrato con la plataforma:
      recibe  { tipo: "expediente:contexto", resuelto }  y responde  { tipo: "expediente:respuesta", respuesta: "NN-NN-NN" } */
   * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 20%, #2a2620, #0b0a08 70%); color: #e9e0cc; font-family: Georgia, serif; user-select: none; }
-  .caja { position: relative; width: min(92vw, 420px); padding: 26px; border-radius: 18px; background: linear-gradient(160deg, #4b4d52, #23252a); box-shadow: inset 0 0 0 3px #15161a, 0 30px 60px rgba(0,0,0,.6); }
+  /* todo entra en el recuadro que le da la plataforma: sin scroll interno */
+  html, body { height: 100%; overflow: hidden; }
+  body { margin: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 20%, #2a2620, #0b0a08 70%); color: #e9e0cc; font-family: Georgia, serif; user-select: none; }
+  .caja { position: relative; width: min(94vw, 400px); padding: 14px; border-radius: 18px; background: linear-gradient(160deg, #4b4d52, #23252a); box-shadow: inset 0 0 0 3px #15161a, 0 30px 60px rgba(0,0,0,.6); }
   .puerta { transition: transform .9s cubic-bezier(.2,.8,.2,1); transform-origin: left center; }
   .abierta .puerta { transform: perspective(900px) rotateY(-75deg); }
-  .interior { position: absolute; inset: 26px; border-radius: 10px; background: #0d0c0a; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; color: #c9b88f; font-style: italic; }
-  .marco { position: relative; border-radius: 12px; background: linear-gradient(160deg, #5a5c62, #34363b); padding: 22px; box-shadow: inset 0 2px 0 rgba(255,255,255,.08); }
-  .visor { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; }
-  .slot { width: 64px; height: 48px; border-radius: 8px; background: #0f1012; box-shadow: inset 0 2px 6px #000; display: flex; align-items: center; justify-content: center; font: 600 26px ui-monospace, Menlo, monospace; color: #e8c37a; }
+  .interior { position: absolute; inset: 14px; border-radius: 10px; background: #0d0c0a; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; color: #c9b88f; font-style: italic; }
+  .marco { position: relative; border-radius: 12px; background: linear-gradient(160deg, #5a5c62, #34363b); padding: 14px; box-shadow: inset 0 2px 0 rgba(255,255,255,.08); }
+  .visor { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+  .slot { width: 58px; height: 42px; border-radius: 8px; background: #0f1012; box-shadow: inset 0 2px 6px #000; display: flex; align-items: center; justify-content: center; font: 600 26px ui-monospace, Menlo, monospace; color: #e8c37a; }
   .slot.activo { outline: 2px solid #e8c37a; }
-  .dial { position: relative; width: 240px; height: 240px; margin: 0 auto; touch-action: none; cursor: grab; }
+  .dial { position: relative; width: min(220px, 38vh); height: min(220px, 38vh); margin: 0 auto; touch-action: none; cursor: grab; }
   .dial svg { width: 100%; height: 100%; }
   .marca { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 16px solid #e8c37a; }
-  .numero { text-align: center; font: 600 34px ui-monospace, Menlo, monospace; margin: 12px 0 4px; color: #f3e6c4; }
-  .botones { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
-  button { font: inherit; padding: 10px 14px; border-radius: 10px; border: 1px solid #6c6f76; background: #2b2d32; color: #eee; cursor: pointer; }
+  .numero { text-align: center; font: 600 28px ui-monospace, Menlo, monospace; margin: 6px 0 2px; color: #f3e6c4; }
+  .botones { display: flex; gap: 8px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
+  button { font: inherit; padding: 8px 12px; border-radius: 10px; border: 1px solid #6c6f76; background: #2b2d32; color: #eee; cursor: pointer; }
   button.principal { background: #b0832e; border-color: #e8c37a; color: #1a1408; font-weight: bold; }
-  .ayuda { text-align: center; font-size: 13px; opacity: .7; margin-top: 10px; }
+  .ayuda { text-align: center; font-size: 12px; opacity: .7; margin: 8px 0 0; }
+  @media (max-height: 520px) { .ayuda { display: none; } }
 </style>
 </head>
 <body>

@@ -1,3 +1,4 @@
+import casoAurora from "../casos/hotel-aurora/caso.json";
 import { expect, test, type Browser, type Page } from "@playwright/test";
 
 /** Abre un jugador nuevo (contexto aislado = otro dispositivo) y lo une a la sala. */
@@ -253,4 +254,53 @@ test("laboratorio: los minijuegos se juegan sueltos", async ({ page }) => {
   await expect(page.getByText("¡Resuelto!")).toBeVisible();
   await page.getByRole("button", { name: "↺ Reiniciar" }).click();
   await expect(page.getByText("¡Resuelto!")).toBeHidden();
+});
+
+
+/** Arrastra manteniendo apretado, en varios pasos, como lo haría una persona. */
+async function arrastrar(page: Page, desde: { x: number; y: number }, hasta: { x: number; y: number }) {
+  await page.mouse.move(desde.x, desde.y);
+  await page.mouse.down();
+  await page.mouse.move(hasta.x, hasta.y, { steps: 12 });
+  await page.mouse.up();
+}
+
+test("laboratorio: la línea de tiempo se ordena arrastrando", async ({ page }) => {
+  const eventos = casoAurora.minijuegos.find((m) => m.id === "reconstruir_noche")!.config as { eventos: string[] };
+  await page.goto("/laboratorio/minijuegos");
+  await page.getByRole("button", { name: /Reconstruir la noche en el piso 6/ }).click();
+  const items = page.locator("ol > li");
+  for (let destino = 0; destino < eventos.eventos.length; destino++) {
+    const textos = await items.allInnerTexts();
+    const actual = textos.findIndex((t) => t.includes(eventos.eventos[destino]));
+    if (actual === destino) continue;
+    const a = (await items.nth(actual).locator("div").first().boundingBox())!;
+    const b = (await items.nth(destino).locator("div").first().boundingBox())!;
+    await arrastrar(page, { x: a.x + 40, y: a.y + a.height / 2 }, { x: a.x + 40, y: b.y + b.height / 2 + (destino < actual ? -6 : 6) });
+  }
+  await page.getByRole("button", { name: "Comprobar" }).click();
+  await expect(page.getByText("¡Resuelto!")).toBeVisible();
+});
+
+test("laboratorio: el papel roto se arma moviendo los pedazos sobre la mesa", async ({ page }) => {
+  const fragmentos = (casoAurora.minijuegos.find((m) => m.id === "papel_roto")!.config as { fragmentos: string[] }).fragmentos;
+  await page.goto("/laboratorio/minijuegos");
+  await page.getByRole("button", { name: /Papel roto del tacho de la 605/ }).click();
+  const mesa = (await page.locator(".mesa-madera").boundingBox())!;
+  for (let k = 0; k < fragmentos.length; k++) {
+    const pedazo = page.getByRole("button", { name: `Pedazo: ${fragmentos[k]}` });
+    const r = (await pedazo.boundingBox())!;
+    // los ya armados van a la derecha (desde el 30% de la mesa); los que faltan se agarran por su borde izquierdo, que queda libre
+    await arrastrar(page, { x: r.x + 10, y: r.y + r.height / 2 }, { x: mesa.x + mesa.width * 0.34 + 10, y: mesa.y + 40 + k * 70 });
+  }
+  await page.getByRole("button", { name: "Comprobar" }).click();
+  await expect(page.getByText("¡Resuelto!")).toBeVisible();
+});
+
+test("laboratorio: la pizarra funciona sin sala", async ({ page }) => {
+  await page.goto("/laboratorio/pizarra");
+  await expect(page.locator(".tarjeta-pizarra")).toHaveCount(5);
+  await expect(page.locator("path.hilo")).toHaveCount(2);
+  await page.getByRole("button", { name: "📺 Cómo se ve en la tele" }).click();
+  await expect(page.getByText("Pizarra del equipo")).toBeVisible();
 });

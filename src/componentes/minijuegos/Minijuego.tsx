@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { useSala } from "@/cliente/useSala";
 import { cesar } from "@/motor/minijuegos";
+import { ListaArrastrable, MesaPapeles } from "./Arrastrables";
 import type { VistaPartida } from "@/motor/vista";
 
 type Sala = ReturnType<typeof useSala>;
@@ -104,71 +105,11 @@ export function JuegoMinijuego({
           ✕ No salió. Revisá y probá de nuevo.
         </p>
       )}
-      {tipo === "rompecabezas" && <Reordenar piezas={(config as { piezas: Pieza[] }).piezas} estilo="papel" resuelto={resuelto} onEnviar={onEnviar} />}
-      {tipo === "linea_tiempo" && <Reordenar piezas={(config as { piezas: Pieza[] }).piezas} estilo="linea" resuelto={resuelto} onEnviar={onEnviar} />}
+      {tipo === "rompecabezas" && <MesaPapeles piezas={(config as { piezas: Pieza[] }).piezas} resuelto={resuelto} onEnviar={onEnviar} />}
+      {tipo === "linea_tiempo" && <ListaArrastrable piezas={(config as { piezas: Pieza[] }).piezas} resuelto={resuelto} onEnviar={onEnviar} />}
       {tipo === "cifrado" && <Cifrado config={config as { mensaje: string; pista?: string }} resuelto={resuelto} onEnviar={onEnviar} />}
       {tipo === "personalizado" && <Personalizado config={config as { pagina: string; alto: number }} ambientacion={ambientacion} apodo={apodo} resuelto={resuelto} onEnviar={onEnviar} />}
     </>
-  );
-}
-
-/**
- * Ordenar piezas: tocá una y después otra para intercambiarlas, o usá las flechas.
- * Sirve para el documento roto (tiras de papel) y para la línea de tiempo.
- */
-function Reordenar({ piezas, estilo, resuelto, onEnviar }: { piezas: Pieza[]; estilo: "papel" | "linea"; resuelto: boolean; onEnviar: (r: string) => void }) {
-  const [orden, setOrden] = useState(piezas);
-  const [elegida, setElegida] = useState<number | null>(null);
-  const mover = (a: number, b: number) => {
-    if (b < 0 || b >= orden.length) return;
-    setOrden((o) => {
-      const n = [...o];
-      [n[a], n[b]] = [n[b], n[a]];
-      return n;
-    });
-  };
-  const tocar = (i: number) => {
-    if (elegida === null) return setElegida(i);
-    if (elegida !== i) mover(elegida, i);
-    setElegida(null);
-  };
-  return (
-    <div>
-      <p className="mb-3 text-sm text-suave">Tocá una pieza y después otra para intercambiarlas, o usá las flechas.</p>
-      <ol className={estilo === "linea" ? "relative space-y-3 border-l-2 border-acento/50 pl-6" : "space-y-1"}>
-        {orden.map((p, i) => (
-          <li key={p.id} className="flex items-stretch gap-2">
-            {estilo === "linea" && <span className="absolute -left-[7px] mt-4 h-3 w-3 rounded-full bg-acento" />}
-            <button
-              disabled={resuelto}
-              onClick={() => tocar(i)}
-              className={`flex-1 text-left transition ${
-                estilo === "papel" ? "papel tira-rota px-4 py-3 font-doc" : "rounded-xl border border-borde bg-panel px-4 py-3"
-              } ${elegida === i ? "ring-2 ring-acento" : ""}`}
-              style={estilo === "papel" ? { transform: `rotate(${((i * 53) % 5) - 2}deg)` } : undefined}
-            >
-              {estilo === "linea" && <span className="mr-2 font-mono text-xs text-suave">{i + 1}.</span>}
-              {p.texto}
-            </button>
-            {!resuelto && (
-              <span className="flex flex-col justify-center gap-1">
-                <button onClick={() => mover(i, i - 1)} aria-label="Subir" className="rounded border border-borde px-2 text-sm">
-                  ▲
-                </button>
-                <button onClick={() => mover(i, i + 1)} aria-label="Bajar" className="rounded border border-borde px-2 text-sm">
-                  ▼
-                </button>
-              </span>
-            )}
-          </li>
-        ))}
-      </ol>
-      {!resuelto && (
-        <button onClick={() => onEnviar(orden.map((p) => p.id).join(","))} className="mt-5 w-full rounded-xl bg-acento py-3 font-semibold text-acento-texto">
-          Comprobar
-        </button>
-      )}
-    </div>
   );
 }
 
