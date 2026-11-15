@@ -1,5 +1,7 @@
 # Propuesta de plataforma: juego de investigación híbrido
 
+> Documento original de diseño (histórico). Lo vigente está en [arquitectura.md](arquitectura.md), [adr/](adr/README.md) y [estado.md](estado.md).
+
 Versión 0.1, 14/11/2026. Documento vivo: lo vamos ajustando.
 
 ## 1. Visión

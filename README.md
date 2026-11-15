@@ -1,6 +1,6 @@
 # Expediente
 
-Plataforma web para resolver casos de investigación en grupo, en el mismo lugar, cada uno con su dispositivo. Diseño completo en [docs/propuesta-plataforma.md](docs/propuesta-plataforma.md).
+Plataforma web para resolver casos de investigación en grupo, en el mismo lugar, cada uno con su dispositivo. Arquitectura en [docs/arquitectura.md](docs/arquitectura.md), decisiones en [docs/adr/](docs/adr/README.md) y estado en [docs/estado.md](docs/estado.md). La propuesta original está en [docs/propuesta-plataforma.md](docs/propuesta-plataforma.md).
 
 ## Correr en local
 

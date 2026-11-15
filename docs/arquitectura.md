@@ -1,0 +1,55 @@
+# Arquitectura
+
+Cómo está armado Expediente hoy. Las decisiones y su porqué están en [adr/](adr/). El estado y lo que sigue, en [estado.md](estado.md).
+
+## Piezas
+
+```
+navegador (panel del jugador / tele)
+   │  POST /api/salas/[codigo]/accion        → acción del jugador
+   │  POST /api/salas/[codigo]/interrogar    → pregunta a un personaje
+   │  GET  /api/salas/[codigo]/vista         → su vista filtrada
+   ▼
+src/app/api/*  ──►  src/servidor/salas.ts  ──►  src/motor/*  (lógica pura)
+                         │
+                         ├─ almacen.ts: Supabase (tabla salas) o memoria en local
+                         └─ llm.ts: Gemini (o modelo falso con LLM_FALSO=1)
+```
+
+| Carpeta | Qué hay |
+|---|---|
+| `casos/<id>/caso.json` | Casos. Contrato en `src/casos/schema.ts`, explicado en [contrato-de-caso.md](contrato-de-caso.md) |
+| `src/casos/registro.ts` | Catálogo de casos |
+| `src/motor/` | Lógica pura y testeable: `condiciones` (evaluar), `reductor` (`aplicar` acciones), `vista` (`vistaPara`, lo único que viaja al cliente), `validador`, `interrogatorio` (prompt, revelaciones, limpieza), `minijuegos` |
+| `src/servidor/` | `almacen` (Supabase con concurrencia optimista por `version`, o memoria + SSE), `salas`, `llm`, `llmFalso` |
+| `src/app/api/` | Rutas: salas, unirse, accion, eventos (SSE local), vista, interrogar, casos, red, laboratorio |
+| `src/componentes/` | UI: Inicio, Sala, Lobby, PanelJugador (Expediente / Interrogar / Pizarra / Notas / Resolver), PantallaCompartida, Resultado, Celular, Pizarra, minijuegos, personaje |
+| `src/app/laboratorio/` | Páginas para revisar diseño sin jugar: personaje, ambientaciones, minijuegos, pizarra |
+| `src/app/globals.css` | Tokens por ambientación (`noir`, `policial`, `medico`, `terror`, `epoca`) y animaciones |
+| `public/casos/<id>/` | Archivos propios de un caso (minijuegos personalizados) |
+| `e2e/`, `scripts/` | Playwright, prueba de humo, validador de casos |
+
+## Flujo de una acción
+
+1. El cliente manda la acción con su token (identidad por pestaña en `sessionStorage`, clave `expediente:{codigo}:{tipo}`).
+2. `almacen.actualizar` lee la sala, corre `aplicar` del reductor y guarda si `version` no cambió (si cambió, reintenta).
+3. Avisa "hubo un cambio" (Supabase Realtime broadcast o SSE en local). El aviso no lleva datos.
+4. Cada dispositivo pide `/vista` y recibe solo lo que le corresponde.
+
+## Interrogatorio
+
+- `construirInstrucciones` arma el prompt con la ficha del personaje: lo que sabe, sus mentiras y los secretos que hoy puede soltar. Nunca la verdad ni lo que saben otros.
+- El modelo tiene una herramienta `revelar(clave)`; `resolverRevelacion` decide si corresponde según las condiciones del caso. Si se revela, el hecho pasa a `hechosRevelados`.
+- `limpiarRespuesta` borra etiquetas que el modelo filtre en el texto.
+- Límites (atómicos dentro de `actualizar`): 3 s entre preguntas de un jugador, una pregunta a la vez por personaje, tope por partida.
+- Modelos: `gemini-3.1-flash-lite` principal (20 s) y Flash de respaldo (35 s). Cuota gratis en [adr/0005](adr/0005-modelos-y-cuota-gemini.md).
+
+## Entornos
+
+| Entorno | Almacén | Modelo |
+|---|---|---|
+| `npm run dev` sin variables de Supabase | memoria + SSE | Gemini o falso |
+| e2e (puerto 3100, `NEXT_DIST_DIR=.next-e2e`) | memoria | falso (`LLM_FALSO=1`) |
+| Producción (Vercel) | Supabase | Gemini |
+
+Vercel corre `npm test && npm run validar && npm run build` antes de cada despliegue (`vercel.json`).
