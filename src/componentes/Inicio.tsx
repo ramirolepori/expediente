@@ -177,7 +177,7 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
                 ayuda={
                   config.audioEn === "nadie"
                     ? "Los personajes responden solo por escrito"
-                    : "Ojo: la primera vez se bajan unos 300 MB en el dispositivo que suena. Se activan ahí con el botón 🔇"
+                    : "Ojo: la primera vez se bajan unos 400 MB en el dispositivo que suena. Se activan ahí con el botón 🔇"
                 }
               >
                 <select className="sel" value={config.audioEn} onChange={(e) => set("audioEn", e.target.value as ConfigPartida["audioEn"])}>

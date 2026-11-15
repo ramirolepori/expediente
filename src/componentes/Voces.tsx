@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { VistaPartida } from "@/motor/vista";
 import { modeloListo, precargar, sintetizar } from "@/cliente/piper";
-import { suenaAca, textoHablado, vozPiper, type VozPersonaje } from "@/cliente/voces";
+import { suenaAca, textoHablado } from "@/cliente/voces";
+import { BASES, type VozPiper } from "@/motor/voz";
 
 /** Qué personaje está sonando ahora en este dispositivo, para que su dibujo mueva la boca. */
 let sonando: string | null = null;
@@ -23,15 +24,16 @@ export function usePersonajeSonando() {
   );
 }
 
-const VOZ_POR_DEFECTO: VozPersonaje = { genero: "masculino", edad: "adulto", velocidad: 1 };
+const VOZ_POR_DEFECTO: VozPiper = { modelo: BASES.masculino[0].modelo, lengthScale: 1, altura: 1, expresividad: 1 };
 
 /** Con la Web Speech API del navegador: mientras baja el modelo de Piper o si Piper falla. */
-function decirConNavegador(texto: string, voz: VozPersonaje) {
+function decirConNavegador(texto: string, voz: VozPiper) {
   return new Promise<void>((resolve) => {
     if (typeof speechSynthesis === "undefined") return resolve();
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = "es-AR";
-    u.rate = voz.velocidad;
+    u.rate = 1 / voz.lengthScale;
+    u.pitch = voz.altura;
     u.onend = u.onerror = () => resolve();
     speechSynthesis.speak(u);
   });
@@ -51,15 +53,14 @@ async function reproducir(audio: Blob) {
   }
 }
 
-async function decir(texto: string, voz: VozPersonaje) {
-  const piper = vozPiper(voz);
-  if (!modeloListo(piper.modelo)) {
+async function decir(texto: string, voz: VozPiper) {
+  if (!modeloListo(voz.modelo)) {
     // la primera vez que habla alguien con un modelo nuevo: se baja en segundo plano
-    precargar([piper.modelo], () => {}).catch(() => {});
+    precargar([voz.modelo], () => {}).catch(() => {});
     return decirConNavegador(texto, voz);
   }
   try {
-    await reproducir(await sintetizar(texto, piper));
+    await reproducir(await sintetizar(texto, voz));
   } catch (e) {
     console.warn("Voces: Piper falló, uso la voz del navegador", e);
     await decirConNavegador(texto, voz);
@@ -102,7 +103,7 @@ export function Voces({ vista, grande }: { vista: VistaPartida; grande?: boolean
     // lo que ya se dijo antes de activar no se lee
     for (const m of Object.values(vista.interrogatorios).flat()) escuchadas.current.add(m.id);
     setEstado("bajando");
-    const rutas = [...new Set(vista.personajes.flatMap((p) => (p.voz ? [vozPiper(p.voz).modelo] : [])))];
+    const rutas = [...new Set(vista.personajes.flatMap((p) => (p.voz ? [p.voz.modelo] : [])))];
     precargar(rutas, setAvance)
       .catch((e) => console.warn("Voces: no se pudieron bajar los modelos, uso la voz del navegador", e))
       .finally(() => setEstado((s) => (s === "bajando" ? "activas" : s)));

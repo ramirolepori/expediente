@@ -16,3 +16,4 @@ Una decisión por archivo: contexto, decisión y consecuencias. Si una decisión
 | [0010](0010-apariencia-de-personajes.md) | Apariencia de los personajes: retratos o vectorial, y emoción desde el modelo | Implementada |
 | [0011](0011-escenas-clickeables.md) | Escenas ilustradas con puntos que abren pruebas | Implementada como índice visual |
 | [0012](0012-casos-de-autores.md) | Casos de cualquier autor: kit, cuentas, Supabase y moderación | Cuentas implementadas; faltan validador y casos en Supabase |
+| [0013](0013-reparto-de-voces.md) | Reparto de voces por elenco, con el género medido | Implementada |

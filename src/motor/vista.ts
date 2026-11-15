@@ -5,6 +5,7 @@ import { LIMITES_INTERROGATORIO, preguntasHechas } from "./interrogatorio";
 import { configPublica } from "./minijuegos";
 import { recursosRestantes } from "./reductor";
 import type { EstadoPartida } from "./tipos";
+import { vocesDelElenco } from "./voz";
 
 /**
  * Lo único que viaja al navegador. Nunca incluye la verdad, los secretos,
@@ -53,10 +54,10 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
     // un personaje todavía no disponible no revela ni su nombre (sería un spoiler)
     personajes: caso.personajes
       .filter((p) => p.interrogable)
-      .map((p) => {
+      .map((p, _, interrogables) => {
         const disponible = terminada || evaluar(p.disponible, estado, caso);
         return disponible
-          ? { id: p.id, nombre: p.nombre, rol: p.rol, edad: p.edad, descripcion: p.descripcion, voz: p.voz, apariencia: aparienciaPublica(p), disponible: true, visitado: estado.personajesVisitados.includes(p.id) }
+          ? { id: p.id, nombre: p.nombre, rol: p.rol, edad: p.edad, descripcion: p.descripcion, voz: vocesDelElenco(interrogables)[p.id], apariencia: aparienciaPublica(p), disponible: true, visitado: estado.personajesVisitados.includes(p.id) }
           : { id: p.id, nombre: "???", rol: "", edad: undefined, descripcion: "", voz: undefined, apariencia: undefined, disponible: false, visitado: false };
       }),
     descubrimientos: caso.hechos.filter((h) => estado.hechosRevelados.includes(h.id)),

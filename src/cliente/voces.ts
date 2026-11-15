@@ -1,33 +1,5 @@
 import type { Conexion, DondeSuena } from "@/motor/tipos";
 
-/** Lo que el caso dice de la voz de un personaje (VozSchema). */
-export interface VozPersonaje {
-  genero: "femenino" | "masculino";
-  edad: "joven" | "adulto" | "mayor";
-  velocidad: number;
-}
-
-/** Ruta del modelo dentro de rhasspy/piper-voices/es y cuánto estirar el habla (mayor = más lento). */
-export interface VozPiper {
-  modelo: string;
-  lengthScale: number;
-}
-
-// No hay voces masculinas rioplatenses en Piper: Daniela es la única es_AR.
-const MODELOS = {
-  femenino: "es_AR/daniela/high/es_AR-daniela-high",
-  joven: "es_MX/ald/medium/es_MX-ald-medium",
-  adulto: "es_MX/claude/high/es_MX-claude-high",
-  mayor: "es_ES/davefx/medium/es_ES-davefx-medium",
-} as const;
-
-export function vozPiper(voz: VozPersonaje): VozPiper {
-  return {
-    modelo: voz.genero === "femenino" ? MODELOS.femenino : MODELOS[voz.edad],
-    lengthScale: 1 / voz.velocidad,
-  };
-}
-
 /**
  * Una sola pista (ADR 0009): decide si este dispositivo pone la voz.
  * Sin `autor` responde si este dispositivo puede llegar a sonar (para mostrar el botón).

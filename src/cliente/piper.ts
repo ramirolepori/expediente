@@ -1,6 +1,7 @@
 "use client";
 
-import { oraciones, wav, type VozPiper } from "./voces";
+import type { VozPiper } from "@/motor/voz";
+import { oraciones, wav } from "./voces";
 
 /**
  * Piper en el navegador (ADR 0009). onnxruntime y el fonemizador se cargan desde jsDelivr con
@@ -166,11 +167,13 @@ export async function sintetizar(texto: string, voz: VozPiper): Promise<Blob> {
     const { output } = await sesion.run({
       input: new o.Tensor("int64", BigInt64Array.from(ids, BigInt), [1, ids.length]),
       input_lengths: new o.Tensor("int64", BigInt64Array.from([BigInt(ids.length)]), [1]),
-      scales: new o.Tensor("float32", Float32Array.from([config.inference.noise_scale, voz.lengthScale, config.inference.noise_w]), [3]),
+      // se genera más lento o más rápido en proporción a la altura, que al reproducirlo a otra frecuencia lo compensa
+      scales: new o.Tensor("float32", Float32Array.from([config.inference.noise_scale * voz.expresividad, voz.lengthScale * voz.altura, config.inference.noise_w * voz.expresividad]), [3]),
+      ...(voz.hablante !== undefined && { sid: new o.Tensor("int64", BigInt64Array.from([BigInt(voz.hablante)]), [1]) }),
     });
     partes.push(output.data);
   }
   const todo = new Float32Array(partes.reduce((n, p) => n + p.length, 0));
   partes.reduce((offset, p) => (todo.set(p, offset), offset + p.length), 0);
-  return wav(todo, config.audio.sample_rate);
+  return wav(todo, Math.round(config.audio.sample_rate * voz.altura));
 }

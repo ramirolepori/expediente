@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Conexion } from "@/motor/tipos";
-import { oraciones, suenaAca, textoHablado, vozPiper, wav } from "./voces";
+import { oraciones, suenaAca, textoHablado, wav } from "./voces";
 
 const c = (id: string, tipo: Conexion["tipo"], anfitrion = false): Conexion => ({ id, tipo, apodo: id, color: "#000", anfitrion, ultimaVez: 0 });
 const ana = c("ana", "jugador", true);
@@ -27,11 +27,6 @@ describe("voces", () => {
     expect(suenaAca("interrogador", ana, [ana, beto, tele], "beto")).toBe(false);
     expect(suenaAca("interrogador", tele, [ana, beto, tele])).toBe(false);
     expect(suenaAca("interrogador", ana, [ana, beto])).toBe(true);
-  });
-
-  it("elige el modelo por género y edad y la velocidad del caso", () => {
-    expect(vozPiper({ genero: "femenino", edad: "joven", velocidad: 1 }).modelo).toContain("es_AR-daniela");
-    expect(vozPiper({ genero: "masculino", edad: "mayor", velocidad: 0.8 })).toEqual({ modelo: "es_ES/davefx/medium/es_ES-davefx-medium", lengthScale: 1.25 });
   });
 
   it("no lee los gestos ni las marcas de formato", () => {
