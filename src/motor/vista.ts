@@ -39,8 +39,8 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
       .map((p) => {
         const disponible = terminada || evaluar(p.disponible, estado, caso);
         return disponible
-          ? { id: p.id, nombre: p.nombre, rol: p.rol, edad: p.edad, descripcion: p.descripcion, disponible: true, visitado: estado.personajesVisitados.includes(p.id) }
-          : { id: p.id, nombre: "???", rol: "", edad: undefined, descripcion: "", disponible: false, visitado: false };
+          ? { id: p.id, nombre: p.nombre, rol: p.rol, edad: p.edad, descripcion: p.descripcion, voz: p.voz, disponible: true, visitado: estado.personajesVisitados.includes(p.id) }
+          : { id: p.id, nombre: "???", rol: "", edad: undefined, descripcion: "", voz: undefined, disponible: false, visitado: false };
       }),
     descubrimientos: caso.hechos.filter((h) => estado.hechosRevelados.includes(h.id)),
     candados: caso.candados

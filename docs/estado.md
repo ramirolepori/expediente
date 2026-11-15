@@ -10,16 +10,18 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 - Caso **Hotel Aurora** jugable: 3 sobres, celular navegable, candados, 4 minijuegos, modo traidor. Valentina ya no admite ser Arcimboldo con lo del primer sobre (necesita el labial, o el celular más el testimonio del hielo) y las opciones del móvil y de Duarte tienen largo parecido, sin nombrar ECLIPSE.
 - Interrogatorios con IA y guardrails (ADR 0002). Un secreto habilitado se cuenta de a partes, después de una reacción, no todo de golpe. Límites según la cuota gratis (ADR 0005): 3 s por jugador, 12 por sala por minuto, 150 por partida con contador visible, y ante un 429 del proveedor un aviso amable sin pasar al respaldo.
 - Pizarra compartida con hilos y línea de tiempo, notas personales y de equipo, votación y revelación final paso a paso.
-- Laboratorio: personaje, ambientaciones, minijuegos y pizarra.
+- Voces de los personajes con Piper en el navegador (ADR 0009): una sola pista, en la tele o en el anfitrión (o en quien pregunta), elegidas al crear la sala (por defecto, sin voces) y activadas con un botón. Respaldo con la voz del navegador mientras bajan los modelos.
+- Laboratorio: personaje, ambientaciones, minijuegos, pizarra y voces.
 - Documentación para autores: [contrato-de-caso.md](contrato-de-caso.md) y [prompt-autor-de-casos.md](prompt-autor-de-casos.md).
 
 ## Pendiente, en orden
 
-1. **Voces** (ADR 0009): una sola pista, Piper en la PC anfitriona.
-2. Mostrar en la tele las pruebas que se van desbloqueando.
-3. Limpieza de salas viejas (cron de Vercel).
-4. Ping semanal a Supabase para que no se pause.
-5. Tecla de pulsar para hablar (accesibilidad).
+1. Mostrar en la tele las pruebas que se van desbloqueando.
+2. Limpieza de salas viejas (cron de Vercel).
+3. Ping semanal a Supabase para que no se pause.
+4. Tecla de pulsar para hablar (accesibilidad).
+
+Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
 
 Más adelante: modo competitivo, herramienta de autor (etapa 2), casos nuevos, juego online o asincrónico, `imagen` y `roles` en pruebas.
 

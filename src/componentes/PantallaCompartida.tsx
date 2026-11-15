@@ -6,6 +6,7 @@ import { BotonSalir, Maquina, Punto, QR, Reloj, useAhora, useUrlSala } from "./c
 import { Corcho } from "./Pizarra";
 import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
+import { Voces } from "./Voces";
 
 /** Lo que se ve en la tele: nada privado, todo grande y legible a distancia. */
 export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; onSalir: () => Promise<void> }) {
@@ -71,6 +72,7 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
         <div className="flex items-center gap-8 text-suave">
           {vista.recursosRestantes !== null && <span className="text-3xl">🕰 {vista.recursosRestantes} h</span>}
           <Reloj iniciada={vista.iniciada} limiteMin={vista.config.temporizadorMin} grande />
+          <Voces vista={vista} grande />
         </div>
       </header>
 

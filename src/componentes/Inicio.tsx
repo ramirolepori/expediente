@@ -172,6 +172,20 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
                   <option value="120">120 minutos</option>
                 </select>
               </Campo>
+              <Campo
+                etiqueta="Voces de los personajes"
+                ayuda={
+                  config.audioEn === "nadie"
+                    ? "Los personajes responden solo por escrito"
+                    : "Ojo: la primera vez se bajan unos 300 MB en el dispositivo que suena. Se activan ahí con el botón 🔇"
+                }
+              >
+                <select className="sel" value={config.audioEn} onChange={(e) => set("audioEn", e.target.value as ConfigPartida["audioEn"])}>
+                  <option value="nadie">Sin voces</option>
+                  <option value="compartida">En la tele (o en el anfitrión si no hay)</option>
+                  <option value="interrogador">En el dispositivo de quien pregunta</option>
+                </select>
+              </Campo>
               <Interruptor etiqueta="Sistema de puntos" valor={config.puntaje} onChange={(v) => set("puntaje", v)} />
               <Interruptor etiqueta="Preguntar por micrófono" valor={config.voz} onChange={(v) => set("voz", v)} />
             </div>

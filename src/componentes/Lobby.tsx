@@ -48,7 +48,7 @@ export function Lobby({ vista, onIniciar }: { vista: VistaPartida; onIniciar: ()
 
         <div className="mt-6 rounded-xl bg-panel-2 p-3 text-xs text-suave">
           Modo {vista.config.modo === "traidor" ? "traidor 🎭 (uno de ustedes juega en contra)" : vista.config.modo} · {vista.config.recursos ? `${vista.config.recursos} horas` : "sin límite de horas"} · ayudas {vista.config.ayudas}
-          {vista.config.temporizadorMin ? ` · ${vista.config.temporizadorMin} min` : ""} · micrófono {vista.config.voz ? "sí" : "no"}
+          {vista.config.temporizadorMin ? ` · ${vista.config.temporizadorMin} min` : ""} · micrófono {vista.config.voz ? "sí" : "no"} · voces {vista.config.audioEn === "nadie" ? "no" : "sí"}
         </div>
 
         {vista.yo?.anfitrion ? (

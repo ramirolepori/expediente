@@ -1,5 +1,5 @@
 export type Modo = "cooperativo" | "competitivo" | "traidor";
-export type DondeSuena = "compartida" | "interrogador" | "todos";
+export type DondeSuena = "nadie" | "compartida" | "interrogador" | "todos";
 
 export interface ConfigPartida {
   modo: Modo;
@@ -19,7 +19,8 @@ export const CONFIG_POR_DEFECTO: ConfigPartida = {
   ayudas: "limitadas",
   temporizadorMin: null,
   voz: true,
-  audioEn: "compartida",
+  // sin voces por defecto: activarlas baja unos 300 MB en el dispositivo que suena
+  audioEn: "nadie",
 };
 
 export type TipoConexion = "jugador" | "pantalla";

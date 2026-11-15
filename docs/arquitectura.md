@@ -43,6 +43,7 @@ src/app/api/*  ──►  src/servidor/salas.ts  ──►  src/motor/*  (lógic
 - `limpiarRespuesta` borra etiquetas que el modelo filtre en el texto.
 - Límites (atómicos dentro de `actualizar`): 3 s entre preguntas de un jugador, una pregunta a la vez por personaje, 12 por sala por minuto y 150 por partida (`LIMITES_INTERROGATORIO`). La vista manda `preguntasRestantes` para el contador.
 - Modelos: `gemini-3.1-flash-lite` principal (20 s) y Flash de respaldo (35 s). Cuota gratis en [adr/0005](adr/0005-modelos-y-cuota-gemini.md).
+- Voces: `Voces.tsx` escucha las respuestas nuevas y, si `suenaAca` dice que este dispositivo es el que suena, las genera con Piper (`src/cliente/piper.ts`) y las reproduce en cola. Detalle en [adr/0009](adr/0009-audio-una-pista.md).
 
 ## Entornos
 

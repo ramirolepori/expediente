@@ -8,6 +8,7 @@ import { Documento, iconoPrueba } from "./Documento";
 import { Avisos } from "./Avisos";
 import { FichaSecreta } from "./FichaSecreta";
 import { Interrogatorio } from "./Interrogatorio";
+import { Voces } from "./Voces";
 import { Corcho, LineaDeTiempo } from "./Pizarra";
 import { TarjetaMinijuego } from "./minijuegos/Minijuego";
 import { Lobby } from "./Lobby";
@@ -93,6 +94,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
             {vista.fichaTraidor && <FichaSecreta ficha={vista.fichaTraidor} />}
             {vista.recursosRestantes !== null && <span title="Horas de investigación">🕰 {vista.recursosRestantes} h</span>}
             <Reloj iniciada={vista.iniciada} limiteMin={vista.config.temporizadorMin} />
+            <Voces vista={vista} />
             <BotonSalir onSalir={sala.salir} />
           </div>
         </header>
