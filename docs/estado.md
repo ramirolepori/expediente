@@ -23,16 +23,15 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 ## Pendiente, en orden
 
 1. **Pregunta del capítulo** (camino de piezas opcionales en el contrato, elegido por Ramiro el 15/11/2026): opciones que, al acertar, muestran un cierre y un gancho y destraban el sobre siguiente, más un resumen al empezar cada capítulo. En la Vendimia hoy el sobre 2 se abre apenas se abre el 1, sin resolver nada: esta pieza lo cubre. Los textos de cierre y gancho ya están en `casos/vendimia/REVISION.md`.
-2. **Kit de autor** para crear casos con IA externas, y en la plataforma un validador para subirlos. Antes hay que decidir dónde viven los casos nuevos (ADR 0008).
+2. **Casos de cualquier autor** (ADR 0012, decidida): kit de autor descargable desde `/autores`, cuentas con Supabase Auth, casos nuevos en Supabase (tabla y Storage), validador con sala de prueba (modelo falso), estados borrador, validado, privado y publicado, y aprobación de Ramiro o sus moderadores. Lo próximo es diseñar el validador.
 
 Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
 
-Más adelante: modo competitivo, herramienta de autor (etapa 2, incluye cómo se consiguen los retratos), casos nuevos, juego online o asincrónico, `imagen` y `roles` en pruebas.
+Más adelante: modo competitivo, que cada usuario use su propia clave y su modelo (ADR 0012), migrar Hotel Aurora y la Vendimia a Supabase, casos nuevos, juego online o asincrónico, `imagen` y `roles` en pruebas.
 
 ## Esperando decisión de Ramiro (no avanzar sin él)
 
 - **Ambientaciones:** se ven muy parecidas, quiere darles una vuelta de rosca.
-- Mover las soluciones de los casos a Supabase (ADR 0008).
 
 ## Problemas conocidos
 
