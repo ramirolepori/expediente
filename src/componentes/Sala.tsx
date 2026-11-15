@@ -20,9 +20,9 @@ export function Sala({ codigo, tipo }: { codigo: string; tipo: TipoConexion }) {
     <div data-ambientacion={ambientacion} className="ambiente flex min-h-dvh flex-col">
       {ambientacion && (
         <div className="ambiente-fx" aria-hidden>
-          <div className="lluvia" />
-          <div className="grano" />
-          <div className="vineta" />
+          <div className="fx-1" />
+          <div className="fx-2" />
+          <div className="fx-3" />
         </div>
       )}
       <div className="capa-juego flex min-h-dvh flex-col">

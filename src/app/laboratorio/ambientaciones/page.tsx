@@ -1,0 +1,73 @@
+"use client";
+
+import { useState } from "react";
+import { AMBIENTACIONES, type Ambientacion, type Prueba } from "@/casos/schema";
+import { Documento } from "@/componentes/Documento";
+
+const NOMBRES: Record<Ambientacion, string> = { noir: "Noir", policial: "Policial moderno", medico: "Médico / forense", terror: "Terror", epoca: "De época" };
+
+const PRUEBA: Prueba = {
+  id: "muestra",
+  titulo: "Informe preliminar",
+  tipo: "informe",
+  sobre: "s1",
+  contenido:
+    "**Hora probable de muerte:** entre las 23:20 y las 23:40.\n\n- La puerta no fue forzada.\n- Dos copas sobre la mesa, una con marcas de labial.\n\n| Hora | Movimiento |\n|---|---|\n| 23:12 | Tarjeta de la víctima |\n| 23:19 | Tarjeta maestra AU-0008 |",
+};
+
+/** Muestra los mismos componentes del juego en cada ambientación. */
+export default function Pagina() {
+  const [amb, setAmb] = useState<Ambientacion>("noir");
+  return (
+    <div data-ambientacion={amb} className="ambiente relative min-h-dvh">
+      <div className="ambiente-fx" aria-hidden>
+        <div className="fx-1" />
+        <div className="fx-2" />
+        <div className="fx-3" />
+      </div>
+      <main className="capa-juego mx-auto max-w-4xl px-4 py-8">
+        <p className="text-xs uppercase tracking-[0.3em] text-acento">Laboratorio</p>
+        <h1 className="font-titulo text-4xl">Ambientaciones</h1>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {AMBIENTACIONES.map((a) => (
+            <button key={a} onClick={() => setAmb(a)} className={`rounded-full border px-3 py-1.5 text-sm ${amb === a ? "border-acento bg-acento text-acento-texto" : "border-borde bg-panel"}`}>
+              {NOMBRES[a]}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <section className="space-y-4">
+            <h2 className="font-titulo text-2xl">Sobre 2: Los registros</h2>
+            <button className="sobre flex h-28 w-full items-end justify-between px-4 pb-3 text-left font-doc">
+              <span className="relative text-sm">Sobre 2</span>
+              <span className="relative rounded bg-acento px-2 py-1 font-ui text-xs font-semibold text-acento-texto">Abrir sobre</span>
+            </button>
+            <div className="flex items-start gap-3 rounded-xl border border-acento/60 bg-panel/95 p-3 shadow-2xl">
+              <span className="text-2xl">📎</span>
+              <span>
+                <span className="block text-sm font-semibold text-acento">Nueva prueba</span>
+                <span className="text-sm">Pendrive azul de Julia</span>
+              </span>
+            </div>
+            <div className="space-y-2 rounded-xl border border-borde bg-panel p-3">
+              <div className="flex justify-end">
+                <p className="max-w-[85%] rounded-2xl rounded-br-sm bg-panel-2 px-3.5 py-2 text-sm">¿Dónde estuvo el domingo a la noche?</p>
+              </div>
+              <div className="flex justify-start">
+                <p className="papel max-w-[85%] rounded-2xl rounded-bl-sm px-3.5 py-2 text-sm">*Se acomoda el saco.* En mi casa, detective. Mirando un partido repetido.</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button className="rounded-xl bg-acento px-4 py-2 font-semibold text-acento-texto">Votar acusación</button>
+              <button className="rounded-xl border border-borde px-4 py-2">Pedir una pista</button>
+            </div>
+          </section>
+          <section>
+            <Documento prueba={PRUEBA} />
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
