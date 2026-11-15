@@ -11,6 +11,7 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 - Interrogatorios con IA y guardrails (ADR 0002). Un secreto habilitado se cuenta de a partes, después de una reacción, no todo de golpe. Límites según la cuota gratis (ADR 0005): 3 s por jugador, 12 por sala por minuto, 150 por partida con contador visible, y ante un 429 del proveedor un aviso amable sin pasar al respaldo.
 - La tele muestra las pruebas recién desbloqueadas durante 25 s (o hasta que alguien pregunte) y una lista del expediente con las más nuevas arriba. Las del primer sobre y las que llegan con una respuesta no se destacan, solo se resaltan en la lista.
 - Pizarra compartida con hilos y línea de tiempo, notas personales y de equipo, votación y revelación final paso a paso.
+- Micrófono en el interrogatorio (Web Speech API; en Firefox no aparece): se mantiene apretado el botón 🎙️, la barra espaciadora (si el foco no está en un campo, botón o link) o Enter/Espacio con el botón enfocado, y al soltar se envía. Un aviso visible y para lectores de pantalla dice que está escuchando, y un texto de ayuda nombra la tecla.
 - Voces de los personajes con Piper en el navegador (ADR 0009): una sola pista, en la tele o en el anfitrión (o en quien pregunta), elegidas al crear la sala (por defecto, sin voces) y activadas con un botón. Respaldo con la voz del navegador mientras bajan los modelos.
 - Limpieza de salas viejas: un cron diario de Vercel (8:00 UTC, `vercel.json`) llama a `/api/cron/limpiar`, que borra las salas sin escrituras hace más de 24 h (columna `actualizada`). Pide `CRON_SECRET` cargada en Vercel; sin esa variable la ruta rechaza todo. La misma consulta diaria mantiene activo Supabase Free, que pausa a los 7 días sin actividad: no hace falta un ping aparte.
 - Laboratorio: personaje, ambientaciones, minijuegos, pizarra y voces.
@@ -18,7 +19,7 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 
 ## Pendiente, en orden
 
-1. Tecla de pulsar para hablar (accesibilidad).
+Nada por ahora.
 
 Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
 

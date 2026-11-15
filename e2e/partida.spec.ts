@@ -115,6 +115,61 @@ test("con la partida empezada se suman la tele y un jugador", async ({ page: anf
   await expect(tele.getByText("Mati se sumó a la investigación")).toBeVisible();
 });
 
+test("pulsar para hablar: con la barra espaciadora y con el botón desde el teclado", async ({ page: anfitrion, browser }) => {
+  const codigo = await crearSala(anfitrion, "Ramiro");
+  // headless no trae reconocimiento de voz: uno falso que "oye" lo que diga window.dicho
+  const contexto = await browser.newContext();
+  await contexto.addInitScript(() => {
+    const w = window as unknown as Record<string, unknown>;
+    w.SpeechRecognition = class {
+      onresult: ((e: unknown) => void) | null = null;
+      onend: (() => void) | null = null;
+      start() {
+        w.escuchando = true;
+        setTimeout(() => this.onresult?.({ results: [[{ transcript: w.dicho }]] }), 50);
+      }
+      stop() {
+        w.escuchando = false;
+        setTimeout(() => this.onend?.(), 100);
+      }
+    };
+  });
+  const lu = await contexto.newPage();
+  await lu.goto(`/sala/${codigo}`);
+  await lu.getByPlaceholder("Ej.: Ramiro").fill("Lu");
+  await lu.getByRole("button", { name: "Entrar a la investigación" }).click();
+  await anfitrion.getByRole("button", { name: "Abrir el caso" }).click();
+  await lu.getByRole("button", { name: "Interrogar" }).click();
+  await lu.getByRole("button", { name: /^Carla Belotti/ }).click();
+  await expect(lu.getByText("Mantené apretada la barra espaciadora")).toBeVisible();
+
+  // escribir un espacio en el campo de la pregunta no dicta
+  const campo = lu.getByPlaceholder("Preguntale algo…");
+  await campo.pressSequentially("hola che");
+  await expect(campo).toHaveValue("hola che");
+  expect(await lu.evaluate(() => (window as unknown as { escuchando?: boolean }).escuchando)).toBeFalsy();
+  await campo.fill("");
+
+  // con el foco fuera de los campos, mantener la barra espaciadora dicta y soltarla envía
+  await lu.evaluate(() => ((window as unknown as { dicho: string }).dicho = "¿Dónde estabas esa noche?"));
+  await lu.locator("body").click({ position: { x: 5, y: 5 } });
+  await lu.keyboard.down(" ");
+  await expect(lu.getByRole("status")).toHaveText("🎙️ Escuchando… soltá para enviar");
+  await expect(lu.getByRole("button", { name: "Mantené apretado para hablar" })).toHaveAttribute("aria-pressed", "true");
+  await lu.keyboard.up(" ");
+  await expect(lu.getByText("¿Dónde estabas esa noche?")).toBeVisible();
+  await expect(lu.getByRole("status")).toHaveText("");
+
+  // el botón con el foco: mantener Enter dicta y soltarlo envía
+  await lu.waitForTimeout(3100);
+  await lu.evaluate(() => ((window as unknown as { dicho: string }).dicho = "¿Conocías a Julia?"));
+  await lu.getByRole("button", { name: "Mantené apretado para hablar" }).focus();
+  await lu.keyboard.down("Enter");
+  await expect(lu.getByRole("status")).toHaveText("🎙️ Escuchando… soltá para enviar");
+  await lu.keyboard.up("Enter");
+  await expect(lu.getByText("¿Conocías a Julia?")).toBeVisible();
+});
+
 test("límite: una segunda pregunta inmediata se rechaza", async ({ request }) => {
   const { codigo } = await (await request.post("/api/salas", { data: { casoId: "hotel_aurora" } })).json();
   const unir = async (apodo: string) => (await (await request.post(`/api/salas/${codigo}/unirse`, { data: { apodo, tipo: "jugador" } })).json()).token;

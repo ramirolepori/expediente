@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
 import { Maquina, Punto } from "./comunes";
@@ -26,6 +26,11 @@ function crearReconocimiento(): Reconocimiento | null {
   r.interimResults = true;
   r.continuous = true;
   return r;
+}
+
+/** Elementos donde la barra espaciadora ya hace algo (escribir, apretar, abrir): ahí no dicta. */
+function usaElEspacio(el: EventTarget | null) {
+  return el instanceof Element && el.closest("input, textarea, select, button, a, summary, [contenteditable], [tabindex]") !== null;
 }
 
 export function Interrogatorio({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
@@ -108,6 +113,7 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
   }
 
   function empezarAHablar() {
+    if (rec.current) return; // ya está escuchando (botón y tecla a la vez)
     const r = crearReconocimiento();
     if (!r) return;
     let acumulado = "";
@@ -116,6 +122,7 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
       setTexto(acumulado);
     };
     r.onend = () => {
+      rec.current = null;
       setEscuchando(false);
       if (acumulado.trim()) enviar(acumulado);
     };
@@ -123,6 +130,26 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
     setEscuchando(true);
     r.start();
   }
+
+  // barra espaciadora mantenida = pulsar para hablar, salvo que el foco esté en algo que use el espacio
+  const teclaAbajo = useEffectEvent((e: KeyboardEvent) => {
+    if (e.code !== "Space" || e.repeat || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || usaElEspacio(e.target)) return;
+    e.preventDefault();
+    empezarAHablar();
+  });
+  useEffect(() => {
+    if (!vozDisponible) return;
+    const arriba = (e: KeyboardEvent) => e.code === "Space" && rec.current?.stop();
+    const soltar = () => rec.current?.stop(); // si la ventana pierde el foco no llega el keyup
+    window.addEventListener("keydown", teclaAbajo);
+    window.addEventListener("keyup", arriba);
+    window.addEventListener("blur", soltar);
+    return () => {
+      window.removeEventListener("keydown", teclaAbajo);
+      window.removeEventListener("keyup", arriba);
+      window.removeEventListener("blur", soltar);
+    };
+  }, [vozDisponible]);
 
   return (
     <div className="flex h-[calc(100dvh-9.5rem)] flex-col lg:h-[calc(100dvh-5rem)]">
@@ -183,9 +210,17 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
               onPointerDown={empezarAHablar}
               onPointerUp={() => rec.current?.stop()}
               onPointerLeave={() => escuchando && rec.current?.stop()}
+              onKeyDown={(e) => {
+                if (e.key !== " " && e.key !== "Enter") return;
+                e.preventDefault();
+                if (!e.repeat) empezarAHablar();
+              }}
+              onKeyUp={(e) => (e.key === " " || e.key === "Enter") && rec.current?.stop()}
               className={`shrink-0 select-none rounded-xl px-4 text-xl ${escuchando ? "bg-acento text-acento-texto" : "border border-borde bg-panel"}`}
-              title="Mantené apretado para hablar"
+              title="Mantené apretado para hablar (o la barra espaciadora)"
               aria-label="Mantené apretado para hablar"
+              aria-pressed={escuchando}
+              aria-describedby="ayuda-voz"
             >
               🎙️
             </button>
@@ -200,6 +235,16 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
             Enviar
           </button>
         </div>
+        {vozDisponible && (
+          <div className="flex gap-2 text-xs">
+            <p role="status" className="font-semibold text-acento">
+              {escuchando && "🎙️ Escuchando… soltá para enviar"}
+            </p>
+            <p id="ayuda-voz" className={`text-suave ${escuchando ? "sr-only" : "hidden sm:block"}`}>
+              Para hablar, mantené apretada la barra espaciadora (fuera del campo de texto) o el botón 🎙️. Al soltar, se envía.
+            </p>
+          </div>
+        )}
       </form>
     </div>
   );
