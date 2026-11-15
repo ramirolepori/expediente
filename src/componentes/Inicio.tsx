@@ -14,6 +14,8 @@ interface CasoResumen {
   advertencias: string[];
   ambientacion: string;
   modos: string[];
+  /** caso de autor sin publicar, abierto por su link: se juega con el modelo falso */
+  prueba?: boolean;
 }
 
 /** modos con lógica implementada; el resto no se ofrece todavía */
@@ -27,10 +29,10 @@ const NOMBRE_AMBIENTACION: Record<string, string> = {
   epoca: "De época",
 };
 
-export function Inicio({ casos }: { casos: CasoResumen[] }) {
+export function Inicio({ casos, inicial }: { casos: CasoResumen[]; inicial?: string }) {
   const router = useRouter();
   const [codigo, setCodigo] = useState("");
-  const [elegido, setElegido] = useState<string | null>(casos[0]?.id ?? null);
+  const [elegido, setElegido] = useState<string | null>(inicial ?? casos[0]?.id ?? null);
   const [config, setConfig] = useState<ConfigPartida>(CONFIG_POR_DEFECTO);
   const [cargando, setCargando] = useState(false);
   const [apodo, setApodo] = useState("");
@@ -113,6 +115,7 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
                 }`}
               >
                 <div className="flex flex-wrap items-center gap-2 text-xs text-suave">
+                  {c.prueba && <span className="rounded-full bg-acento px-2 py-0.5 font-semibold text-acento-texto">Caso de prueba</span>}
                   <span className="rounded-full bg-panel-2 px-2 py-0.5">{NOMBRE_AMBIENTACION[c.ambientacion] ?? c.ambientacion}</span>
                   <span>{c.duracionMin} min</span>
                   <span>·</span>
@@ -125,6 +128,7 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
                 <h3 className="mt-2 text-lg font-bold">{c.titulo}</h3>
                 <p className="mt-1 text-sm text-suave">{c.sinopsis}</p>
                 {c.advertencias.length > 0 && <p className="mt-2 text-xs text-suave">Contiene: {c.advertencias.join(", ")}</p>}
+                {c.prueba && <p className="mt-2 text-xs text-suave">Todavía no está publicado. Los personajes responden con el modelo de prueba, no con la IA real.</p>}
               </button>
             ))}
           </div>

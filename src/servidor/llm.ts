@@ -13,8 +13,9 @@ export interface OpcionModelo {
   providerOptions?: Record<string, Record<string, never> | Record<string, unknown>>;
 }
 
-export async function modelosInterrogatorio(): Promise<OpcionModelo[] | null> {
-  if (process.env.LLM_FALSO === "1") {
+/** `falso`: casos de autor sin publicar (ADR 0012), que se prueban sin gastar la cuota compartida. */
+export async function modelosInterrogatorio({ falso = false } = {}): Promise<OpcionModelo[] | null> {
+  if (falso || process.env.LLM_FALSO === "1") {
     const { modeloFalso } = await import("./llmFalso");
     return [{ modelo: modeloFalso(), nombre: "falso", timeoutMs: 5000 }];
   }

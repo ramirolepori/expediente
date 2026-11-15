@@ -3,6 +3,7 @@ import { obtenerCaso } from "@/casos/registro";
 import { ErrorDeJuego, nuevoId } from "@/motor/reductor";
 import { CONFIG_POR_DEFECTO, type ConfigPartida, type TipoConexion } from "@/motor/tipos";
 import { almacen, type Sala } from "./almacen";
+import { casoDeAutor } from "./casosAutor";
 
 const LETRAS = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sin I ni O para no confundir
 const COLORES = ["#e4572e", "#29a3a3", "#f3a712", "#8e7dbe", "#7bb661", "#e86a92", "#4f8fd6", "#c9a227"];
@@ -13,9 +14,20 @@ export class ErrorSala extends Error {
   }
 }
 
+/**
+ * El caso de una sala: del repo o de un autor (ADR 0012). Los de autor sin publicar son de prueba
+ * y se juegan con el modelo falso, para no gastar la cuota de Gemini.
+ */
+export async function casoDeSala(casoId: string) {
+  const delRepo = obtenerCaso(casoId);
+  if (delRepo) return { caso: delRepo, dePrueba: false };
+  const deAutor = await casoDeAutor(casoId).catch(() => null);
+  if (!deAutor) throw new ErrorSala("Ese caso no existe o ya no se puede jugar", 404);
+  return deAutor;
+}
+
 export async function crearSala(casoId: string, config?: Partial<ConfigPartida>) {
-  const caso = obtenerCaso(casoId);
-  if (!caso) throw new ErrorSala("Caso inexistente", 404);
+  await casoDeSala(casoId);
   let codigo = "";
   do {
     codigo = Array.from({ length: 4 }, () => LETRAS[Math.floor(Math.random() * LETRAS.length)]).join("");
@@ -52,7 +64,7 @@ export async function unirse(codigo: string, apodo: string, tipo: TipoConexion, 
   if (token && sala.tokens[token]) {
     return { token, conexionId: sala.tokens[token] };
   }
-  const caso = obtenerCaso(sala.estado.casoId)!;
+  const { caso } = await casoDeSala(sala.estado.casoId);
   const nombre = apodo.trim().slice(0, 24) || (tipo === "pantalla" ? "Pantalla" : "");
   if (!nombre) throw new ErrorSala("Elegí un apodo");
   const jugadores = Object.values(sala.estado.conexiones).filter((c) => c.tipo === "jugador");
@@ -86,7 +98,8 @@ export async function autenticar(codigo: string, token: string | null) {
   if (!sala) throw new ErrorSala("No existe una sala con ese código", 404);
   const conexionId = token ? sala.tokens[token] : undefined;
   if (!conexionId) throw new ErrorSala("No estás en esta sala", 401);
-  return { sala, conexionId, caso: obtenerCaso(sala.estado.casoId)! };
+  const { caso, dePrueba } = await casoDeSala(sala.estado.casoId);
+  return { sala, conexionId, caso, dePrueba };
 }
 
 export function respuestaError(e: unknown) {

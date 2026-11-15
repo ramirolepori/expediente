@@ -145,6 +145,10 @@ El mismo validador corre con `npm run validar` (casos del repo) y en `/autores` 
 5. **Archivos:** que cada imagen (escenas, `imagen` de pruebas, imágenes dentro del markdown y retratos) exista, sea jpg, png o webp de verdad, no pese de más y, en las escenas, que su proporción coincida con `proporcion`. Avisa las imágenes que sobran.
 6. **Seguridad**, siempre error: textos que le dan órdenes al modelo, HTML, links externos, caracteres invisibles, textos de más de 4.000 caracteres, un caso.json de más de 300 KB y rutas fuera de `/casos/<id>/`. Los casos de autores no pueden traer minijuegos personalizados.
 
+## Cómo subirlo (autores)
+
+En `/autores`, con tu cuenta, "Subir un caso" recibe la carpeta con `caso.json`, las imágenes (con las mismas rutas relativas que usa el caso después de `/casos/<id>/`) y, si lo tenés, `REVISION.md` con la solución explicada para quien revisa. Si pasa el validador queda **validado**; con "Probar con amigos" pasa a **privado** y se juega con su link usando el modelo de prueba. Cuando está listo, "Pedir que lo publiquen": un moderador lo revisa y lo **publica** o te lo devuelve con una nota.
+
 ## Cómo probarlo
 
 1. `npm run validar` hasta que dé ✅.

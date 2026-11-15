@@ -431,7 +431,7 @@ test("autores: el validador revisa la carpeta del caso y arma el informe para la
   await page.goto("/autores");
   await page.getByLabel("Mail para el login de prueba").fill("autora@prueba.test");
   await page.getByRole("button", { name: "Entrar (modo prueba)" }).click();
-  await page.getByLabel("Carpeta del caso").setInputFiles(carpeta);
+  await page.getByLabel("Carpeta del caso", { exact: true }).setInputFiles(carpeta);
   await expect(page.getByText("Listo para probar")).toBeVisible();
   await expect(page.getByText(/Muerte en la vendimia ·/)).toBeVisible();
 
@@ -444,4 +444,50 @@ test("autores: el validador revisa la carpeta del caso y arma el informe para la
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.getByRole("button", { name: "Copiar informe para tu IA" }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("## Errores");
+});
+
+test("autores: subir un caso, probarlo por link y publicarlo con un moderador", async ({ page: autora, browser }, info) => {
+  const carpeta = info.outputPath("vendimia");
+  cpSync("casos/vendimia/caso.json", `${carpeta}/caso.json`);
+  cpSync("casos/vendimia/REVISION.md", `${carpeta}/REVISION.md`);
+  cpSync("public/casos/vendimia", carpeta, { recursive: true });
+
+  await autora.goto("/autores");
+  await autora.getByLabel("Mail para el login de prueba").fill("autora2@prueba.test");
+  await autora.getByRole("button", { name: "Entrar (modo prueba)" }).click();
+  await autora.getByLabel("Carpeta del caso a subir").setInputFiles(carpeta);
+  const tarjeta = autora.getByRole("listitem").filter({ hasText: "Muerte en la vendimia" });
+  await expect(tarjeta.getByText("Validado", { exact: true })).toBeVisible();
+
+  await tarjeta.getByRole("button", { name: "Probar con amigos" }).click();
+  await expect(tarjeta.getByText("Privado", { exact: true })).toBeVisible();
+  const link = await tarjeta.getByRole("link", { name: "Jugarlo" }).getAttribute("href");
+  expect(link).toMatch(/\?caso=autor-/);
+
+  // por link aparece como caso de prueba, con sus imágenes servidas desde el almacenamiento de autores
+  const amigo = await (await browser.newContext()).newPage();
+  await amigo.goto(link!);
+  await expect(amigo.getByText("Caso de prueba")).toBeVisible();
+  const casoId = new URL(link!).searchParams.get("caso")!;
+  const imagen = await amigo.request.get(`/api/autores/archivos/${casoId.slice("autor-".length)}/escenas/nave.jpg`);
+  expect(imagen.status()).toBe(200);
+  // y todavía no está en el catálogo
+  expect((await (await amigo.request.get("/api/casos")).json()).some((c: { id: string }) => c.id === casoId)).toBe(false);
+
+  await tarjeta.getByRole("button", { name: "Pedir que lo publiquen" }).click();
+  await expect(tarjeta.getByText("Esperando revisión")).toBeVisible();
+
+  const admin = await (await browser.newContext()).newPage();
+  await admin.goto("/autores");
+  await admin.getByLabel("Mail para el login de prueba").fill("admin@prueba.test");
+  await admin.getByRole("button", { name: "Entrar (modo prueba)" }).click();
+  const pedido = admin.getByRole("listitem").filter({ hasText: "Muerte en la vendimia" }).filter({ hasText: "autora2@prueba.test" });
+  await pedido.getByRole("button", { name: "Leer REVISION.md" }).click();
+  await expect(pedido.getByText(/Vendimia|vendimia/).first()).toBeVisible();
+  await pedido.getByRole("button", { name: "Publicar" }).click();
+  await expect(admin.getByText("Publicados (1)")).toBeVisible();
+
+  expect((await (await amigo.request.get("/api/casos")).json()).some((c: { id: string }) => c.id === casoId)).toBe(true);
+  await autora.reload();
+  await expect(autora.getByRole("listitem").filter({ hasText: "Muerte en la vendimia" }).getByText("Publicado", { exact: true })).toBeVisible();
 });

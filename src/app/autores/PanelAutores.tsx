@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAutor, type Proveedor } from "@/cliente/sesion";
 import type { Autor } from "@/servidor/autores";
+import { MisCasos } from "./MisCasos";
+import { Moderacion } from "./Moderacion";
 import { Validador } from "./Validador";
 
 const NOMBRE_PROVEEDOR: Record<Proveedor, string> = { google: "Google", github: "GitHub" };
@@ -45,7 +47,8 @@ export function PanelAutores() {
         <div className="mt-10 space-y-6">
           <Perfil autor={autor} salir={salir} />
           <Validador pedir={pedir} />
-          <MisCasos />
+          <MisCasos pedir={pedir} />
+          {(autor.rol === "admin" || autor.rol === "moderador") && <Moderacion pedir={pedir} />}
           {autor.rol === "admin" && <Moderadores pedir={pedir} />}
         </div>
       ) : (
@@ -153,21 +156,6 @@ function Perfil({ autor, salir }: { autor: Autor; salir: () => void }) {
       <button onClick={salir} className="rounded-xl border border-borde px-4 py-2 text-sm transition hover:border-acento">
         Salir
       </button>
-    </section>
-  );
-}
-
-function MisCasos() {
-  return (
-    <section className="rounded-2xl border border-borde bg-panel p-5">
-      <h2 className="text-lg font-semibold">Mis casos</h2>
-      <div className="mt-4 rounded-xl border border-dashed border-borde px-5 py-8 text-center">
-        <p className="text-3xl" aria-hidden>
-          🗂️
-        </p>
-        <p className="mt-2 font-medium">Todavía no tenés casos</p>
-        <p className="mx-auto mt-1 max-w-md text-sm text-suave">Muy pronto vas a poder bajar el kit de autor y guardar tus casos acá para probarlos con amigos.</p>
-      </div>
     </section>
   );
 }

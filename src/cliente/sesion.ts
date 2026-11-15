@@ -14,7 +14,7 @@ export type Proveedor = "google" | "github";
 const CLAVE_FALSA = "expediente-autor-falso";
 let cliente: SupabaseClient | null = null;
 
-function supabaseAutores(): SupabaseClient | null {
+export function supabaseAutores(): SupabaseClient | null {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const clave = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (!url || !clave) return null;

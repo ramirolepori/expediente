@@ -1,6 +1,5 @@
 import { autorDelPedido } from "@/servidor/autores";
 import { ErrorSala, respuestaError } from "@/servidor/salas";
-import { informeParaIA } from "@/motor/informe";
 import { revisarCaso, type ArchivoPaquete } from "@/motor/validador";
 import { BYTES_CABECERA } from "@/motor/validador-archivos";
 
@@ -38,10 +37,10 @@ export async function POST(req: Request) {
       datos = JSON.parse(texto);
     } catch (e) {
       const hallazgos = [{ capa: "forma" as const, nivel: "error" as const, donde: "caso.json", mensaje: `no es un JSON válido (${(e as Error).message})` }];
-      return Response.json({ ok: false, hallazgos, informe: informeParaIA(hallazgos) });
+      return Response.json({ ok: false, titulo: null, hallazgos });
     }
     const r = revisarCaso(datos, { origen: "autor", archivos });
-    return Response.json({ ok: r.ok, titulo: r.caso?.meta.titulo ?? null, hallazgos: r.hallazgos, informe: informeParaIA(r.hallazgos, r.caso?.meta.titulo) });
+    return Response.json({ ok: r.ok, titulo: r.caso?.meta.titulo ?? null, hallazgos: r.hallazgos });
   } catch (e) {
     return respuestaError(e);
   }

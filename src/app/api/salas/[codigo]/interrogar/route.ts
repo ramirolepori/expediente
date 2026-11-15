@@ -23,7 +23,7 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
   try {
     const { codigo } = await ctx.params;
     const { token, personaje: personajeId, texto, prueba } = await req.json();
-    const { conexionId, caso, sala } = await autenticar(codigo, token);
+    const { conexionId, caso, sala, dePrueba } = await autenticar(codigo, token);
     const yo = sala.estado.conexiones[conexionId];
     if (yo.tipo !== "jugador") throw new ErrorSala("Solo los jugadores interrogan");
     if (sala.estado.fase !== "jugando") throw new ErrorSala("La partida no está en curso");
@@ -63,7 +63,7 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
       return { ...sl, estado };
     });
 
-    const modelos = await modelosInterrogatorio();
+    const modelos = await modelosInterrogatorio({ falso: dePrueba });
     if (!modelos) {
       await agregarMensaje(codigo, personaje.id, {
         id: nuevoId(), de: "sistema", hora: Date.now(),
