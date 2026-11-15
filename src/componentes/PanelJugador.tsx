@@ -12,6 +12,7 @@ import { Voces } from "./Voces";
 import { Corcho, LineaDeTiempo } from "./Pizarra";
 import { TarjetaMinijuego } from "./minijuegos/Minijuego";
 import { Lobby } from "./Lobby";
+import { Escena } from "./Escena";
 import { Resultado } from "./Resultado";
 
 type Sala = ReturnType<typeof useSala>;
@@ -136,6 +137,8 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
 
 function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
   const [abierta, setAbierta] = useState<string | null>(null);
+  // pruebas que este jugador ya abrió (marca con ✓ los puntos de la escena)
+  const [examinadas, setExaminadas] = useState<string[]>([]);
   const [codigos, setCodigos] = useState<Record<string, string>>({});
   // intentos enviados desde este dispositivo; si el candado sigue cerrado, el último falló
   const [fallidos, setFallidos] = useState<Record<string, number>>({});
@@ -174,12 +177,26 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
                 </span>
               </button>
             )}
+            {s.abierto && s.escena && (
+              <Escena
+                escena={s.escena}
+                abierta={abierta}
+                vistas={examinadas}
+                onAbrir={(id) => {
+                  setAbierta(id);
+                  setExaminadas((v) => (v.includes(id) ? v : [...v, id]));
+                }}
+              />
+            )}
             {s.abierto && (
               <div className="grid gap-2 sm:grid-cols-2">
                 {pruebas.map((p, i) => (
                   <button
                     key={p.id}
-                    onClick={() => setAbierta(abierta === p.id ? null : p.id)}
+                    onClick={() => {
+                      setAbierta(abierta === p.id ? null : p.id);
+                      setExaminadas((v) => (v.includes(p.id) ? v : [...v, p.id]));
+                    }}
                     style={{ animationDelay: `${Math.min(i, 10) * 60}ms` }}
                     className={`papel-entrar rounded-xl border px-4 py-3 text-left text-sm transition ${abierta === p.id ? "border-acento bg-panel-2" : "border-borde bg-panel hover:border-suave"}`}
                   >

@@ -8,6 +8,8 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 
 - Salas con código y QR, panel por jugador y tele compartida, tiempo real con Supabase. Con la partida empezada se puede sumar una tele o un jugador: el botón "➕ Sumar" del encabezado muestra código, QR y abre la tele. En modo traidor el traidor se sortea al abrir el caso, así que quien entra tarde nunca lo es.
 - Caso **Hotel Aurora** jugable: 3 sobres, celular navegable, candados, 4 minijuegos, modo traidor. Valentina ya no admite ser Arcimboldo con lo del primer sobre (necesita el labial, o el celular más el testimonio del hielo) y las opciones del móvil y de Duarte tienen largo parecido, sin nombrar ECLIPSE.
+- Caso **Muerte en la vendimia** (de Franco): 5 sobres como capítulos, 31 pruebas, 7 personajes, 2 minijuegos y modo traidor. Su documento de revisión con la solución y los cierres y ganchos de cada capítulo está en `casos/vendimia/REVISION.md`; los prompts de las imágenes, en `PROMPTS-IMAGENES.md`. Faltan retocar textos en inglés de algunas ilustraciones y la foto opcional del lado de adentro de la puerta. Sus personajes usan los rasgos por defecto.
+- Escenas ilustradas por sobre (ADR 0011): una imagen con círculos sobre los objetos que abren la prueba, como índice visual. Viajan solo con el sobre abierto y sin los puntos de pruebas bloqueadas. La descripción de un sobre se ve recién cuando se puede abrir, para que pueda resumir lo descubierto sin adelantar nada.
 - Interrogatorios con IA y guardrails (ADR 0002). Un secreto habilitado se cuenta de a partes, después de una reacción, no todo de golpe. Límites según la cuota gratis (ADR 0005): 3 s por jugador, 12 por sala por minuto, 150 por partida con contador visible, y ante un 429 del proveedor un aviso amable sin pasar al respaldo.
 - La tele muestra las pruebas recién desbloqueadas durante 25 s (o hasta que alguien pregunte) y una lista del expediente con las más nuevas arriba. Las del primer sobre y las que llegan con una respuesta no se destacan, solo se resaltan en la lista.
 - Pizarra compartida con hilos y línea de tiempo, notas personales y de equipo, votación y revelación final paso a paso.
@@ -20,7 +22,8 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 
 ## Pendiente, en orden
 
-Nada por ahora.
+1. **Pregunta del capítulo** (camino de piezas opcionales en el contrato, elegido por Ramiro el 15/11/2026): opciones que, al acertar, muestran un cierre y un gancho y destraban el sobre siguiente, más un resumen al empezar cada capítulo. En la Vendimia hoy el sobre 2 se abre apenas se abre el 1, sin resolver nada: esta pieza lo cubre. Los textos de cierre y gancho ya están en `casos/vendimia/REVISION.md`.
+2. **Kit de autor** para crear casos con IA externas, y en la plataforma un validador para subirlos. Antes hay que decidir dónde viven los casos nuevos (ADR 0008).
 
 Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
 

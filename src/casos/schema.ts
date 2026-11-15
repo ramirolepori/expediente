@@ -179,12 +179,33 @@ export const PersonajeSchema = z.object({
   apariencia: AparienciaSchema.optional(),
 });
 
+/** Escena ilustrada del sobre: una imagen con puntos que abren pruebas al tocarlos. */
+export const EscenaSchema = z.object({
+  /** imagen servida desde public/ (ej. /casos/vendimia/escenas/nave.jpg) */
+  imagen: z.string().startsWith("/"),
+  /** proporción de la imagen, ancho/alto (ej. 16/9 → 1.78) */
+  proporcion: z.number().positive().default(16 / 9),
+  descripcion: z.string().optional().describe("texto alternativo de la imagen"),
+  puntos: z
+    .array(
+      z.object({
+        prueba: Id,
+        /** posición en porcentaje del ancho y del alto de la imagen */
+        x: z.number().min(0).max(100),
+        y: z.number().min(0).max(100),
+        etiqueta: z.string(),
+      }),
+    )
+    .min(1),
+});
+
 export const SobreSchema = z.object({
   id: Id,
   titulo: z.string(),
   descripcion: z.string(),
   /** condición para poder abrirlo (además de abrirlo a mano) */
   requisito: CondicionSchema,
+  escena: EscenaSchema.optional(),
 });
 
 export const CandadoSchema = z.object({

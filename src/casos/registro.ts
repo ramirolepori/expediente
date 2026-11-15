@@ -1,8 +1,9 @@
 import { CasoSchema, type Caso } from "./schema";
 import hotelAurora from "../../casos/hotel-aurora/caso.json";
+import vendimia from "../../casos/vendimia/caso.json";
 
 /** Catálogo de casos jugables. Para sumar uno: agregarlo acá y correr `npm run validar`. */
-const FUENTES: unknown[] = [hotelAurora];
+const FUENTES: unknown[] = [hotelAurora, vendimia];
 
 let cache: Map<string, Caso> | null = null;
 

@@ -89,7 +89,24 @@ Hay dos estilos y conviene usar uno solo por caso:
 Todas las combinaciones se ven en `/laboratorio/personaje`. La emoción la elige el modelo en cada respuesta (`neutral`, `nervioso`, `enojado`, `triste`, `sorprendido`, `evasivo`, `confiado` o `quebrado`): no hace falta escribirla en el caso.
 
 ### `sobres`
-`{ id, titulo, descripcion, requisito }`. El primero tiene que tener `requisito: { "tipo": "siempre" }`. Lo habitual es que cada sobre pida el anterior.
+`{ id, titulo, descripcion, requisito, escena }`. El primero tiene que tener `requisito: { "tipo": "siempre" }`. Lo habitual es que cada sobre pida el anterior.
+
+Para armar el caso por capítulos, cada sobre es un capítulo: su `requisito` pide el sobre anterior y, si querés que el grupo resuelva algo antes de avanzar, un hecho, un candado o un minijuego del capítulo (por ejemplo `todas: [sobre anterior, hecho clave]`). La `descripcion` lleva el resumen de lo sabido y la pregunta del capítulo. Los jugadores ven la `descripcion` recién cuando el sobre se puede abrir, así que puede resumir lo que ya descubrieron sin adelantar nada.
+
+`escena` (opcional) es una ilustración del lugar con puntos para tocar. Cada punto abre una prueba del mismo sobre:
+
+```json
+"escena": {
+  "imagen": "/casos/<id>/escenas/nave.jpg",
+  "proporcion": 1.79,
+  "descripcion": "Texto alternativo de la imagen",
+  "puntos": [{ "prueba": "puerta_nave", "x": 86, "y": 52, "etiqueta": "Barra de la puerta" }]
+}
+```
+
+`x` e `y` van en porcentaje del ancho y el alto de la imagen. Los puntos de pruebas que todavía no se desbloquearon no se muestran. La imagen va en `public/casos/<id>/escenas/`, en 16:9, sin texto y comprimida (menos de 300 KB). La lista de pruebas sigue apareciendo debajo de la escena.
+
+Las pruebas pueden traer imágenes dentro del `contenido` con markdown: `![epígrafe](/casos/<id>/pruebas/foto.jpg)`.
 
 ### `pruebas`
 | Campo | Qué es |

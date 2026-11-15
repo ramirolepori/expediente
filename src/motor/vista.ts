@@ -1,6 +1,6 @@
 import type { Caso } from "@/casos/schema";
 import { aparienciaPublica } from "./apariencia";
-import { evaluar, minijuegoVisible, pruebasVisibles } from "./condiciones";
+import { evaluar, minijuegoVisible, pruebaVisible, pruebasVisibles } from "./condiciones";
 import { LIMITES_INTERROGATORIO, preguntasHechas } from "./interrogatorio";
 import { configPublica } from "./minijuegos";
 import { recursosRestantes } from "./reductor";
@@ -26,13 +26,29 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
       ambientacion: caso.ambientacion,
       introduccion: caso.introduccion,
     },
-    sobres: caso.sobres.map((s) => ({
-      id: s.id,
-      titulo: s.titulo,
-      descripcion: s.descripcion,
-      abierto: estado.sobresAbiertos.includes(s.id),
-      sePuedeAbrir: evaluar(s.requisito, estado, caso),
-    })),
+    sobres: caso.sobres.map((s) => {
+      const abierto = estado.sobresAbiertos.includes(s.id);
+      const sePuedeAbrir = evaluar(s.requisito, estado, caso);
+      return {
+        id: s.id,
+        titulo: s.titulo,
+        // la descripción suele resumir lo que el grupo ya descubrió: viaja recién cuando el sobre se puede abrir
+        descripcion: abierto || sePuedeAbrir ? s.descripcion : "",
+        abierto,
+        sePuedeAbrir,
+        // la escena solo viaja con el sobre abierto, y sin los puntos de pruebas todavía bloqueadas
+        // (un círculo de más adelantaría que ahí hay algo)
+        escena:
+          abierto && s.escena
+            ? {
+                imagen: s.escena.imagen,
+                proporcion: s.escena.proporcion,
+                descripcion: s.escena.descripcion ?? s.titulo,
+                puntos: s.escena.puntos.filter((pt) => pruebaVisible(pt.prueba, estado, caso)),
+              }
+            : null,
+      };
+    }),
     pruebas: estado.fase === "lobby" ? [] : pruebasVisibles(estado, caso),
     // un personaje todavía no disponible no revela ni su nombre (sería un spoiler)
     personajes: caso.personajes

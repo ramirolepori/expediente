@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import datos from "../../casos/hotel-aurora/caso.json";
+import datosVendimia from "../../casos/vendimia/caso.json";
 import { CasoSchema } from "@/casos/schema";
 import { validarCaso } from "./validador";
 import { aplicar, ErrorDeJuego, revelarHecho } from "./reductor";
@@ -177,6 +178,14 @@ describe("Hotel Aurora", () => {
     expect(resolverRevelacion(caso, personaje("valentina"), conHielo, "valentina_admite_arcimboldo").ok).toBe(true);
   });
 
+  it("la descripción de un sobre cerrado no viaja hasta que se puede abrir", () => {
+    const s = partida();
+    const sobres = vistaPara(caso, s, "a").sobres;
+    const cerrado = sobres.find((x) => !x.abierto && !x.sePuedeAbrir)!;
+    expect(cerrado.descripcion).toBe("");
+    expect(sobres.find((x) => x.abierto)!.descripcion).not.toBe("");
+  });
+
   it("cuenta las preguntas de la partida y de la ventana reciente", () => {
     const s = partida();
     s.interrogatorios = {
@@ -240,5 +249,40 @@ describe("Hotel Aurora", () => {
 
   it("no se puede votar con preguntas sin responder", () => {
     expect(() => aplicar(partida(), { tipo: "votar", respuestas: { autor: "julian" } }, "a", caso)).toThrow(ErrorDeJuego);
+  });
+});
+
+describe("Muerte en la vendimia (escenas)", () => {
+  const casoV = CasoSchema.parse(datosVendimia);
+  const partidaV = (): EstadoPartida => {
+    const s = partida();
+    return { ...s, casoId: casoV.meta.id, sobresAbiertos: ["s1_nave"] };
+  };
+
+  it("pasa el validador", () => {
+    const r = validarCaso(datosVendimia);
+    expect(r.errores).toEqual([]);
+    expect(r.ok).toBe(true);
+  });
+
+  it("la escena solo viaja con el sobre abierto", () => {
+    const v = vistaPara(casoV, partidaV(), "a");
+    expect(v.sobres.find((s) => s.id === "s1_nave")!.escena?.puntos.length).toBe(5);
+    expect(v.sobres.find((s) => s.id === "s2_fiesta")!.escena).toBeNull();
+  });
+
+  it("la escena no muestra puntos de pruebas bloqueadas", () => {
+    const conEscena = structuredClone(datosVendimia) as typeof datosVendimia;
+    conEscena.sobres[3].escena = { imagen: "/x.jpg", proporcion: 1.5, puntos: [{ prueba: "celular_ignacio", x: 10, y: 10, etiqueta: "Celular" }] } as never;
+    const c = CasoSchema.parse(conEscena);
+    const s = { ...partidaV(), sobresAbiertos: ["s1_nave", "s2_fiesta", "s3_control", "s4_venta"] };
+    expect(vistaPara(c, s, "a").sobres.find((x) => x.id === "s4_venta")!.escena?.puntos).toEqual([]);
+    expect(vistaPara(c, { ...s, candadosAbiertos: ["pin_celular"] }, "a").sobres.find((x) => x.id === "s4_venta")!.escena?.puntos).toHaveLength(1);
+  });
+
+  it("el validador rechaza puntos que apuntan a pruebas de otro sobre", () => {
+    const malo = structuredClone(datosVendimia) as typeof datosVendimia;
+    malo.sobres[0].escena!.puntos[0].prueba = "fotos_camila";
+    expect(validarCaso(malo).errores.join(" ")).toContain("es del sobre s2_fiesta");
   });
 });

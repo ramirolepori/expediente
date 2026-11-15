@@ -61,6 +61,14 @@ export function validarCaso(datos: unknown, existe?: (ruta: string) => boolean):
     }
   };
   caso.sobres.forEach((s) => chequear(s.requisito, `sobre ${s.id}`));
+  caso.sobres.forEach((s) =>
+    s.escena?.puntos.forEach((pt) => {
+      const prueba = caso.pruebas.find((p) => p.id === pt.prueba);
+      if (!prueba) errores.push(`escena del sobre ${s.id}: prueba inexistente "${pt.prueba}"`);
+      else if (prueba.sobre !== s.id) errores.push(`escena del sobre ${s.id}: la prueba "${pt.prueba}" es del sobre ${prueba.sobre}`);
+      if (s.escena!.puntos.filter((o) => o.prueba === pt.prueba).length > 1) avisos.push(`escena del sobre ${s.id}: la prueba "${pt.prueba}" tiene más de un punto`);
+    }),
+  );
   caso.candados.forEach((c) => chequear(c.disponible, `candado ${c.id}`));
   caso.ayudas.forEach((a) => chequear(a.disponible, `ayuda ${a.id}`));
   caso.minijuegos.forEach((m) => {
