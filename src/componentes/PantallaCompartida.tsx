@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { VistaPartida } from "@/motor/vista";
 import { BotonSalir, Maquina, Punto, QR, Reloj, useAhora, useUrlSala } from "./comunes";
 import { Corcho } from "./Pizarra";
 import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
 import { Voces } from "./Voces";
+import { Documento, iconoPrueba } from "./Documento";
+
+const DESTACAR_MS = 25_000;
 
 /** Lo que se ve en la tele: nada privado, todo grande y legible a distancia. */
 export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; onSalir: () => Promise<void> }) {
@@ -16,6 +19,28 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
   const ahora = useAhora(5000);
   // lo que ya estaba cuando se abrió la tele no se anima
   const [previos] = useState(() => new Set(Object.values(vista.interrogatorios).flat().map((m) => m.id)));
+  // pruebas en el orden en que aparecieron, la más nueva primero; las que ya estaban van en orden inverso del caso
+  const [conocidas, setConocidas] = useState(() => vista.pruebas.map((p) => p.id).reverse());
+  // pruebas recién desbloqueadas y cuántos mensajes de interrogatorio había en ese momento
+  const [destacadas, setDestacadas] = useState<{ ids: string[]; mensajes: number }>({ ids: [], mensajes: 0 });
+  const mensajes = Object.values(vista.interrogatorios).flat().length;
+  const [mensajesAntes, setMensajesAntes] = useState(mensajes);
+  const [ultimas, setUltimas] = useState<string[]>([]);
+  const nuevas = vista.pruebas.filter((p) => !conocidas.includes(p.id)).map((p) => p.id);
+  if (nuevas.length) {
+    setConocidas([...nuevas.toReversed(), ...conocidas]);
+    if (conocidas.length) setUltimas(nuevas);
+    // no se destacan las del primer sobre (llegan con el arranque y taparían la introducción)
+    // ni las que llegan junto con una respuesta (se lee la respuesta; la prueba queda resaltada en la lista)
+    if (conocidas.length && mensajes === mensajesAntes) setDestacadas({ ids: nuevas, mensajes });
+  }
+  if (mensajes !== mensajesAntes) setMensajesAntes(mensajes);
+  // ocupan la pantalla un rato, o hasta que alguien pregunte algo
+  useEffect(() => {
+    if (!destacadas.ids.length) return;
+    const t = setTimeout(() => setDestacadas((d) => ({ ...d, ids: [] })), DESTACAR_MS);
+    return () => clearTimeout(t);
+  }, [destacadas]);
 
   if (vista.fase === "lobby") {
     return (
@@ -58,6 +83,9 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
   const interrogando = !!activo && ahora - activo.ultimo < 120_000;
   const personaje = interrogando ? vista.personajes.find((p) => p.id === activo.id) : undefined;
   const autor = (id?: string) => vista.conexiones.find((c) => c.id === id);
+  const prueba = (id: string) => vista.pruebas.find((p) => p.id === id);
+  const pruebasDestacadas = mensajes === destacadas.mensajes ? destacadas.ids.flatMap((id) => prueba(id) ?? []) : [];
+  const recientes = conocidas.slice(0, 6).flatMap((id) => prueba(id) ?? []);
 
   return (
     <main className="grid min-h-dvh grid-rows-[auto_1fr] gap-6 p-6 lg:p-10">
@@ -78,7 +106,19 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
 
       <div className="grid min-h-0 gap-6 lg:grid-cols-[1.5fr_1fr]">
         <section className="flex min-h-0 flex-col rounded-2xl border border-borde bg-panel p-6">
-          {personaje ? (
+          {pruebasDestacadas.length ? (
+            <>
+              <p className="text-sm uppercase tracking-widest text-acento">{pruebasDestacadas.length === 1 ? "Nueva prueba en el expediente" : "Nuevas pruebas en el expediente"}</p>
+              <div className={`mt-4 grid min-h-0 flex-1 gap-5 overflow-hidden ${pruebasDestacadas.length > 1 ? "md:grid-cols-2" : ""}`}>
+                {pruebasDestacadas.slice(0, 4).map((p) => (
+                  <div key={p.id} className={`min-h-0 overflow-hidden ${pruebasDestacadas.length <= 2 ? "[zoom:1.3]" : ""}`}>
+                    <Documento prueba={p} />
+                  </div>
+                ))}
+              </div>
+              {pruebasDestacadas.length > 4 && <p className="mt-3 text-xl text-suave">Y {pruebasDestacadas.length - 4} más en el panel de cada uno.</p>}
+            </>
+          ) : personaje ? (
             <>
               <p className="text-sm uppercase tracking-widest text-suave">Interrogatorio en curso</p>
               <h2 className="font-titulo text-3xl">{personaje.nombre}</h2>
@@ -116,6 +156,16 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
               {vista.sobres.map((s) => (
                 <li key={s.id} className={s.abierto ? "" : "text-suave"}>
                   {s.abierto ? "📂" : "✉️"} {s.titulo}
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section className="rounded-2xl border border-borde bg-panel p-5">
+            <h2 className="mb-3 text-lg font-semibold">Expediente ({vista.pruebas.length} pruebas)</h2>
+            <ul className="space-y-1.5 text-lg">
+              {recientes.map((p) => (
+                <li key={p.id} className={`aparecer truncate ${ultimas.includes(p.id) ? "text-acento" : ""}`}>
+                  {iconoPrueba(p.tipo)} {p.titulo}
                 </li>
               ))}
             </ul>

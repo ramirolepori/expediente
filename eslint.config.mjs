@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // worktrees de las sesiones de Claude Code: son copias del repo con sus propios artefactos
+    ".claude/**",
     // artefactos de los tests de punta a punta
     ".next-e2e/**",
     "playwright-report/**",

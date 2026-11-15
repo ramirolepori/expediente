@@ -42,6 +42,9 @@ test("partida completa: dos jugadores y la tele", async ({ page: anfitrion, brow
   // abrir un sobre: aviso agrupado en el otro dispositivo
   await anfitrion.getByRole("button", { name: /Sobre 2.*Abrir sobre/ }).click();
   await expect(lu.getByText("7 pruebas nuevas en el expediente")).toBeVisible();
+  // la tele muestra las pruebas recién desbloqueadas y las suma al expediente
+  await expect(tele.getByText("Nuevas pruebas en el expediente")).toBeVisible();
+  await expect(tele.getByRole("heading", { name: /Expediente \(\d+ pruebas\)/ })).toBeVisible();
 
   // el celular de la víctima se navega como uno real
   await anfitrion.getByRole("button", { name: "📱 Celular de Julia" }).click();
