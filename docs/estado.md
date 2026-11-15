@@ -6,7 +6,7 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 
 ## Funcionando en producción
 
-- Salas con código y QR, panel por jugador y tele compartida, tiempo real con Supabase.
+- Salas con código y QR, panel por jugador y tele compartida, tiempo real con Supabase. Con la partida empezada se puede sumar una tele o un jugador: el botón "➕ Sumar" del encabezado muestra código, QR y abre la tele. En modo traidor el traidor se sortea al abrir el caso, así que quien entra tarde nunca lo es.
 - Caso **Hotel Aurora** jugable: 3 sobres, celular navegable, candados, 4 minijuegos, modo traidor. Valentina ya no admite ser Arcimboldo con lo del primer sobre (necesita el labial, o el celular más el testimonio del hielo) y las opciones del móvil y de Duarte tienen largo parecido, sin nombrar ECLIPSE.
 - Interrogatorios con IA y guardrails (ADR 0002). Un secreto habilitado se cuenta de a partes, después de una reacción, no todo de golpe. Límites según la cuota gratis (ADR 0005): 3 s por jugador, 12 por sala por minuto, 150 por partida con contador visible, y ante un 429 del proveedor un aviso amable sin pasar al respaldo.
 - Pizarra compartida con hilos y línea de tiempo, notas personales y de equipo, votación y revelación final paso a paso.

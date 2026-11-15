@@ -94,6 +94,24 @@ test("partida completa: dos jugadores y la tele", async ({ page: anfitrion, brow
   await anfitrion.waitForURL("/");
 });
 
+test("con la partida empezada se suman la tele y un jugador", async ({ page: anfitrion, browser }) => {
+  const codigo = await crearSala(anfitrion, "Ramiro");
+  const lu = await unirJugador(browser, codigo, "Lu");
+  await anfitrion.getByRole("button", { name: "Abrir el caso" }).click();
+  await expect(lu.getByRole("heading", { name: "Sobre 1: La escena" })).toBeVisible();
+
+  // la tele se abre desde el panel, con el código a mano
+  await anfitrion.getByText("➕ Sumar").click();
+  await expect(anfitrion.getByText(codigo, { exact: true })).toBeVisible();
+  const [tele] = await Promise.all([anfitrion.waitForEvent("popup"), anfitrion.getByRole("button", { name: "📺 Abrir la pantalla compartida" }).click()]);
+  await tele.getByRole("button", { name: "Conectar como pantalla compartida" }).click();
+  await expect(tele.getByText("Se conectó una pantalla compartida")).toBeVisible();
+
+  const mati = await unirJugador(browser, codigo, "Mati");
+  await expect(mati.getByRole("heading", { name: "Sobre 1: La escena" })).toBeVisible();
+  await expect(tele.getByText("Mati se sumó a la investigación")).toBeVisible();
+});
+
 test("límite: una segunda pregunta inmediata se rechaza", async ({ request }) => {
   const { codigo } = await (await request.post("/api/salas", { data: { casoId: "hotel_aurora" } })).json();
   const unir = async (apodo: string) => (await (await request.post(`/api/salas/${codigo}/unirse`, { data: { apodo, tipo: "jugador" } })).json()).token;
@@ -138,6 +156,12 @@ test("modo traidor: uno solo ve la ficha y el cierre lo revela", async ({ page: 
   const conFicha = [];
   for (const j of jugadores) if (await j.getByRole("button", { name: /rol secreto/i }).count()) conFicha.push(j);
   expect(conFicha).toHaveLength(1);
+
+  // quien entra tarde no puede ser el traidor
+  const dani = await unirJugador(browser, codigo, "Dani");
+  await expect(dani.getByRole("heading", { name: "Sobre 1: La escena" })).toBeVisible();
+  await expect(dani.getByRole("button", { name: /rol secreto/i })).toHaveCount(0);
+  jugadores.push(dani);
 
   // la ficha se ve solo mientras se mantiene apretada
   const boton = conFicha[0].getByRole("button", { name: /rol secreto/i });

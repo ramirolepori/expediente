@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
-import { BotonSalir, Markdown, Punto, Reloj } from "./comunes";
+import { BotonSalir, Markdown, Punto, QR, Reloj, useUrlSala } from "./comunes";
 import { Documento, iconoPrueba } from "./Documento";
 import { Avisos } from "./Avisos";
 import { FichaSecreta } from "./FichaSecreta";
@@ -15,6 +15,24 @@ import { Lobby } from "./Lobby";
 import { Resultado } from "./Resultado";
 
 type Sala = ReturnType<typeof useSala>;
+
+/** Código, QR y tele a mano con la partida empezada, para sumar gente o una pantalla. */
+function Sumar({ codigo }: { codigo: string }) {
+  const url = useUrlSala(codigo);
+  return (
+    <details className="relative">
+      <summary className="cursor-pointer list-none hover:text-acento">➕ Sumar</summary>
+      <div className="absolute right-0 z-30 mt-2 w-64 rounded-2xl border border-borde bg-panel p-4 text-center shadow-xl">
+        <p className="text-xs text-suave">Código de la sala</p>
+        <p className="font-mono text-3xl font-bold tracking-[0.3em] text-texto">{codigo}</p>
+        <div className="mt-3 flex justify-center">{url ? <QR url={url} tamano={140} /> : <div className="h-[140px]" />}</div>
+        <button onClick={() => window.open(`/sala/${codigo}?pantalla`, "_blank")} className="mt-3 w-full rounded-xl border border-borde bg-panel-2 py-2 text-sm font-medium text-texto">
+          📺 Abrir la pantalla compartida
+        </button>
+      </div>
+    </details>
+  );
+}
 type Pestana = "expediente" | "interrogar" | "pizarra" | "notas" | "resolver";
 
 const PESTANAS: { id: Pestana; nombre: string; icono: string }[] = [
@@ -95,6 +113,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
             {vista.recursosRestantes !== null && <span title="Horas de investigación">🕰 {vista.recursosRestantes} h</span>}
             <Reloj iniciada={vista.iniciada} limiteMin={vista.config.temporizadorMin} />
             <Voces vista={vista} />
+            <Sumar codigo={vista.codigo} />
             <BotonSalir onSalir={sala.salir} />
           </div>
         </header>
