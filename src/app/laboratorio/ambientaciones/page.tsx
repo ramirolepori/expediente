@@ -26,8 +26,7 @@ export default function Pagina() {
         <div className="fx-3" />
       </div>
       <main className="capa-juego mx-auto max-w-4xl px-4 py-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-acento">Laboratorio</p>
-        <h1 className="font-titulo text-4xl">Ambientaciones</h1>
+                <h1 className="font-titulo text-4xl">Ambientaciones</h1>
         <div className="mt-4 flex flex-wrap gap-2">
           {AMBIENTACIONES.map((a) => (
             <button key={a} onClick={() => setAmb(a)} className={`rounded-full border px-3 py-1.5 text-sm ${amb === a ? "border-acento bg-acento text-acento-texto" : "border-borde bg-panel"}`}>

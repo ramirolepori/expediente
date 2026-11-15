@@ -40,8 +40,7 @@ export function Comparacion({ imagenes }: { imagenes: Record<string, string> }) 
   return (
     <main data-ambientacion="noir" className="ambiente min-h-dvh px-4 py-8">
       <div className="mx-auto max-w-5xl">
-        <p className="text-xs uppercase tracking-[0.3em] text-acento">Laboratorio</p>
-        <h1 className="font-titulo text-3xl">Alberto Mansilla: dos estilos</h1>
+                <h1 className="font-titulo text-3xl">Alberto Mansilla: dos estilos</h1>
         <p className="mt-1 text-sm text-suave">Mismas emociones, mismas animaciones. Probá cada emoción, hacelo hablar y probá la confesión.</p>
 
         <div className="mt-5 flex flex-wrap gap-2">

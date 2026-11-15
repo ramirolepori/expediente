@@ -186,6 +186,11 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
           </div>
         </div>
       </section>
+      <footer className="mt-12 border-t border-borde pt-4 text-sm text-suave">
+        <a href="/laboratorio" className="hover:text-acento">
+          🧪 Laboratorio de diseño
+        </a>
+      </footer>
       <style>{`.sel{width:100%;border-radius:.75rem;border:1px solid var(--borde);background:var(--panel-2);padding:.6rem .75rem;color:var(--texto)}`}</style>
     </main>
   );
