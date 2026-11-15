@@ -13,7 +13,11 @@ export interface OpcionModelo {
   providerOptions?: Record<string, Record<string, never> | Record<string, unknown>>;
 }
 
-export function modelosInterrogatorio(): OpcionModelo[] | null {
+export async function modelosInterrogatorio(): Promise<OpcionModelo[] | null> {
+  if (process.env.LLM_FALSO === "1") {
+    const { modeloFalso } = await import("./llmFalso");
+    return [{ modelo: modeloFalso(), nombre: "falso", timeoutMs: 5000 }];
+  }
   if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) return null;
   // el lite responde en 1-3 s de forma estable; el flash es mejor actor pero en el plan gratis tarda 10-30 s
   const principal = process.env.MODELO_LLM ?? "gemini-3.1-flash-lite";

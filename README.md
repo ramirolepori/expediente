@@ -46,3 +46,16 @@ Abrí `http://localhost:3000`. Los celulares en la misma WiFi entran escaneando 
 4. Cargar las variables en Vercel y desplegar: `npx vercel deploy --prod`.
 
 Con Supabase configurado, las salas se guardan en Postgres y el tiempo real usa Supabase Realtime: el servidor solo avisa "hubo un cambio" y cada dispositivo pide su vista filtrada, así la solución nunca viaja por el canal público.
+
+## Cómo se prueba
+
+| Comando | Qué hace | Cuánto tarda |
+|---|---|---|
+| `npm test` | Tests del motor (reglas, guardrails, vista filtrada) | ~1 s |
+| `npm run e2e` | Juega partidas completas en un navegador automático: dos jugadores, la tele, sobres, celular, interrogatorios, candados, votación y salir. Usa salas en memoria y un modelo falso (`LLM_FALSO=1`), así no gasta Gemini ni toca Supabase | ~15 s |
+| `npm run humo -- <url>` | Prueba rápida contra un despliegue: responde, guarda salas, abre sobres. Con `--con-modelo` hace una pregunta real | ~8 s |
+| `npm run verificar` | Lint, tests, validación de casos y e2e, en ese orden | ~30 s |
+
+El modelo falso responde "Respuesta de prueba" y, si la pregunta incluye `[revelar:clave]`, primero intenta revelar esa clave, para probar los guardrails.
+
+GitHub Actions corre todo esto en cada push a `main`, y la prueba rápida cada vez que Vercel termina un despliegue a producción.

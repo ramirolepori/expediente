@@ -62,7 +62,7 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
       return { ...sl, estado };
     });
 
-    const modelos = modelosInterrogatorio();
+    const modelos = await modelosInterrogatorio();
     if (!modelos) {
       await agregarMensaje(codigo, personaje.id, {
         id: nuevoId(), de: "sistema", hora: Date.now(),
