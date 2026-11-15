@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
 import { BotonSalir, Markdown, Punto, QR, Reloj, useUrlSala } from "./comunes";
+import { BotonEscuchar, lecturaDe, ReproductorLectura } from "./Narrador";
 import { Documento, iconoPrueba } from "./Documento";
 import { Avisos } from "./Avisos";
 import { FichaSecreta } from "./FichaSecreta";
@@ -34,6 +35,12 @@ function Sumar({ codigo }: { codigo: string }) {
     </details>
   );
 }
+/** Escuchar en voz alta: acá o, si hay tele, en la tele para todos (se elige en el momento). */
+function Escuchar({ que, sala, vista, chico }: { que: string; sala: Sala; vista: VistaPartida; chico?: boolean }) {
+  const hayTele = vista.conexiones.some((c) => c.tipo === "pantalla");
+  return <BotonEscuchar chico={chico} lectura={() => lecturaDe(que, vista)} enTele={hayTele ? () => void sala.accion({ tipo: "narrar", que }) : undefined} />;
+}
+
 type Pestana = "expediente" | "interrogar" | "pizarra" | "notas" | "resolver";
 
 const PESTANAS: { id: Pestana; nombre: string; icono: string }[] = [
@@ -67,7 +74,8 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
   if (vista.fase === "terminada") {
     return (
       <>
-        <Resultado vista={vista} />
+        <Resultado vista={vista} escuchar={<Escuchar que="resolucion" sala={sala} vista={vista} />} />
+        <ReproductorLectura />
         <div className="pb-10 text-center">
           <BotonSalir onSalir={sala.salir} pedirConfirmacion={false} className="rounded-xl border border-borde px-4 py-2" />
         </div>
@@ -78,6 +86,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
       <Avisos vista={vista} />
+      <ReproductorLectura />
       {/* barra lateral en pantallas grandes, barra inferior en celulares */}
       <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-borde bg-panel/95 backdrop-blur lg:sticky lg:top-0 lg:h-dvh lg:w-56 lg:shrink-0 lg:flex-col lg:border-t-0 lg:border-r lg:bg-panel lg:p-3">
         <div className="hidden px-2 pb-4 lg:block">
@@ -150,6 +159,9 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
     <div className="space-y-6">
       <details className="papel rounded-sm px-5 py-4" open={vista.sobres.filter((s) => s.abierto).length === 1}>
         <summary className="cursor-pointer text-lg">📜 Introducción al caso</summary>
+        <div className="mt-2 flex justify-end">
+          <Escuchar que="introduccion" sala={sala} vista={vista} chico />
+        </div>
         <div className="mt-2 leading-relaxed">
           <Markdown>{vista.caso.introduccion}</Markdown>
         </div>
@@ -216,7 +228,7 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
             )}
             {pruebas.some((p) => p.id === abierta) && (
               <div ref={doc} className="mt-4 scroll-mt-16">
-                <Documento prueba={pruebas.find((p) => p.id === abierta)!} />
+                <Documento prueba={pruebas.find((p) => p.id === abierta)!} accion={<Escuchar que={`prueba:${abierta}`} sala={sala} vista={vista} chico />} />
               </div>
             )}
           </section>

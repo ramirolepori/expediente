@@ -7,6 +7,7 @@ import { Corcho } from "./Pizarra";
 import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
 import { Voces } from "./Voces";
+import { NarracionEnTele, ReproductorLectura } from "./Narrador";
 import { Documento, iconoPrueba } from "./Documento";
 import { Personaje } from "./personaje/Personaje";
 
@@ -72,6 +73,8 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
       <>
         {salir}
         <Resultado vista={vista} grande />
+        <NarracionEnTele vista={vista} />
+        <ReproductorLectura grande />
       </>
     );
   }
@@ -90,6 +93,8 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
 
   return (
     <main className="grid min-h-dvh grid-rows-[auto_1fr] gap-6 p-6 lg:p-10">
+      <NarracionEnTele vista={vista} />
+      <ReproductorLectura grande />
       <Avisos vista={vista} grande />
       {salir}
       <header className="flex items-end justify-between gap-6">

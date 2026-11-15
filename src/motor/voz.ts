@@ -78,3 +78,47 @@ export function vocesDelElenco(personajes: Pick<Personaje, "id" | "voz">[]): Rec
 
 /** Tono que se escucha con esta voz, en Hz. */
 export const f0De = (v: VozPiper) => Math.round(Object.values(BASES).flat().find((b) => b.modelo === v.modelo && b.hablante === v.hablante)!.f0 * v.altura);
+
+type Voz = Personaje["voz"];
+
+/** Narrador por defecto según la ambientación, si el caso no trae el suyo. */
+const NARRADOR: Record<string, Voz> = {
+  noir: { genero: "masculino", edad: "mayor", velocidad: 0.92, tono: "grave" },
+  policial: { genero: "masculino", edad: "adulto", velocidad: 1, tono: "calmo" },
+  medico: { genero: "femenino", edad: "adulto", velocidad: 1, tono: "calmo" },
+  terror: { genero: "masculino", edad: "mayor", velocidad: 0.88, tono: "grave" },
+  epoca: { genero: "femenino", edad: "mayor", velocidad: 0.95, tono: "formal" },
+};
+
+/** Una voz base que el elenco no use, para que el narrador no suene como ningún personaje. */
+function baseLibre(genero: Genero, usadas: VozPiper[]): Base {
+  const libres = BASES[genero].filter((b) => !usadas.some((u) => u.modelo === b.modelo && u.hablante === b.hablante));
+  return libres[0] ?? BASES[genero][BASES[genero].length - 1]!;
+}
+
+function vozFija(voz: Voz, base: Base): VozPiper {
+  const [min, max] = RANGO_F0[voz.genero];
+  const altura = Math.min(max / base.f0, Math.max(min / base.f0, ALTURA_EDAD[voz.edad] + (voz.tono && GRAVE.test(voz.tono) ? -0.04 : 0)));
+  return {
+    modelo: base.modelo,
+    ...(base.hablante !== undefined && { hablante: base.hablante }),
+    lengthScale: 1 / voz.velocidad,
+    altura: Math.round(altura * 1000) / 1000,
+    // quien narra lee parejo: menos vaivén que un personaje
+    expresividad: 0.8,
+  };
+}
+
+/**
+ * Las voces para leer documentos: la del narrador (la del caso o una según la ambientación) y otra
+ * del género contrario para la segunda persona de un chat o un diálogo sin personaje asignado.
+ */
+export function vocesDeLectura(ambientacion: string, personajes: Pick<Personaje, "id" | "voz">[], narrador?: Voz) {
+  const elenco = Object.values(vocesDelElenco(personajes));
+  const voz = narrador ?? NARRADOR[ambientacion] ?? NARRADOR.policial!;
+  const otroGenero: Genero = voz.genero === "masculino" ? "femenino" : "masculino";
+  return {
+    narrador: vozFija(voz, baseLibre(voz.genero, elenco)),
+    otra: vozFija({ genero: otroGenero, edad: "adulto", velocidad: 1 }, baseLibre(otroGenero, elenco)),
+  };
+}

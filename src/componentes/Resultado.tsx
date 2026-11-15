@@ -6,7 +6,7 @@ import type { VistaPartida } from "@/motor/vista";
 const PAUSA_MS = 1600;
 
 /** Cierre del caso. Si la acusación es reciente, se revela pregunta por pregunta con suspenso. */
-export function Resultado({ vista, grande }: { vista: VistaPartida; grande?: boolean }) {
+export function Resultado({ vista, grande, escuchar }: { vista: VistaPartida; grande?: boolean; escuchar?: React.ReactNode }) {
   const a = vista.acusacion;
   const total = vista.preguntas.length;
   const [paso, setPaso] = useState(total);
@@ -114,7 +114,10 @@ export function Resultado({ vista, grande }: { vista: VistaPartida; grande?: boo
 
       {terminado && (
         <section className="papel revelar mt-8 rounded-sm p-6">
-          <h2 className={grande ? "text-3xl" : "text-xl"}>Lo que realmente pasó</h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className={grande ? "text-3xl" : "text-xl"}>Lo que realmente pasó</h2>
+            {escuchar}
+          </div>
           <p className={`mt-3 leading-relaxed ${grande ? "text-xl" : ""}`}>{vista.verdad.resumen}</p>
           <details className="mt-4">
             <summary className="cursor-pointer">Cronología completa</summary>

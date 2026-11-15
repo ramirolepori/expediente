@@ -112,6 +112,8 @@ export interface EstadoPartida {
   /** conexión que juega de traidor (modo traidor) */
   traidor?: string | null;
   acusacion: ResultadoAcusacion | null;
+  /** lo último que un jugador mandó a leer en la pantalla compartida: "introduccion", "resolucion" o "prueba:<id>" */
+  narracion?: { id: string; que: string; por: string } | null;
   eventos: Evento[];
   version: number;
 }
@@ -134,4 +136,5 @@ export type Accion =
   | { tipo: "votar"; respuestas: Record<string, string> }
   | { tipo: "retirarVoto" }
   | { tipo: "cerrarVotacion" }
-  | { tipo: "configurar"; config: Partial<ConfigPartida> };
+  | { tipo: "configurar"; config: Partial<ConfigPartida> }
+  | { tipo: "narrar"; que: string | null };

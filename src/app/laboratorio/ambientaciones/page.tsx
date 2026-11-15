@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { AMBIENTACIONES, type Ambientacion, type Prueba } from "@/casos/schema";
 import { Documento } from "@/componentes/Documento";
+import { BotonEscuchar, ReproductorLectura } from "@/componentes/Narrador";
+import { oraciones } from "@/cliente/voces";
+import { guionDePrueba } from "@/motor/narracion";
+import { vocesDeLectura, vocesDelElenco } from "@/motor/voz";
 
 const NOMBRES: Record<Ambientacion, string> = { noir: "Noir", policial: "Policial moderno", medico: "Médico / forense", terror: "Terror", epoca: "De época" };
 
@@ -12,7 +16,7 @@ const PRUEBA: Prueba = {
   tipo: "informe",
   sobre: "s1",
   contenido:
-    "**Hora probable de muerte:** entre las 23:20 y las 23:40.\n\n- La puerta no fue forzada.\n- Dos copas sobre la mesa, una con marcas de labial.\n\n| Hora | Movimiento |\n|---|---|\n| 23:12 | Tarjeta de la víctima |\n| 23:19 | Tarjeta maestra AU-0008 |",
+    "**Hora probable de muerte:** entre las 23:20 y las 23:40.\n\n**Duarte:** Yo estuve en mi casa toda la noche, lo juro.\n\n**Inspectora:** Las cámaras dicen otra cosa.\n\n- La puerta no fue forzada.\n- Dos copas sobre la mesa, una con marcas de labial.\n\n| Hora | Movimiento |\n|---|---|\n| 23:12 | Tarjeta de la víctima |\n| 23:19 | Tarjeta maestra AU-0008 |",
 };
 
 /** Muestra los mismos componentes del juego en cada ambientación. */
@@ -63,7 +67,28 @@ export default function Pagina() {
             </div>
           </section>
           <section>
-            <Documento prueba={PRUEBA} />
+            {/* el narrador con la voz de esta ambientación; "Duarte" es un personaje de muestra */}
+            <Documento
+              prueba={PRUEBA}
+              accion={
+                <BotonEscuchar
+                  chico
+                  lectura={() => {
+                    const elenco = [{ id: "duarte", nombre: "Martín Duarte", voz: { genero: "masculino" as const, edad: "adulto" as const, velocidad: 1 } }];
+                    const voces = vocesDeLectura(amb, elenco);
+                    const duarte = vocesDelElenco(elenco).duarte!;
+                    return {
+                      que: `muestra-${amb}`,
+                      titulo: PRUEBA.titulo,
+                      partes: guionDePrueba(PRUEBA, elenco).flatMap((l) =>
+                        oraciones(l.texto).map((texto) => ({ texto, voz: l.voz === "narrador" ? voces.narrador : l.voz === "otra" ? voces.otra : duarte })),
+                      ),
+                    };
+                  }}
+                />
+              }
+            />
+            <ReproductorLectura />
           </section>
         </div>
       </main>

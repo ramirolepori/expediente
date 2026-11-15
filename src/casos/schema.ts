@@ -328,6 +328,8 @@ export const CasoSchema = z.object({
     inspiracion: z.string().optional(),
   }),
   ambientacion: z.enum(AMBIENTACIONES),
+  /** voz de quien lee los documentos en voz alta; si falta, una según la ambientación */
+  narrador: VozSchema.optional(),
   introduccion: z.string().describe("lo que lee el grupo al arrancar (markdown)"),
   verdad: VerdadSchema,
   hechos: z.array(HechoSchema),

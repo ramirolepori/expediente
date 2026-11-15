@@ -44,7 +44,7 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
   const s: EstadoPartida = structuredClone(estado);
   const log = (t: string) => s.eventos.push(evento(t));
 
-  if (accion.tipo !== "nota" && accion.tipo !== "borrarNota" && accion.tipo !== "configurar" && accion.tipo !== "iniciar") {
+  if (accion.tipo !== "nota" && accion.tipo !== "borrarNota" && accion.tipo !== "configurar" && accion.tipo !== "iniciar" && accion.tipo !== "narrar") {
     if (s.fase !== "jugando") throw new ErrorDeJuego("La partida no está en curso");
   }
 
@@ -198,6 +198,19 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
       void _;
       s.votos = resto;
       log(`${autor.apodo} retiró su voto`);
+      break;
+    }
+    case "narrar": {
+      // mandar a leer en la tele: solo lo que el grupo ya tiene a la vista
+      const que = accion.que;
+      if (que !== null) {
+        const ok =
+          (que === "introduccion" && s.fase === "jugando") ||
+          (que === "resolucion" && s.fase === "terminada") ||
+          (que.startsWith("prueba:") && s.fase === "jugando" && pruebaVisible(que.slice("prueba:".length), s, caso));
+        if (!ok) throw new ErrorDeJuego("Eso no se puede leer ahora");
+      }
+      s.narracion = que === null ? null : { id: nuevoId(), que, por: autorId };
       break;
     }
     case "cerrarVotacion": {

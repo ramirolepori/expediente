@@ -491,3 +491,29 @@ test("autores: subir un caso, probarlo por link y publicarlo con un moderador", 
   await autora.reload();
   await expect(autora.getByRole("listitem").filter({ hasText: "Muerte en la vendimia" }).getByText("Publicado", { exact: true })).toBeVisible();
 });
+
+test("narrador: cada uno elige en el momento si escucha en su celular o en la tele", async ({ page: anfitrion, browser }) => {
+  const codigo = await crearSala(anfitrion, "Ramiro");
+  const lu = await unirJugador(browser, codigo, "Lu");
+  const tele = await (await browser.newContext()).newPage();
+  // sin bajar los modelos de voz (decenas de MB): la lectura queda preparándose, que alcanza para ver dónde suena
+  for (const p of [tele, lu]) await p.route(/huggingface\.co|cdn\.jsdelivr\.net/, () => {});
+  await tele.goto(`/sala/${codigo}?pantalla`);
+  await tele.getByRole("button", { name: "Conectar como pantalla compartida" }).click();
+  await anfitrion.getByRole("button", { name: "Abrir el caso" }).click();
+
+  // con tele conectada, el botón pregunta dónde: la tele lee para todos
+  await anfitrion.getByRole("button", { name: "Escuchar en voz alta" }).first().click();
+  await anfitrion.getByRole("menuitem", { name: /En la tele/ }).click();
+  const enTele = tele.getByRole("region", { name: "Lectura en voz alta" });
+  await expect(enTele.getByText("Introducción")).toBeVisible();
+  await expect(anfitrion.getByRole("region", { name: "Lectura en voz alta" })).toHaveCount(0);
+
+  // otro jugador lo escucha por su lado, en su celular
+  await lu.getByRole("button", { name: "Escuchar en voz alta" }).first().click();
+  await lu.getByRole("menuitem", { name: /En este dispositivo/ }).click();
+  const enLu = lu.getByRole("region", { name: "Lectura en voz alta" });
+  await expect(enLu.getByText("Introducción")).toBeVisible();
+  await enLu.getByRole("button", { name: "Dejar de escuchar" }).click();
+  await expect(enLu).toHaveCount(0);
+});

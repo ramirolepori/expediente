@@ -131,6 +131,9 @@ Ver [docs/minijuegos.md](minijuegos.md). Hay tres tipos de catálogo (`rompecabe
 ### `resolucion.preguntas`
 Las preguntas que el equipo vota al final. Cada una tiene `id`, `texto`, `tipo` (`personaje` u `opcion`), `opciones` (si es de opción), `respuesta`, `puntos` y `explicacion`. Con `permiteNadie: true`, una pregunta de personaje ofrece "Nadie", así no se adelanta que hubo cómplices. Ojo con las pistas involuntarias: la opción correcta no puede ser la única larga ni la única con detalles del caso.
 
+### `narrador` (opcional) y diálogos con voces
+`narrador` es una `voz` (`genero`, `edad`, `velocidad`, `tono`) para quien lee los documentos en voz alta; si falta, se elige una según la ambientación. Para que una línea de un documento la diga un personaje con su voz, empezala con su nombre en negrita: `**Martín Duarte:** Yo estuve en mi casa.` (también vale el id o un nombre que no se repita). Lo que no está marcado lo lee el narrador.
+
 ### `modos` y `traidor`
 `modos` puede tener `cooperativo` y `traidor` (`competitivo` todavía no existe). Si incluye `traidor`, el caso tiene que traer `traidor`: `rol` (en segunda persona), `objetivo` (con `texto`, la `pregunta` que quiere torcer y la `respuesta` que quiere que voten, que no puede ser la correcta), `sabe` (ids de hechos) y `consejos`.
 

@@ -5,7 +5,7 @@ import { LIMITES_INTERROGATORIO, preguntasHechas } from "./interrogatorio";
 import { configPublica } from "./minijuegos";
 import { recursosRestantes } from "./reductor";
 import type { EstadoPartida } from "./tipos";
-import { vocesDelElenco } from "./voz";
+import { vocesDeLectura, vocesDelElenco } from "./voz";
 
 /**
  * Lo único que viaja al navegador. Nunca incluye la verdad, los secretos,
@@ -51,6 +51,9 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
       };
     }),
     pruebas: estado.fase === "lobby" ? [] : pruebasVisibles(estado, caso),
+    // voces para leer documentos en voz alta, y lo que alguien mandó a leer en la tele
+    lectura: vocesDeLectura(caso.ambientacion, caso.personajes.filter((p) => p.interrogable), caso.narrador),
+    narracion: estado.narracion ?? null,
     // un personaje todavía no disponible no revela ni su nombre (sería un spoiler)
     personajes: caso.personajes
       .filter((p) => p.interrogable)
