@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { sintetizar } from "@/cliente/piper";
+import { precargar, sintetizar } from "@/cliente/piper";
 import { vozPiper, type VozPersonaje } from "@/cliente/voces";
 
 type Personaje = { id: string; caso: string; nombre: string; rol: string; voz: VozPersonaje };
@@ -14,10 +14,15 @@ export function Probador({ personajes }: { personajes: Personaje[] }) {
   const [audios, setAudios] = useState<Record<string, string>>({});
 
   async function probar(p: Personaje) {
-    setEstado((e) => ({ ...e, [p.id]: "Generando… (la primera vez baja el modelo)" }));
+    const decir = (texto: string) => setEstado((e) => ({ ...e, [p.id]: texto }));
+    const voz = vozPiper(p.voz);
+    decir("Generando…");
     const inicio = performance.now();
     try {
-      const audio = await sintetizar(frase, vozPiper(p.voz));
+      // el progreso solo llega si el modelo no estaba guardado en este navegador
+      await precargar([voz.modelo], (f) => f < 1 && decir(`Bajando el modelo de esta voz (solo la primera vez): ${Math.round(f * 100)}%`));
+      decir("Generando…");
+      const audio = await sintetizar(frase, voz);
       setAudios((a) => ({ ...a, [p.id]: URL.createObjectURL(audio) }));
       setEstado((e) => ({ ...e, [p.id]: `Listo en ${((performance.now() - inicio) / 1000).toFixed(1)} s` }));
     } catch (err) {
@@ -29,7 +34,7 @@ export function Probador({ personajes }: { personajes: Personaje[] }) {
     <main className="mx-auto max-w-4xl px-4 py-8">
       <h1 className="font-titulo text-4xl">Voces</h1>
       <p className="mt-2 text-sm text-suave">
-        Piper en el navegador, con el modelo que le toca a cada personaje según su género y edad, y su velocidad. Cada modelo pesa entre 60 y 115 MB y se baja una sola vez.
+        Piper en el navegador, con el modelo que le toca a cada personaje según su género y edad, y su velocidad. Hay cuatro modelos (entre 60 y 115 MB cada uno) y varios personajes comparten el mismo: cada modelo se baja una sola vez y queda guardado en este navegador.
       </p>
       <textarea value={frase} onChange={(e) => setFrase(e.target.value)} rows={2} className="mt-4 w-full rounded-xl border border-borde bg-panel p-3" aria-label="Frase de prueba" />
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
