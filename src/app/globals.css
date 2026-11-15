@@ -204,3 +204,25 @@ body {
 .cel-app { animation: cel-app 0.32s cubic-bezier(0.25, 0.8, 0.3, 1) both; }
 @keyframes cel-entrar { from { opacity: 0; transform: scale(1.08); } to { opacity: 1; transform: none; } }
 .cel-entrar { animation: cel-entrar 0.35s ease-out both; }
+
+/* ---------- Personaje animado ---------- */
+@keyframes respirar { 0%, 100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-2px) scaleY(1.008); } }
+.respirar { animation: respirar 4.2s ease-in-out infinite; transform-origin: 50% 100%; transform-box: fill-box; }
+@keyframes balanceo { 0%, 100% { transform: rotate(0deg); } 33% { transform: rotate(0.8deg); } 66% { transform: rotate(-0.6deg); } }
+.balanceo { animation: balanceo 7s ease-in-out infinite; transform-origin: 50% 95%; transform-box: fill-box; }
+@keyframes lampara-titila { 0%, 100% { opacity: 1; } 47% { opacity: 1; } 48% { opacity: 0.82; } 50% { opacity: 1; } 76% { opacity: 0.93; } 77% { opacity: 1; } }
+.lampara-titila { animation: lampara-titila 6s linear infinite; }
+@keyframes humo { 0% { opacity: 0; transform: translateY(10px) scale(0.9); } 30% { opacity: 0.45; } 100% { opacity: 0; transform: translateY(-40px) scale(1.25); } }
+.humo { animation: humo 5s ease-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes gota { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 0.9; } 100% { transform: translateY(26px); opacity: 0; } }
+.gota { animation: gota 2.6s ease-in infinite; transform-box: fill-box; }
+@keyframes personaje-impacto { 0% { transform: scale(1); } 18% { transform: scale(1.14); filter: brightness(1.35) contrast(1.1); } 100% { transform: scale(1.06); filter: none; } }
+.personaje-impacto { animation: personaje-impacto 1.2s cubic-bezier(0.2, 0.9, 0.3, 1) both; transform-origin: 50% 35%; }
+
+/* retrato realista: cambio de cara con fundido, respiración y deriva suave de cámara */
+@keyframes deriva { 0%, 100% { transform: scale(1.04) translate(0, 0); } 50% { transform: scale(1.06) translate(-1%, -0.6%); } }
+.retrato-deriva { animation: deriva 14s ease-in-out infinite; }
+@keyframes retrato-respira { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.5%); } }
+.retrato-respira { animation: retrato-respira 4.2s ease-in-out infinite; }
+@keyframes retrato-habla { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(0.3%) rotate(0.3deg); } 75% { transform: translateY(-0.2%) rotate(-0.2deg); } }
+.retrato-habla { animation: retrato-habla 0.5s ease-in-out infinite; }
