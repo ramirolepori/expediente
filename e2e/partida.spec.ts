@@ -397,7 +397,8 @@ test("autores: el administrador nombra un moderador y cada uno entra con su rol"
   await expect(admin.getByRole("heading", { name: "Creá un caso para Expediente" })).toBeVisible();
   await admin.getByLabel("Mail para el login de prueba").fill("admin@prueba.test");
   await admin.getByRole("button", { name: "Entrar (modo prueba)" }).click();
-  await expect(admin.getByText("admin@prueba.test · Administrador")).toBeVisible();
+  await expect(admin.getByText("admin@prueba.test")).toBeVisible();
+  await expect(admin.getByText("Administrador", { exact: true })).toBeVisible();
 
   await admin.getByLabel("Mail del nuevo moderador").fill("Mod@Prueba.test");
   await admin.getByRole("button", { name: "Agregar" }).click();
@@ -407,7 +408,7 @@ test("autores: el administrador nombra un moderador y cada uno entra con su rol"
   await mod.goto("/autores");
   await mod.getByLabel("Mail para el login de prueba").fill("mod@prueba.test");
   await mod.getByRole("button", { name: "Entrar (modo prueba)" }).click();
-  await expect(mod.getByText("mod@prueba.test · Moderador")).toBeVisible();
+  await expect(mod.getByText("Moderador", { exact: true })).toBeVisible();
   await expect(mod.getByRole("heading", { name: "Moderadores" })).toHaveCount(0);
 
   // un autor común no puede tocar la lista de moderadores, ni siquiera llamando a la API
