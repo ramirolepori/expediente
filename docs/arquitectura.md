@@ -22,7 +22,7 @@ src/app/api/*  ──►  src/servidor/salas.ts  ──►  src/motor/*  (lógic
 | `src/casos/registro.ts` | Catálogo de casos |
 | `src/motor/` | Lógica pura y testeable: `condiciones` (evaluar), `reductor` (`aplicar` acciones), `vista` (`vistaPara`, lo único que viaja al cliente), `validador`, `interrogatorio` (prompt, revelaciones, limpieza), `minijuegos` |
 | `src/servidor/` | `almacen` (Supabase con concurrencia optimista por `version`, o memoria + SSE), `salas`, `llm`, `llmFalso` |
-| `src/app/api/` | Rutas: salas, unirse, accion, eventos (SSE local), vista, interrogar, casos, red, laboratorio |
+| `src/app/api/` | Rutas: salas, unirse, accion, eventos (SSE local), vista, interrogar, casos, red, laboratorio, cron/limpiar (cron diario de Vercel, borra salas sin escrituras hace 24 h) |
 | `src/componentes/` | UI: Inicio, Sala, Lobby, PanelJugador (Expediente / Interrogar / Pizarra / Notas / Resolver), PantallaCompartida, Resultado, Celular, Pizarra, minijuegos, personaje |
 | `src/app/laboratorio/` | Páginas para revisar diseño sin jugar: personaje, ambientaciones, minijuegos, pizarra |
 | `src/app/globals.css` | Tokens por ambientación (`noir`, `policial`, `medico`, `terror`, `epoca`) y animaciones |

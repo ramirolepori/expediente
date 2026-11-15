@@ -22,7 +22,12 @@ export interface Almacen {
   actualizar(codigo: string, fn: (sala: Sala) => Sala): Promise<Sala>;
   /** solo en memoria: para el stream SSE local */
   suscribir(codigo: string, oyente: Oyente): () => void;
+  /** borra las salas sin escrituras desde `antesDe` (ms); devuelve cuántas borró */
+  borrarViejas(antesDe: number): Promise<number>;
 }
+
+/** Una sala sin escrituras en este tiempo se da por abandonada (la limpia el cron diario). */
+export const INACTIVIDAD_MAXIMA_MS = 24 * 60 * 60 * 1000;
 
 export const canalSala = (codigo: string) => `sala-${codigo}`;
 
@@ -30,12 +35,15 @@ class AlmacenMemoria implements Almacen {
   readonly tipo = "memoria" as const;
   private salas = new Map<string, Sala>();
   private oyentes = new Map<string, Set<Oyente>>();
+  /** código → última escritura (ms), como la columna `actualizada` de Supabase */
+  private actualizada = new Map<string, number>();
 
   async obtener(codigo: string) {
     return this.salas.get(codigo) ?? null;
   }
   async crear(sala: Sala) {
     this.salas.set(sala.estado.codigo, sala);
+    this.actualizada.set(sala.estado.codigo, Date.now());
   }
   async actualizar(codigo: string, fn: (sala: Sala) => Sala) {
     const actual = this.salas.get(codigo);
@@ -43,6 +51,7 @@ class AlmacenMemoria implements Almacen {
     const nueva = fn(actual);
     if (nueva !== actual) {
       this.salas.set(codigo, nueva);
+      this.actualizada.set(codigo, Date.now());
       this.oyentes.get(codigo)?.forEach((o) => o(nueva));
     }
     return nueva;
@@ -51,6 +60,17 @@ class AlmacenMemoria implements Almacen {
     if (!this.oyentes.has(codigo)) this.oyentes.set(codigo, new Set());
     this.oyentes.get(codigo)!.add(oyente);
     return () => this.oyentes.get(codigo)?.delete(oyente);
+  }
+  async borrarViejas(antesDe: number) {
+    let borradas = 0;
+    for (const [codigo, cuando] of this.actualizada) {
+      if (cuando >= antesDe) continue;
+      this.salas.delete(codigo);
+      this.actualizada.delete(codigo);
+      this.oyentes.delete(codigo);
+      borradas++;
+    }
+    return borradas;
   }
 }
 
@@ -108,6 +128,12 @@ class AlmacenSupabase implements Almacen {
     } catch (e) {
       console.error("No se pudo avisar por Realtime", e);
     }
+  }
+
+  async borrarViejas(antesDe: number) {
+    const { count, error } = await this.db.from("salas").delete({ count: "exact" }).lt("actualizada", new Date(antesDe).toISOString());
+    if (error) throw error;
+    return count ?? 0;
   }
 
   suscribir(): () => void {
