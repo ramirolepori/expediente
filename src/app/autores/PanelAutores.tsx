@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAutor, type Proveedor } from "@/cliente/sesion";
 import type { Autor } from "@/servidor/autores";
+import { Validador } from "./Validador";
 
 const NOMBRE_PROVEEDOR: Record<Proveedor, string> = { google: "Google", github: "GitHub" };
 const NOMBRE_ROL = { admin: "Administrador", moderador: "Moderador", autor: "Autor" } as const;
@@ -43,6 +44,7 @@ export function PanelAutores() {
       ) : autor ? (
         <div className="mt-10 space-y-6">
           <Perfil autor={autor} salir={salir} />
+          <Validador pedir={pedir} />
           <MisCasos />
           {autor.rol === "admin" && <Moderadores pedir={pedir} />}
         </div>
@@ -164,7 +166,7 @@ function MisCasos() {
           🗂️
         </p>
         <p className="mt-2 font-medium">Todavía no tenés casos</p>
-        <p className="mx-auto mt-1 max-w-md text-sm text-suave">Muy pronto vas a poder bajar el kit de autor, subir tus casos y validarlos desde acá.</p>
+        <p className="mx-auto mt-1 max-w-md text-sm text-suave">Muy pronto vas a poder bajar el kit de autor y guardar tus casos acá para probarlos con amigos.</p>
       </div>
     </section>
   );

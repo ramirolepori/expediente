@@ -72,7 +72,11 @@ export function useAutor() {
 
   const pedir = useCallback(
     (url: string, init: RequestInit = {}) =>
-      fetch(url, { ...init, headers: { "Content-Type": "application/json", ...init.headers, ...(token ? { Authorization: `Bearer ${token}` } : {}) } }),
+      fetch(url, {
+        ...init,
+        // con FormData el navegador pone el Content-Type (con el boundary) solo
+        headers: { ...(init.body instanceof FormData ? {} : { "Content-Type": "application/json" }), ...init.headers, ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      }),
     [token],
   );
 

@@ -134,14 +134,16 @@ Las preguntas que el equipo vota al final. Cada una tiene `id`, `texto`, `tipo` 
 ### `modos` y `traidor`
 `modos` puede tener `cooperativo` y `traidor` (`competitivo` todavía no existe). Si incluye `traidor`, el caso tiene que traer `traidor`: `rol` (en segunda persona), `objetivo` (con `texto`, la `pregunta` que quiere torcer y la `respuesta` que quiere que voten, que no puede ser la correcta), `sabe` (ids de hechos) y `consejos`.
 
-## Qué revisa `npm run validar`
+## Qué revisa el validador
 
-- Que el JSON cumpla el schema.
-- Que no haya ids duplicados y que toda referencia apunte a algo que existe.
-- Que todo hecho usado en una condición lo pueda revelar algún personaje (con `sabe` o con un secreto).
-- Que, jugando "perfecto", se pueda abrir todo: cada sobre, prueba, candado, minijuego, personaje y secreto. Si algo queda trabado, lo marca como inalcanzable.
-- Que la ficha del traidor sea coherente.
-- Que los retratos tengan `neutral` y que sus archivos existan en `public/`. Avisa si el caso mezcla personajes con retratos y vectoriales.
+El mismo validador corre con `npm run validar` (casos del repo) y en `/autores` (casos de autores, con cuenta). Revisa seis capas y cada hallazgo es un **error** (bloquea probar y publicar), un **aviso** (lo decide quien modera) o una **sugerencia**:
+
+1. **Forma:** que el JSON cumpla el schema y su `version`. Avisa los campos que no son del contrato, que se ignoran.
+2. **Referencias:** ids duplicados, referencias a cosas que no existen, hechos usados en condiciones que ningún personaje cuenta, retratos sin `neutral` y la ficha del traidor.
+3. **Se puede resolver:** jugando "perfecto" se tiene que poder abrir todo: cada sobre, prueba, candado, minijuego, personaje y secreto. Avisa si un culpable no aparece nombrado en ninguna prueba ni hecho que se pueda descubrir.
+4. **Spoilers y diseño:** la opción correcta bastante más larga que las demás, un capítulo que se abre sin pasar por el anterior, un secreto que se suelta desde el principio, sobres vacíos o con demasiadas pruebas, y mezcla de retratos con vectoriales.
+5. **Archivos:** que cada imagen (escenas, `imagen` de pruebas, imágenes dentro del markdown y retratos) exista, sea jpg, png o webp de verdad, no pese de más y, en las escenas, que su proporción coincida con `proporcion`. Avisa las imágenes que sobran.
+6. **Seguridad**, siempre error: textos que le dan órdenes al modelo, HTML, links externos, caracteres invisibles, textos de más de 4.000 caracteres, un caso.json de más de 300 KB y rutas fuera de `/casos/<id>/`. Los casos de autores no pueden traer minijuegos personalizados.
 
 ## Cómo probarlo
 

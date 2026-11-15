@@ -42,6 +42,6 @@ yarn-error.log*
 next-env.d.ts
 
 # tests de punta a punta
-/.next-e2e
+/.next-*/
 /test-results
 /playwright-report

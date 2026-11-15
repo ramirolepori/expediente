@@ -20,7 +20,7 @@ src/app/api/*  ──►  src/servidor/salas.ts  ──►  src/motor/*  (lógic
 |---|---|
 | `casos/<id>/caso.json` | Casos. Contrato en `src/casos/schema.ts`, explicado en [contrato-de-caso.md](contrato-de-caso.md) |
 | `src/casos/registro.ts` | Catálogo de casos |
-| `src/motor/` | Lógica pura y testeable: `condiciones` (evaluar), `reductor` (`aplicar` acciones), `vista` (`vistaPara`, lo único que viaja al cliente), `validador`, `interrogatorio` (prompt, revelaciones, limpieza, emoción), `minijuegos`, `apariencia` (rasgos por defecto de los personajes) |
+| `src/motor/` | Lógica pura y testeable: `condiciones` (evaluar), `reductor` (`aplicar` acciones), `vista` (`vistaPara`, lo único que viaja al cliente), `validador` (las seis capas, con `validador-archivos`, `validador-seguridad` e `informe` para la IA del autor), `interrogatorio` (prompt, revelaciones, limpieza, emoción), `minijuegos`, `apariencia` (rasgos por defecto de los personajes) |
 | `src/servidor/` | `almacen` (Supabase con concurrencia optimista por `version`, o memoria + SSE), `salas`, `llm`, `llmFalso`, `autores` (cuentas y roles: valida el token de Supabase Auth, admin por `ADMIN_EMAILS`, moderadores en tabla, login falso con `AUTH_FALSO=1`) |
 | `src/app/api/` | Rutas: salas, unirse, accion, eventos (SSE local), vista, interrogar, casos, red, laboratorio, cron/limpiar (cron diario de Vercel, borra salas sin escrituras hace 24 h) |
 | `src/componentes/` | UI: Inicio, Sala, Lobby, PanelJugador (Expediente / Interrogar / Pizarra / Notas / Resolver), PantallaCompartida, Resultado, Celular, Pizarra, minijuegos, personaje (`Personaje` elige entre `PersonajeRetrato` y `PersonajeVectorial`) |
