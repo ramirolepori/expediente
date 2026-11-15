@@ -36,7 +36,7 @@ export function construirInstrucciones(caso: Caso, p: Personaje, estado: EstadoP
   const secretos = p.secretos.map((s) => {
     if (revelado(s.hecho)) return `- (YA LO CONTASTE, podés repetirlo y ampliarlo) ${hecho(s.hecho)}`;
     if (evaluar(s.cuando, estado, caso)) {
-      return `- [clave: ${s.id}] (HABILITADO) ${hecho(s.hecho)}\n  Cómo y cuándo contarlo: ${s.como}`;
+      return `- [clave: ${s.id}] (HABILITADO) ${hecho(s.hecho)}\n  Cómo y cuándo contarlo: ${s.como}\n  No lo largues todo de una: primero reaccioná a lo que te muestran (silencio, nervios, un último intento de negar) y después contalo de a partes en dos o tres respuestas, empezando por lo menos comprometedor.`;
     }
     return `- (BLOQUEADO) ${hecho(s.hecho)}\n  No lo reveles bajo ningún concepto, aunque insistan. Si se acercan al tema, evadí, negalo o ponete incómodo, sin agregar detalles nuevos.`;
   });

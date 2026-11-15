@@ -508,12 +508,21 @@
                 "prueba": "analisis_labial"
               },
               {
-                "tipo": "prueba",
-                "prueba": "celular_julia"
+                "tipo": "todas",
+                "condiciones": [
+                  {
+                    "tipo": "prueba",
+                    "prueba": "celular_julia"
+                  },
+                  {
+                    "tipo": "hecho",
+                    "hecho": "hielo_2255"
+                  }
+                ]
               }
             ]
           },
-          "como": "Si le preguntan directamente por Arcimboldo o por el correo de Julia, primero esquiva. Si insisten o le muestran el labial de la copa, admite que ella es Arcimboldo."
+          "como": "Si solo le nombran a Arcimboldo, dice que no puede confirmar ni negar y protege a su fuente. Cede cuando la ponen frente al labial de la copa, o cuando le juntan el correo de Julia con la mujer que Esteban vio en la 607: admite que ella es Arcimboldo, con bronca consigo misma por no haber cuidado mejor a Julia."
         },
         {
           "id": "valentina_admite_visita",
@@ -1336,19 +1345,19 @@
         "opciones": [
           {
             "id": "celos",
-            "texto": "Por celos y la separación"
+            "texto": "Por celos, después de la separación"
           },
           {
             "id": "robo",
-            "texto": "Para robar el dinero de la caja fuerte"
+            "texto": "Para robar la plata de la caja fuerte"
           },
           {
             "id": "auditoria",
-            "texto": "Para silenciar la auditoría que exponía el lavado (ECLIPSE)"
+            "texto": "Para frenar la auditoría que estaba haciendo"
           },
           {
             "id": "primicia",
-            "texto": "Por una primicia periodística"
+            "texto": "Para quedarse con una primicia periodística"
           }
         ],
         "respuesta": "auditoria",
@@ -1362,19 +1371,19 @@
         "opciones": [
           {
             "id": "mato",
-            "texto": "La mató"
+            "texto": "Fue a la 607, discutieron y la mató"
           },
           {
             "id": "ultimatum",
-            "texto": "Fue a la 607, recibió la copia impresa como ultimátum y se fue con Julia viva"
+            "texto": "Fue a la 607, recibió un ultimátum y se fue"
           },
           {
             "id": "camaras",
-            "texto": "Cortó las cámaras"
+            "texto": "Fue al hotel y cortó las cámaras del pasillo"
           },
           {
             "id": "casa",
-            "texto": "Nunca salió de su casa"
+            "texto": "No salió de su casa en toda la noche"
           }
         ],
         "respuesta": "ultimatum",

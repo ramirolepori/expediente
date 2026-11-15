@@ -170,6 +170,13 @@ describe("Hotel Aurora", () => {
     expect(resolverRevelacion(caso, personaje("duarte"), s, "clave_inventada").ok).toBe(false);
   });
 
+  it("Valentina no admite ser Arcimboldo solo con lo del primer sobre", () => {
+    const s = partida();
+    expect(resolverRevelacion(caso, personaje("valentina"), s, "valentina_admite_arcimboldo").ok).toBe(false);
+    const conHielo = revelarHecho(s, "hielo_2255", "Esteban Ríos");
+    expect(resolverRevelacion(caso, personaje("valentina"), conHielo, "valentina_admite_arcimboldo").ok).toBe(true);
+  });
+
   it("cuenta las preguntas de la partida y de la ventana reciente", () => {
     const s = partida();
     s.interrogatorios = {

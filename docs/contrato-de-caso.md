@@ -57,7 +57,7 @@ Lista de `{ id, texto }`. Son las piezas de información que los personajes pued
 | `interrogable` | Si se lo puede interrogar (por defecto, sí) |
 | `disponible` | Condición para poder citarlo |
 | `sabe` | Ids de hechos que cuenta libremente si le preguntan |
-| `secretos` | `{ id, hecho, cuando, como }`: un hecho que solo suelta si se cumple `cuando`. `como` describe cómo y en qué contexto lo cuenta |
+| `secretos` | `{ id, hecho, cuando, como }`: un hecho que solo suelta si se cumple `cuando`. `como` describe cómo y en qué contexto lo cuenta. El motor ya le pide al personaje que reaccione primero y lo cuente de a partes: no hace falta escribirlo |
 | `mentiras` | `{ tema, dice, cae, alCaer }`: lo que sostiene, con qué condición se le cae y qué hace cuando eso pasa |
 | `color` | Cosas sin importancia que puede improvisar (fútbol, el clima) |
 | `voz` | `genero`, `edad`, `velocidad`, `tono`. Pensado para las voces, que todavía no están |
