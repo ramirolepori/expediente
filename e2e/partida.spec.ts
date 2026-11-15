@@ -390,3 +390,32 @@ test("laboratorio: la pizarra funciona sin sala", async ({ page }) => {
   await page.getByRole("button", { name: "📺 Cómo se ve en la tele" }).click();
   await expect(page.getByText("Pizarra del equipo")).toBeVisible();
 });
+
+test("autores: el administrador nombra un moderador y cada uno entra con su rol", async ({ page: admin, browser }) => {
+  await admin.goto("/");
+  await admin.getByRole("link", { name: /Escribí tu propio caso/ }).click();
+  await expect(admin.getByRole("heading", { name: "Creá un caso para Expediente" })).toBeVisible();
+  await admin.getByLabel("Mail para el login de prueba").fill("admin@prueba.test");
+  await admin.getByRole("button", { name: "Entrar (modo prueba)" }).click();
+  await expect(admin.getByText("admin@prueba.test · Administrador")).toBeVisible();
+
+  await admin.getByLabel("Mail del nuevo moderador").fill("Mod@Prueba.test");
+  await admin.getByRole("button", { name: "Agregar" }).click();
+  await expect(admin.getByText("mod@prueba.test")).toBeVisible();
+
+  const mod = await (await browser.newContext()).newPage();
+  await mod.goto("/autores");
+  await mod.getByLabel("Mail para el login de prueba").fill("mod@prueba.test");
+  await mod.getByRole("button", { name: "Entrar (modo prueba)" }).click();
+  await expect(mod.getByText("mod@prueba.test · Moderador")).toBeVisible();
+  await expect(mod.getByRole("heading", { name: "Moderadores" })).toHaveCount(0);
+
+  // un autor común no puede tocar la lista de moderadores, ni siquiera llamando a la API
+  const r = await mod.request.get("/api/autores/moderadores", { headers: { Authorization: "Bearer falso:mod@prueba.test" } });
+  expect(r.status()).toBe(403);
+  const sinSesion = await mod.request.get("/api/autores/yo");
+  expect(sinSesion.status()).toBe(401);
+
+  await admin.getByRole("button", { name: "Quitar a mod@prueba.test" }).click();
+  await expect(admin.getByText("Todavía no hay moderadores.")).toBeVisible();
+});

@@ -200,6 +200,10 @@ export function Inicio({ casos }: { casos: CasoResumen[] }) {
           </div>
         </div>
       </section>
+      <a href="/autores" className="mt-10 block rounded-2xl border border-borde bg-panel p-5 transition hover:border-acento">
+        <p className="font-semibold">✍️ Escribí tu propio caso</p>
+        <p className="mt-1 text-sm text-suave">Armalo con tu IA y nuestro kit de autor, validalo y sumalo al catálogo.</p>
+      </a>
       <footer className="mt-12 border-t border-borde pt-4 text-sm text-suave">
         <a href="/laboratorio" className="hover:text-acento">
           🧪 Laboratorio de diseño

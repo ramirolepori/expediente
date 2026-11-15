@@ -26,6 +26,9 @@ export default defineConfig({
     timeout: 180_000,
     env: {
       LLM_FALSO: "1",
+      // login de autores sin Supabase, con un administrador de prueba
+      AUTH_FALSO: "1",
+      ADMIN_EMAILS: "admin@prueba.test",
       NEXT_DIST_DIR: ".next-e2e",
       // vacías a propósito: fuerzan salas en memoria y tiempo real por SSE
       NEXT_PUBLIC_SUPABASE_URL: "",
