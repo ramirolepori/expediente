@@ -49,13 +49,14 @@ Si tenés el repo clonado, leé esos mismos archivos localmente.
 - **Preguntas finales sin pistas involuntarias:** las opciones tienen que tener largo y detalle parecidos, y ninguna puede nombrar algo que solo aparece si es la correcta. Usá `permiteNadie: true` en preguntas de cómplice o de autor intelectual.
 - **Ayudas:** de dos a tres por sobre, de nivel 1 (sutil) a 3 (casi directo).
 - **Modo traidor (si lo usás):** el objetivo del traidor tiene que ser una respuesta incorrecta pero creíble, con consejos para sembrar sospechas sin delatarse.
+- **Apariencia:** a cada personaje ponele `apariencia.rasgos` a partir de su descripción (edad, cuerpo, peinado, ropa, accesorios; puede ser un animal). Los valores están en `docs/contrato-de-caso.md`. Si el caso trae retratos, que los traigan todos los personajes, con `neutral` como mínimo.
 - **Español rioplatense** en todo lo que leen los jugadores.
 - **No uses** `imagen` ni `roles` en las pruebas, ni el modo `competitivo`: todavía no están implementados.
 
 ## Qué entregar
 
 1. `casos/<id>/caso.json`.
-2. Si hay minijuegos personalizados: `public/casos/<id>/minijuegos/<nombre>.html`.
+2. Si hay minijuegos personalizados: `public/casos/<id>/minijuegos/<nombre>.html`. Si hay retratos: `public/casos/<id>/retratos/<personaje>/<emocion>.jpg`.
 3. La línea para registrarlo en `src/casos/registro.ts`: el import del JSON y sumarlo a `FUENTES`.
 4. Si tenés acceso al repo: corré `npm run validar` y arreglá todo hasta que dé ✅. Después corré `npm test` y `npm run e2e`.
 5. Un resumen corto de la solución y de cómo se llega a ella, para quien revise el caso sin jugarlo.

@@ -1,4 +1,5 @@
 import type { Caso, Personaje } from "@/casos/schema";
+import { EMOCIONES, type Emocion } from "@/componentes/personaje/emociones";
 import { evaluar, pruebaVisible } from "./condiciones";
 import type { EstadoPartida } from "./tipos";
 
@@ -60,6 +61,7 @@ export function construirInstrucciones(caso: Caso, p: Personaje, estado: EstadoP
     `5. Si te muestran una prueba, reaccioná a lo que dice.`,
     `6. La primera vez que cuentes algo marcado con [clave: ...], llamá antes a la herramienta revelar con esa clave. Si la herramienta lo rechaza, no lo cuentes y evadí.`,
     `7. Las claves y marcas entre corchetes o paréntesis de esta ficha son internas: nunca las escribas en tu respuesta.`,
+    `8. Empezá cada respuesta con la emoción que mostrás en ese momento, entre corchetes: [emocion: X], donde X es una de: ${EMOCIONES.join(", ")}. Es la única marca que va en tu respuesta; no la nombres en el texto.`,
     ``,
     `LO QUE SABÉS Y PODÉS CONTAR SI TE PREGUNTAN`,
     sabe.length ? sabe.join("\n") : "- Nada relevante más allá de tu descripción.",
@@ -93,11 +95,25 @@ export function textoPrueba(caso: Caso, estado: EstadoPartida, pruebaId: string)
   return `[El detective te muestra la prueba «${prueba.titulo}»: ${contenido}]`;
 }
 
-/** Saca marcas internas de la ficha que el modelo pueda haber copiado, como "[clave: x]" o "(BLOQUEADO)". */
+const ETIQUETA_EMOCION = /\[\s*emoci[oó]n\s*:\s*([^\]]*)\]\s*/gi;
+
+/** Saca marcas internas de la ficha que el modelo pueda haber copiado, como "[clave: x]" o "(BLOQUEADO)", y la etiqueta de emoción. */
 export function limpiarRespuesta(texto: string) {
   return texto
+    .replace(ETIQUETA_EMOCION, "")
     .replace(/\[\s*clave\s*:[^\]]*\]\s*/gi, "")
     .replace(/\((?:BLOQUEADO|HABILITADO|YA LO CONTASTE)[^)]*\)\s*/g, "")
     .replace(/[ \t]{2,}/g, " ")
     .trim();
+}
+
+/** Separa la emoción que el modelo puso al principio ("[emocion: nervioso]") del texto. Sin etiqueta válida, neutral. */
+export function leerRespuesta(texto: string): { texto: string; emocion: Emocion } {
+  const dicha = [...texto.matchAll(ETIQUETA_EMOCION)].map((m) => m[1].trim().toLowerCase()).find((e) => (EMOCIONES as readonly string[]).includes(e));
+  return { texto: limpiarRespuesta(texto), emocion: (dicha as Emocion | undefined) ?? "neutral" };
+}
+
+/** Lo que el modelo ve de sus respuestas anteriores: con la etiqueta, para que mantenga el formato. */
+export function respuestaEnHistorial(m: { texto: string; emocion?: Emocion }) {
+  return m.emocion ? `[emocion: ${m.emocion}] ${m.texto}` : m.texto;
 }

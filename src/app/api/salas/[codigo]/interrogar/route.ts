@@ -1,7 +1,7 @@
 import { generateText, isStepCount, tool, type ModelMessage } from "ai";
 import { z } from "zod";
 import { evaluar } from "@/motor/condiciones";
-import { construirInstrucciones, LIMITES_INTERROGATORIO as LIMITES, limpiarRespuesta, preguntasHechas, resolverRevelacion, textoPrueba } from "@/motor/interrogatorio";
+import { construirInstrucciones, LIMITES_INTERROGATORIO as LIMITES, leerRespuesta, preguntasHechas, respuestaEnHistorial, resolverRevelacion, textoPrueba } from "@/motor/interrogatorio";
 import { nuevoId, recursosRestantes, revelarHecho } from "@/motor/reductor";
 import type { MensajeInterrogatorio } from "@/motor/tipos";
 import { almacen, type Sala } from "@/servidor/almacen";
@@ -77,7 +77,7 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
       .filter((m) => m.de !== "sistema")
       .slice(-30)
       .map((m) => {
-        if (m.de === "personaje") return { role: "assistant", content: m.texto };
+        if (m.de === "personaje") return { role: "assistant", content: respuestaEnHistorial(m) };
         const extra = m.prueba ? `\n${textoPrueba(caso, actual.estado, m.prueba) ?? ""}` : "";
         return { role: "user", content: `[${apodos[m.autor ?? ""] ?? "Detective"}]: ${m.texto}${extra}` };
       });
@@ -133,9 +133,10 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
       return Response.json({ error: "Sin respuesta del modelo" }, { status: 503 });
     }
 
-    // red de seguridad: el modelo a veces copia las etiquetas internas de la ficha en su respuesta
-    const respuesta = limpiarRespuesta(respuestaModelo) || "*Se queda en silencio.*";
-    await agregarMensaje(codigo, personaje.id, { id: nuevoId(), de: "personaje", texto: respuesta, hora: Date.now() });
+    // la emoción viaja como etiqueta en el mismo texto (sin otra llamada al modelo); de paso se limpian
+    // las etiquetas internas de la ficha que el modelo a veces copia
+    const { texto: limpio, emocion } = leerRespuesta(respuestaModelo);
+    await agregarMensaje(codigo, personaje.id, { id: nuevoId(), de: "personaje", texto: limpio || "*Se queda en silencio.*", emocion, hora: Date.now() });
     return Response.json({ ok: true });
   } catch (e) {
     return respuestaError(e);

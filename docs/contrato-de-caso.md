@@ -5,6 +5,7 @@ Un caso es una carpeta con un `caso.json` que cumple el schema de [src/casos/sch
 ```
 casos/<id>/caso.json                      ← el caso (obligatorio)
 public/casos/<id>/minijuegos/*.html       ← minijuegos personalizados (opcional)
+public/casos/<id>/retratos/**             ← retratos de los personajes (opcional)
 src/casos/registro.ts                     ← una línea para sumarlo al catálogo
 ```
 
@@ -60,7 +61,32 @@ Lista de `{ id, texto }`. Son las piezas de información que los personajes pued
 | `secretos` | `{ id, hecho, cuando, como }`: un hecho que solo suelta si se cumple `cuando`. `como` describe cómo y en qué contexto lo cuenta. El motor ya le pide al personaje que reaccione primero y lo cuente de a partes: no hace falta escribirlo |
 | `mentiras` | `{ tema, dice, cae, alCaer }`: lo que sostiene, con qué condición se le cae y qué hace cuando eso pasa |
 | `color` | Cosas sin importancia que puede improvisar (fútbol, el clima) |
-| `voz` | `genero`, `edad`, `velocidad`, `tono`. Pensado para las voces, que todavía no están |
+| `voz` | `genero` (`femenino` o `masculino`), `edad` (`joven`, `adulto` o `mayor`), `velocidad` y `tono`. La usan las voces de Piper |
+| `apariencia` | Cómo se ve en el interrogatorio: `retratos` o `rasgos` (ver abajo). Opcional |
+
+#### `apariencia`
+
+Hay dos estilos y conviene usar uno solo por caso:
+
+- **Retratos:** `"retratos": { "neutral": "/casos/<carpeta>/retratos/duarte/neutral.jpg", "nervioso": "...", "hablando": "..." }`. Una imagen por emoción, con `neutral` obligatoria; las emociones que falten muestran la neutral. `hablando` (opcional) alterna con la neutral mientras habla. Los archivos van en `public/casos/<carpeta>/`.
+- **Vectorial:** si no hay retratos, la plataforma lo dibuja. Con `"rasgos": { ... }` se elige cómo; todo es opcional y lo que falta sale de `voz.genero`, `edad` y `voz.edad`, con colores que dependen del `id` (dos personajes sin datos no salen iguales).
+
+| Rasgo | Valores |
+|---|---|
+| `especie` | `humano` (por defecto), `perro`, `gato`, `loro` |
+| `cuerpo` | `femenino`, `masculino`, `neutro` |
+| `edad` | `bebe`, `nino`, `adolescente`, `adulto`, `mayor`: cambia las proporciones de cara y cuerpo |
+| `piel`, `pelo`, `ojos` | Colores hex (`#c68a5e`). En animales, `piel` es el pelaje o plumaje y `pelo` las manchas, orejas o cresta |
+| `peinado` | `corto`, `entradas`, `calvo`, `rapado`, `largo`, `melena`, `rulos`, `rodete`, `cola`, `pelusa` |
+| `vello` | `ninguno`, `bigote`, `barba`, `barba_corta`, `candado` |
+| `labios`, `sombra` | Maquillaje: color hex o `null` |
+| `pecas`, `arrugas` | `true`/`false`; de 0 a 1 |
+| `anteojos` | `ninguno`, `redondos`, `rectangulares`, `sol` |
+| `ropa` | `traje`, `camisa`, `remera`, `buzo`, `vestido`, `uniforme`, `delantal`, `enterito` |
+| `colorRopa`, `colorDetalle`, `corbata` | Colores (camisa bajo el saco, vivos); `corbata: null` sin corbata |
+| `accesorios`, `colorAccesorio` | Lista entre `aros`, `collar`, `gorra`, `sombrero`, `baston`, `chupete`, `vapeador`, `cigarrillo`, `moño` |
+
+Todas las combinaciones se ven en `/laboratorio/personaje`. La emoción la elige el modelo en cada respuesta (`neutral`, `nervioso`, `enojado`, `triste`, `sorprendido`, `evasivo`, `confiado` o `quebrado`): no hace falta escribirla en el caso.
 
 ### `sobres`
 `{ id, titulo, descripcion, requisito }`. El primero tiene que tener `requisito: { "tipo": "siempre" }`. Lo habitual es que cada sobre pida el anterior.
@@ -98,6 +124,7 @@ Las preguntas que el equipo vota al final. Cada una tiene `id`, `texto`, `tipo` 
 - Que todo hecho usado en una condición lo pueda revelar algún personaje (con `sabe` o con un secreto).
 - Que, jugando "perfecto", se pueda abrir todo: cada sobre, prueba, candado, minijuego, personaje y secreto. Si algo queda trabado, lo marca como inalcanzable.
 - Que la ficha del traidor sea coherente.
+- Que los retratos tengan `neutral` y que sus archivos existan en `public/`. Avisa si el caso mezcla personajes con retratos y vectoriales.
 
 ## Cómo probarlo
 

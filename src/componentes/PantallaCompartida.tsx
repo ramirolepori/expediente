@@ -8,6 +8,7 @@ import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
 import { Voces } from "./Voces";
 import { Documento, iconoPrueba } from "./Documento";
+import { Personaje } from "./personaje/Personaje";
 
 const DESTACAR_MS = 25_000;
 
@@ -123,18 +124,25 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
               <p className="text-sm uppercase tracking-widest text-suave">Interrogatorio en curso</p>
               <h2 className="font-titulo text-3xl">{personaje.nombre}</h2>
               <p className="text-acento">{personaje.rol}</p>
-              <div className="mt-4 flex-1 space-y-4 overflow-hidden">
-                {activo.ms.slice(-6).map((m) =>
-                  m.de === "personaje" ? (
-                    <p key={m.id} className="papel aparecer rounded-sm p-4 text-2xl leading-snug">
-                      <Maquina texto={m.texto} animar={!previos.has(m.id)} />
-                    </p>
-                  ) : m.de === "jugador" ? (
-                    <p key={m.id} className="aparecer flex items-center gap-2 text-xl text-suave">
-                      <Punto color={autor(m.autor)?.color ?? "#777"} /> {autor(m.autor)?.apodo}: {m.texto}
-                    </p>
-                  ) : null,
+              <div className="mt-4 flex min-h-0 flex-1 gap-6">
+                {personaje.apariencia && (
+                  <div className="w-[min(18rem,35%)] shrink-0 self-start overflow-hidden rounded-xl border border-borde">
+                    <Personaje id={personaje.id} apariencia={personaje.apariencia} nombre={personaje.nombre} mensajes={activo.ms} previos={previos} />
+                  </div>
                 )}
+                <div className="min-w-0 flex-1 space-y-4 overflow-hidden">
+                  {activo.ms.slice(-6).map((m) =>
+                    m.de === "personaje" ? (
+                      <p key={m.id} className="papel aparecer rounded-sm p-4 text-2xl leading-snug">
+                        <Maquina texto={m.texto} animar={!previos.has(m.id)} />
+                      </p>
+                    ) : m.de === "jugador" ? (
+                      <p key={m.id} className="aparecer flex items-center gap-2 text-xl text-suave">
+                        <Punto color={autor(m.autor)?.color ?? "#777"} /> {autor(m.autor)?.apodo}: {m.texto}
+                      </p>
+                    ) : null,
+                  )}
+                </div>
               </div>
             </>
           ) : vista.pizarra.items.length > 0 ? (

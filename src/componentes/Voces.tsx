@@ -1,9 +1,27 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { VistaPartida } from "@/motor/vista";
 import { modeloListo, precargar, sintetizar } from "@/cliente/piper";
 import { suenaAca, textoHablado, vozPiper, type VozPersonaje } from "@/cliente/voces";
+
+/** Qué personaje está sonando ahora en este dispositivo, para que su dibujo mueva la boca. */
+let sonando: string | null = null;
+const oyentes = new Set<() => void>();
+function marcarSonando(personajeId: string | null) {
+  sonando = personajeId;
+  oyentes.forEach((o) => o());
+}
+export function usePersonajeSonando() {
+  return useSyncExternalStore(
+    (o) => {
+      oyentes.add(o);
+      return () => oyentes.delete(o);
+    },
+    () => sonando,
+    () => null,
+  );
+}
 
 const VOZ_POR_DEFECTO: VozPersonaje = { genero: "masculino", edad: "adulto", velocidad: 1 };
 
@@ -69,7 +87,11 @@ export function Voces({ vista, grande }: { vista: VistaPartida; grande?: boolean
         if (!suenaAca(vista.config.audioEn, yo, vista.conexiones, autor)) return;
         const texto = textoHablado(m.texto);
         const voz = vista.personajes.find((p) => p.id === personajeId)?.voz ?? VOZ_POR_DEFECTO;
-        if (texto) cola.current = cola.current.then(() => decir(texto, voz)).catch(() => {});
+        if (!texto) return;
+        cola.current = cola.current
+          .then(() => (marcarSonando(personajeId), decir(texto, voz)))
+          .catch(() => {})
+          .finally(() => marcarSonando(null));
       });
     }
   }, [estado, vista.interrogatorios, vista.config.audioEn, vista.conexiones, vista.personajes, yo]);

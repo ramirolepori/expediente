@@ -372,6 +372,19 @@
         "edad": "adulto",
         "velocidad": 0.95,
         "tono": "grave y seco"
+      },
+      "apariencia": {
+        "rasgos": {
+          "piel": "#d9a77f",
+          "pelo": "#2b2522",
+          "peinado": "corto",
+          "vello": "barba_corta",
+          "ropa": "traje",
+          "colorRopa": "#24344d",
+          "colorDetalle": "#d6dce4",
+          "corbata": null,
+          "arrugas": 0.3
+        }
       }
     },
     {
@@ -478,6 +491,22 @@
         "edad": "mayor",
         "velocidad": 0.9,
         "tono": "ronco"
+      },
+      "apariencia": {
+        "rasgos": {
+          "piel": "#cf9d78",
+          "pelo": "#9a958d",
+          "peinado": "entradas",
+          "vello": "bigote",
+          "arrugas": 0.75,
+          "ropa": "traje",
+          "colorRopa": "#4a4b4f",
+          "colorDetalle": "#ddd6c6",
+          "corbata": "#5a1c1c",
+          "accesorios": [
+            "vapeador"
+          ]
+        }
       }
     },
     {
@@ -587,6 +616,22 @@
         "edad": "adulto",
         "velocidad": 1.0,
         "tono": "suave y firme"
+      },
+      "apariencia": {
+        "rasgos": {
+          "piel": "#e0ac84",
+          "pelo": "#1f1915",
+          "peinado": "melena",
+          "labios": "#b3121e",
+          "ropa": "camisa",
+          "colorRopa": "#2d2d33",
+          "corbata": null,
+          "accesorios": [
+            "aros"
+          ],
+          "colorAccesorio": "#c9a25f",
+          "arrugas": 0.1
+        }
       }
     },
     {
@@ -609,6 +654,17 @@
         "edad": "joven",
         "velocidad": 1.1,
         "tono": "alegre"
+      },
+      "apariencia": {
+        "rasgos": {
+          "piel": "#a86d45",
+          "pelo": "#1f1915",
+          "peinado": "rulos",
+          "ropa": "camisa",
+          "colorRopa": "#e8e4da",
+          "corbata": "#1a1a1a",
+          "arrugas": 0
+        }
       }
     },
     {
@@ -650,6 +706,19 @@
         "edad": "joven",
         "velocidad": 1.05,
         "tono": "nervioso"
+      },
+      "apariencia": {
+        "rasgos": {
+          "piel": "#f3d2b8",
+          "pelo": "#7d5532",
+          "peinado": "cola",
+          "pecas": true,
+          "ropa": "uniforme",
+          "colorRopa": "#5a2e2e",
+          "corbata": null,
+          "colorAccesorio": "#c9a25f",
+          "arrugas": 0
+        }
       }
     },
     {
@@ -690,6 +759,19 @@
         "edad": "joven",
         "velocidad": 1.15,
         "tono": "agitado"
+      },
+      "apariencia": {
+        "rasgos": {
+          "piel": "#f1c9a5",
+          "pelo": "#8b2f1c",
+          "peinado": "rapado",
+          "vello": "barba_corta",
+          "anteojos": "rectangulares",
+          "ropa": "buzo",
+          "colorRopa": "#2d2d33",
+          "colorDetalle": "#cfd8c8",
+          "arrugas": 0
+        }
       }
     },
     {
@@ -721,6 +803,17 @@
         "edad": "adulto",
         "velocidad": 0.95,
         "tono": "quebrado"
+      },
+      "apariencia": {
+        "rasgos": {
+          "piel": "#c68a5e",
+          "pelo": "#5a3b24",
+          "peinado": "cola",
+          "ropa": "remera",
+          "colorRopa": "#1f4a4a",
+          "arrugas": 0.1,
+          "sombra": "#6b5a7a"
+        }
       }
     },
     {
@@ -802,6 +895,19 @@
         "edad": "joven",
         "velocidad": 1.05,
         "tono": "tenso"
+      },
+      "apariencia": {
+        "rasgos": {
+          "piel": "#cf9d78",
+          "pelo": "#5a3b24",
+          "peinado": "corto",
+          "vello": "candado",
+          "ropa": "traje",
+          "colorRopa": "#2d2d33",
+          "colorDetalle": "#efe6cf",
+          "corbata": null,
+          "arrugas": 0
+        }
       }
     },
     {
@@ -856,6 +962,20 @@
         "edad": "mayor",
         "velocidad": 0.85,
         "tono": "calmo y frío"
+      },
+      "apariencia": {
+        "rasgos": {
+          "edad": "mayor",
+          "piel": "#e0ac84",
+          "pelo": "#e2ded6",
+          "peinado": "calvo",
+          "anteojos": "rectangulares",
+          "ropa": "traje",
+          "colorRopa": "#1f1f24",
+          "colorDetalle": "#efe6cf",
+          "corbata": "#1f3a5a",
+          "arrugas": 0.85
+        }
       }
     }
   ],

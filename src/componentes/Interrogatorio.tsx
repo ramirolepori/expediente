@@ -4,6 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } fro
 import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
 import { Maquina, Punto } from "./comunes";
+import { Personaje } from "./personaje/Personaje";
 
 type Sala = ReturnType<typeof useSala>;
 
@@ -152,19 +153,24 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
   }, [vozDisponible]);
 
   return (
-    <div className="flex h-[calc(100dvh-9.5rem)] flex-col lg:h-[calc(100dvh-5rem)]">
-      <div className="mb-3 flex items-center gap-3">
-        <button onClick={onVolver} className="rounded-lg border border-borde px-3 py-1.5 text-sm">
+    <div className="grid h-[calc(100dvh-9.5rem)] grid-cols-[5rem_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] gap-x-3 lg:h-[calc(100dvh-5rem)] lg:grid-cols-[16rem_minmax(0,1fr)]">
+      {personaje.apariencia && (
+        <div className="col-start-1 row-start-1 mb-3 self-start overflow-hidden rounded-xl border border-borde lg:row-span-3">
+          <Personaje id={personaje.id} apariencia={personaje.apariencia} nombre={personaje.nombre} mensajes={mensajes} previos={previos} />
+        </div>
+      )}
+      <div className="col-start-2 row-start-1 mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 self-center">
+        <button onClick={onVolver} className="whitespace-nowrap rounded-lg border border-borde px-3 py-1.5 text-sm">
           ← Volver
         </button>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="truncate font-titulo text-lg leading-tight">{personaje.nombre}</p>
           <p className="truncate text-xs text-suave">{personaje.rol}</p>
         </div>
-        <ContadorPreguntas restantes={vista.preguntasRestantes} className="ml-auto shrink-0" />
+        <ContadorPreguntas restantes={vista.preguntasRestantes} className="w-full sm:ml-auto sm:w-auto sm:shrink-0" />
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto rounded-xl border border-borde bg-panel p-3">
+      <div className="col-span-2 space-y-3 overflow-y-auto rounded-xl border border-borde bg-panel p-3 lg:col-span-1 lg:col-start-2">
         {mensajes.length === 0 && <p className="py-8 text-center text-sm text-suave">{personaje.nombre} espera sentado/a del otro lado de la mesa.</p>}
         {mensajes.map((m) => {
           if (m.de === "sistema") return <p key={m.id} className="text-center text-xs text-acento">{m.texto}</p>;
@@ -189,7 +195,7 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
       </div>
 
       <form
-        className="mt-3 space-y-2"
+        className="col-span-2 mt-3 space-y-2 lg:col-span-1 lg:col-start-2"
         onSubmit={(e) => {
           e.preventDefault();
           enviar();

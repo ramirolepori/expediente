@@ -4,6 +4,7 @@ import { MockLanguageModelV4 } from "ai/test";
  * Modelo falso para tests (LLM_FALSO=1): responde al instante, sin gastar cuota.
  * Si la pregunta incluye "[revelar:clave]", primero llama a la herramienta revelar con esa clave,
  * así los tests pueden ejercitar las revelaciones y los guardrails del servidor.
+ * Como el real, empieza cada respuesta con la etiqueta de emoción.
  */
 export function modeloFalso() {
   const uso = {
@@ -23,7 +24,7 @@ export function modeloFalso() {
         const resultado = JSON.stringify(ultimo.content);
         const permitido = resultado.includes('"permitido":true');
         return {
-          content: [{ type: "text", text: permitido ? `${nombre}: Está bien, les cuento lo que sé.` : `${nombre}: No tengo nada que decir sobre eso.` }],
+          content: [{ type: "text", text: permitido ? `[emocion: quebrado] ${nombre}: Está bien, les cuento lo que sé.` : `[emocion: evasivo] ${nombre}: No tengo nada que decir sobre eso.` }],
           finishReason: { unified: "stop", raw: undefined },
           usage: uso,
           warnings: [],
@@ -41,7 +42,7 @@ export function modeloFalso() {
         };
       }
       return {
-        content: [{ type: "text", text: `${nombre}: Respuesta de prueba.` }],
+        content: [{ type: "text", text: `[emocion: nervioso] ${nombre}: Respuesta de prueba.` }],
         finishReason: { unified: "stop", raw: undefined },
         usage: uso,
         warnings: [],

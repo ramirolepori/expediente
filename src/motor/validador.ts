@@ -14,8 +14,11 @@ function referencias(c: Condicion, out: { tipo: string; id: string }[] = []) {
   return out;
 }
 
-/** Valida forma (schema), integridad de referencias y que el caso se pueda resolver. */
-export function validarCaso(datos: unknown): ResultadoValidacion {
+/**
+ * Valida forma (schema), integridad de referencias y que el caso se pueda resolver.
+ * `existe` dice si un archivo de public/ existe (el script de validación usa el disco; sin ella no se revisan archivos).
+ */
+export function validarCaso(datos: unknown, existe?: (ruta: string) => boolean): ResultadoValidacion {
   const parsed = CasoSchema.safeParse(datos);
   if (!parsed.success) {
     return { ok: false, avisos: [], errores: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`) };
@@ -84,6 +87,21 @@ export function validarCaso(datos: unknown): ResultadoValidacion {
     });
     p.mentiras.forEach((m, i) => chequear(m.cae, `personaje ${p.id}.mentiras[${i}]`));
   });
+  // apariencia: retratos con neutral y archivos que existan; todos con retratos o todos vectoriales
+  const conRetratos = caso.personajes.filter((p) => p.apariencia?.retratos);
+  conRetratos.forEach((p) => {
+    const retratos = p.apariencia!.retratos!;
+    if (!retratos.neutral) errores.push(`personaje ${p.id}: los retratos necesitan al menos "neutral"`);
+    Object.values(retratos).forEach((ruta) => {
+      if (!ruta.startsWith("/casos/")) avisos.push(`personaje ${p.id}: el retrato ${ruta} debería vivir en public/casos/<caso>/`);
+      if (existe && !existe(ruta)) errores.push(`personaje ${p.id}: no existe el retrato public${ruta}`);
+    });
+    if (p.apariencia?.rasgos) avisos.push(`personaje ${p.id}: tiene retratos y rasgos; se usan los retratos`);
+  });
+  const interrogables = caso.personajes.filter((p) => p.interrogable);
+  const mezcla = interrogables.filter((p) => p.apariencia?.retratos).length;
+  if (mezcla && mezcla < interrogables.length) avisos.push("algunos personajes tienen retratos y otros se dibujan en vectorial: conviene un solo estilo por caso");
+
   caso.verdad.culpables.forEach((c) => {
     if (!ids.personaje.has(c.personaje)) errores.push(`verdad: culpable inexistente "${c.personaje}"`);
   });

@@ -1,3 +1,5 @@
+import type { Emocion } from "@/componentes/personaje/emociones";
+
 export type Modo = "cooperativo" | "competitivo" | "traidor";
 export type DondeSuena = "nadie" | "compartida" | "interrogador" | "todos";
 
@@ -52,6 +54,8 @@ export interface MensajeInterrogatorio {
   prueba?: string;
   hora: number;
   audioUrl?: string;
+  /** emoción con la que respondió el personaje (la elige el modelo) */
+  emocion?: Emocion;
 }
 
 export interface ResultadoAcusacion {

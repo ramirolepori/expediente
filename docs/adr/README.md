@@ -13,3 +13,4 @@ Una decisión por archivo: contexto, decisión y consecuencias. Si una decisión
 | [0007](0007-pruebas.md) | Pruebas sin simular partidas en producción | Vigente |
 | [0008](0008-casos-en-repo-publico.md) | Los casos (con solución) viven en el repo público | Vigente, revisable |
 | [0009](0009-audio-una-pista.md) | Audio: una sola pista para todos | Implementada |
+| [0010](0010-apariencia-de-personajes.md) | Apariencia de los personajes: retratos o vectorial, y emoción desde el modelo | Implementada |

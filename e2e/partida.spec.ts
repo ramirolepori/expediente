@@ -60,6 +60,9 @@ test("partida completa: dos jugadores y la tele", async ({ page: anfitrion, brow
   await preguntar(lu, "Carla Belotti", "¿Julia te dejó algo? [revelar:carla_entrega_sobre]");
   await expect(lu.getByText("Carla Belotti: Está bien, les cuento lo que sé.")).toBeVisible();
   await expect(tele.getByText("Carla Belotti: Está bien, les cuento lo que sé.")).toBeVisible();
+  // el personaje se dibuja con la emoción que eligió el modelo
+  await expect(lu.getByRole("img", { name: "Carla Belotti, expresión quebrado" })).toBeVisible();
+  await expect(tele.getByRole("img", { name: "Carla Belotti, expresión quebrado" })).toBeVisible();
   await expect(anfitrion.getByText("Pendrive azul de Julia").first()).toBeVisible();
 
   // guardrail: una clave ajena a la ficha se rechaza

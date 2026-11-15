@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EMOCIONES } from "@/componentes/personaje/emociones";
 
 /**
  * Contrato de un caso. Todo caso que cumpla este schema (y pase el validador)
@@ -118,6 +119,45 @@ export const VozSchema = z.object({
   tono: z.string().optional(),
 });
 
+const Color = z.string().regex(/^#[0-9a-fA-F]{6}$/, "color en hex de 6 dígitos, ej. #3a3d44");
+
+export const ESPECIES = ["humano", "perro", "gato", "loro"] as const;
+export const EDADES_RASGO = ["bebe", "nino", "adolescente", "adulto", "mayor"] as const;
+export const PEINADOS = ["corto", "entradas", "calvo", "rapado", "largo", "melena", "rulos", "rodete", "cola", "pelusa"] as const;
+export const ROPAS = ["traje", "camisa", "remera", "buzo", "vestido", "uniforme", "delantal", "enterito"] as const;
+export const ACCESORIOS = ["aros", "collar", "gorra", "sombrero", "baston", "chupete", "vapeador", "cigarrillo", "moño"] as const;
+
+/** Cómo dibuja la plataforma a un personaje vectorial. Todo es opcional: lo que falta sale de su voz, edad e id. */
+export const RasgosSchema = z
+  .object({
+    especie: z.enum(ESPECIES),
+    cuerpo: z.enum(["femenino", "masculino", "neutro"]),
+    edad: z.enum(EDADES_RASGO),
+    piel: Color.describe("en animales, el pelaje o plumaje"),
+    pelo: Color.describe("en animales, manchas, orejas o cresta"),
+    ojos: Color,
+    peinado: z.enum(PEINADOS),
+    vello: z.enum(["ninguno", "bigote", "barba", "barba_corta", "candado"]),
+    labios: Color.nullable().describe("labial; null sin maquillaje"),
+    sombra: Color.nullable().describe("sombra de ojos; null sin maquillaje"),
+    pecas: z.boolean(),
+    arrugas: z.number().min(0).max(1),
+    anteojos: z.enum(["ninguno", "redondos", "rectangulares", "sol"]),
+    ropa: z.enum(ROPAS),
+    colorRopa: Color,
+    colorDetalle: Color.describe("camisa bajo el saco, cuello, vivos"),
+    corbata: Color.nullable(),
+    accesorios: z.array(z.enum(ACCESORIOS)),
+    colorAccesorio: Color,
+  })
+  .partial();
+
+export const AparienciaSchema = z.object({
+  rasgos: RasgosSchema.optional(),
+  /** una imagen por emoción (neutral obligatoria) y opcionalmente "hablando", servidas desde public/casos/<id>/ */
+  retratos: z.partialRecord(z.enum([...EMOCIONES, "hablando"]), z.string().startsWith("/")).optional(),
+});
+
 export const PersonajeSchema = z.object({
   id: Id,
   nombre: z.string(),
@@ -135,6 +175,8 @@ export const PersonajeSchema = z.object({
   /** cosas de color que puede improvisar sin afectar el caso */
   color: z.string().optional(),
   voz: VozSchema,
+  /** retratos del caso o, si no trae, vectorial con estos rasgos (o con rasgos por defecto) */
+  apariencia: AparienciaSchema.optional(),
 });
 
 export const SobreSchema = z.object({
@@ -281,6 +323,7 @@ export const CasoSchema = z.object({
 
 export type Caso = z.infer<typeof CasoSchema>;
 export type Personaje = z.infer<typeof PersonajeSchema>;
+export type RasgosCaso = z.infer<typeof RasgosSchema>;
 export type Prueba = z.infer<typeof PruebaSchema>;
 export type Ambientacion = (typeof AMBIENTACIONES)[number];
 export type Minijuego = z.infer<typeof MinijuegoSchema>;
