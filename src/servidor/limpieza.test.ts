@@ -1,4 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+// corre antes de los imports: el almacén tiene que ser el de memoria aunque el build de Vercel tenga las claves de Supabase
+vi.hoisted(() => {
+  delete process.env.VERCEL;
+  delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+  delete process.env.SUPABASE_SECRET_KEY;
+});
 import { almacen, INACTIVIDAD_MAXIMA_MS, type Sala } from "./almacen";
 import { GET } from "@/app/api/cron/limpiar/route";
 
