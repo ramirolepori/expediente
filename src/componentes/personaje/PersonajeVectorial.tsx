@@ -181,7 +181,7 @@ export function PersonajeVectorial({
   const cab = cabezaDe(r);
   const prop = humano ? PROPORCION[r.edad] : { cuerpo: 1, cabeza: 1 };
   // el mentón baja hasta dejar un cuello proporcionado al cuerpo (48 de alto en un adulto)
-  const dy = humano ? 420 - 150 * prop.cuerpo - (270 + (cab.abajo - 270) * prop.cabeza) : { perro: 24, gato: 40, loro: 44 }[r.especie];
+  const dy = humano ? 420 - 150 * prop.cuerpo - (270 + (cab.abajo - 270) * prop.cabeza) : { humano: 0, perro: 24, gato: 40, loro: 44 }[r.especie];
   const OY = 167;
   const { rx, ry, iris } = cab.ojo;
 
