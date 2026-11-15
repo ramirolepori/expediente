@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import type { VistaPartida } from "@/motor/vista";
-import { BotonSalir, Maquina, Punto, QR, Reloj, useUrlSala } from "./comunes";
+import { BotonSalir, Maquina, Punto, QR, Reloj, useAhora, useUrlSala } from "./comunes";
+import { Corcho } from "./Pizarra";
 import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
 
@@ -11,6 +12,7 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
   const salir = <BotonSalir onSalir={onSalir} className="fixed top-3 right-4 z-40 opacity-40 hover:opacity-100" />;
   const jugadores = vista.conexiones.filter((c) => c.tipo === "jugador");
   const url = useUrlSala(vista.codigo);
+  const ahora = useAhora(5000);
   // lo que ya estaba cuando se abrió la tele no se anima
   const [previos] = useState(() => new Set(Object.values(vista.interrogatorios).flat().map((m) => m.id)));
 
@@ -51,7 +53,9 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
   const activo = Object.entries(vista.interrogatorios)
     .map(([id, ms]) => ({ id, ultimo: ms.at(-1)?.hora ?? 0, ms }))
     .sort((a, b) => b.ultimo - a.ultimo)[0];
-  const personaje = activo && vista.personajes.find((p) => p.id === activo.id);
+  // si nadie interroga hace más de dos minutos, la tele muestra el corcho del equipo
+  const interrogando = !!activo && ahora - activo.ultimo < 120_000;
+  const personaje = interrogando ? vista.personajes.find((p) => p.id === activo.id) : undefined;
   const autor = (id?: string) => vista.conexiones.find((c) => c.id === id);
 
   return (
@@ -91,8 +95,15 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
                 )}
               </div>
             </>
+          ) : vista.pizarra.items.length > 0 ? (
+            <>
+              <p className="mb-3 text-sm uppercase tracking-widest text-suave">Pizarra del equipo</p>
+              <div className="min-h-0 flex-1">
+                <Corcho vista={vista} soloLectura alto="100%" />
+              </div>
+            </>
           ) : (
-            <div className="m-auto max-w-xl text-center text-2xl text-suave">Cuando alguien interrogue a un sospechoso, la charla aparece acá para que la sigan todos.</div>
+            <div className="m-auto max-w-xl text-center text-2xl text-suave">Cuando alguien interrogue a un sospechoso, la charla aparece acá. Si arman la pizarra, también se ve acá.</div>
           )}
         </section>
 

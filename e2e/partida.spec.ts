@@ -199,3 +199,43 @@ test("minijuegos: descifrar un mensaje y abrir la caja fuerte propia del caso", 
   await page.getByRole("button", { name: "Cerrar" }).click();
   await expect(page.getByRole("button", { name: "🧷 Contenido de la caja fuerte de gerencia" })).toBeVisible();
 });
+
+test("pizarra: corcho con hilos, línea de tiempo y la tele", async ({ page: ana, browser }) => {
+  const codigo = await crearSala(ana, "Ana");
+  const beto = await unirJugador(browser, codigo, "Beto");
+  const tele = await (await browser.newContext({ viewport: { width: 1600, height: 900 } })).newPage();
+  await tele.goto(`/sala/${codigo}?pantalla`);
+  await tele.getByRole("button", { name: "Conectar como pantalla compartida" }).click();
+  await ana.getByRole("button", { name: "Abrir el caso" }).click();
+
+  await ana.getByRole("button", { name: "Pizarra" }).click();
+  await ana.getByRole("button", { name: /Agregar/ }).click();
+  await ana.getByRole("button", { name: "👤 Martín Duarte" }).click();
+  await ana.getByRole("button", { name: /Informe de la primera patrulla/ }).click();
+  await expect(ana.locator(".tarjeta-pizarra")).toHaveCount(2);
+
+  // conectar las dos tarjetas con un hilo
+  await ana.getByRole("button", { name: "🧵 Conectar" }).click();
+  await ana.locator(".tarjeta-pizarra").nth(0).click();
+  await ana.locator(".tarjeta-pizarra").nth(1).click();
+  await expect(ana.locator("path.hilo")).toHaveCount(1);
+
+  // el otro jugador ve lo mismo en tiempo real
+  await beto.getByRole("button", { name: "Pizarra" }).click();
+  await expect(beto.locator(".tarjeta-pizarra")).toHaveCount(2);
+  await expect(beto.locator("path.hilo")).toHaveCount(1);
+
+  // línea de tiempo ordenada sola
+  await beto.getByRole("button", { name: "🕰️ Línea de tiempo" }).click();
+  await beto.getByLabel("Hora").fill("Lun 02:41");
+  await beto.getByRole("button", { name: "Sumar" }).click();
+  await beto.getByLabel("Hora").fill("Dom 22:36");
+  await beto.getByRole("button", { name: "Sumar" }).click();
+  await expect(beto.locator("ol li").first()).toContainText("Dom 22:36");
+
+  // la tele muestra el corcho si nadie interroga
+  await expect(tele.getByText("Pizarra del equipo")).toBeVisible();
+  await expect(tele.locator(".tarjeta-pizarra")).toHaveCount(2);
+  await tele.screenshot({ path: "test-results/pizarra-tele.png" });
+  await ana.screenshot({ path: "test-results/pizarra-jugador.png" });
+});

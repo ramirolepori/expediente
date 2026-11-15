@@ -123,6 +123,24 @@ describe("Hotel Aurora", () => {
     expect(s.minijuegosResueltos?.nota_cifrada).toBe("a");
   });
 
+  it("pizarra: solo acepta lo que el equipo ve, hilos que se cortan y línea de tiempo", () => {
+    let s = partida();
+    expect(() => aplicar(s, { tipo: "pizarraColocar", ref: { tipo: "prueba", id: "informe_adn" }, x: 10, y: 10 }, "a", caso)).toThrow(ErrorDeJuego);
+    s = aplicar(s, { tipo: "pizarraColocar", ref: { tipo: "prueba", id: "informe_escena" }, x: 10, y: 10 }, "a", caso);
+    s = aplicar(s, { tipo: "pizarraColocar", ref: { tipo: "personaje", id: "duarte" }, x: 140, y: -5 }, "b", caso);
+    const [p1, p2] = s.pizarra!.items;
+    expect(p2).toMatchObject({ x: 100, y: 0 });
+    s = aplicar(s, { tipo: "pizarraHilo", a: p1.id, b: p2.id }, "a", caso);
+    expect(s.pizarra!.hilos).toHaveLength(1);
+    s = aplicar(s, { tipo: "pizarraHilo", a: p2.id, b: p1.id }, "b", caso);
+    expect(s.pizarra!.hilos).toHaveLength(0);
+    s = aplicar(s, { tipo: "pizarraHilo", a: p1.id, b: p2.id }, "a", caso);
+    s = aplicar(s, { tipo: "pizarraQuitar", item: p2.id }, "a", caso);
+    expect(s.pizarra!.hilos).toHaveLength(0);
+    s = aplicar(s, { tipo: "lineaAgregar", ref: { tipo: "prueba", id: "informe_escena" }, hora: "Lun 02:41" }, "a", caso);
+    expect(vistaPara(caso, s, "b").pizarra.linea[0].hora).toBe("Lun 02:41");
+  });
+
   it("las notas privadas solo las ve su autor", () => {
     let s = partida();
     s = aplicar(s, { tipo: "nota", texto: "sospecho del gerente", visibilidad: "privada" }, "a", caso);

@@ -64,6 +64,17 @@ export interface ResultadoAcusacion {
   traidor?: { id: string; votado: string; descubierto: boolean; cumplio: boolean; gana: "equipo" | "traidor" };
 }
 
+export type RefPizarra = { tipo: "prueba" | "hecho" | "personaje" | "nota"; id: string };
+
+export interface Pizarra {
+  /** tarjetas en el corcho; x e y en porcentaje del tablero (0 a 100) */
+  items: { id: string; ref: RefPizarra; x: number; y: number; autor: string }[];
+  hilos: { id: string; a: string; b: string; autor: string }[];
+  linea: { id: string; ref: RefPizarra; hora: string; autor: string }[];
+}
+
+export const PIZARRA_VACIA: Pizarra = { items: [], hilos: [], linea: [] };
+
 export interface Evento {
   id: string;
   hora: number;
@@ -91,6 +102,8 @@ export interface EstadoPartida {
   interrogatorios: Record<string, MensajeInterrogatorio[]>;
   /** votos de acusación: conexión → respuestas (opcional para salas creadas antes de la votación) */
   votos?: Record<string, Record<string, string>>;
+  /** corcho compartido (opcional para salas creadas antes) */
+  pizarra?: Pizarra;
   /** conexión que juega de traidor (modo traidor) */
   traidor?: string | null;
   acusacion: ResultadoAcusacion | null;
@@ -101,6 +114,12 @@ export interface EstadoPartida {
 export type Accion =
   | { tipo: "iniciar" }
   | { tipo: "salir" }
+  | { tipo: "pizarraColocar"; ref: RefPizarra; x: number; y: number }
+  | { tipo: "pizarraMover"; item: string; x: number; y: number }
+  | { tipo: "pizarraQuitar"; item: string }
+  | { tipo: "pizarraHilo"; a: string; b: string }
+  | { tipo: "lineaAgregar"; ref: RefPizarra; hora: string }
+  | { tipo: "lineaQuitar"; id: string }
   | { tipo: "abrirSobre"; sobre: string }
   | { tipo: "probarCandado"; candado: string; codigo: string }
   | { tipo: "resolverMinijuego"; minijuego: string; respuesta: string }

@@ -8,6 +8,7 @@ import { Documento, iconoPrueba } from "./Documento";
 import { Avisos } from "./Avisos";
 import { FichaSecreta } from "./FichaSecreta";
 import { Interrogatorio } from "./Interrogatorio";
+import { Corcho, LineaDeTiempo } from "./Pizarra";
 import { TarjetaMinijuego } from "./minijuegos/Minijuego";
 import { Lobby } from "./Lobby";
 import { Resultado } from "./Resultado";
@@ -103,7 +104,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
         <main className="mx-auto w-full max-w-4xl px-4 py-5">
           {pestana === "expediente" && <Expediente sala={sala} vista={vista} />}
           {pestana === "interrogar" && <Interrogatorio sala={sala} vista={vista} />}
-          {pestana === "pizarra" && <Pizarra vista={vista} />}
+          {pestana === "pizarra" && <Pizarra sala={sala} vista={vista} />}
           {pestana === "notas" && <Notas sala={sala} vista={vista} />}
           {pestana === "resolver" && <Resolver sala={sala} vista={vista} />}
         </main>
@@ -246,7 +247,31 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
   );
 }
 
-function Pizarra({ vista }: { vista: VistaPartida }) {
+function Pizarra({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
+  const [vistaPizarra, setVistaPizarra] = useState<"corcho" | "linea" | "bitacora">("corcho");
+  return (
+    <div>
+      <div className="mb-4 flex rounded-lg border border-borde p-0.5 text-sm">
+        {(
+          [
+            ["corcho", "📌 Corcho"],
+            ["linea", "🕰️ Línea de tiempo"],
+            ["bitacora", "📜 Descubrimientos"],
+          ] as const
+        ).map(([id, nombre]) => (
+          <button key={id} onClick={() => setVistaPizarra(id)} className={`flex-1 rounded-md px-3 py-1.5 ${vistaPizarra === id ? "bg-acento text-acento-texto" : "text-suave"}`}>
+            {nombre}
+          </button>
+        ))}
+      </div>
+      {vistaPizarra === "corcho" && <Corcho vista={vista} enviar={sala.accion} />}
+      {vistaPizarra === "linea" && <LineaDeTiempo vista={vista} enviar={sala.accion} />}
+      {vistaPizarra === "bitacora" && <Bitacora vista={vista} />}
+    </div>
+  );
+}
+
+function Bitacora({ vista }: { vista: VistaPartida }) {
   return (
     <div className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
       <section>

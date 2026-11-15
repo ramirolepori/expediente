@@ -1,7 +1,7 @@
 import type { Caso } from "@/casos/schema";
-import { evaluar, minijuegoVisible } from "./condiciones";
+import { evaluar, minijuegoVisible, pruebaVisible } from "./condiciones";
 import { esRespuestaCorrecta } from "./minijuegos";
-import type { Accion, EstadoPartida, Evento } from "./tipos";
+import { PIZARRA_VACIA, type Accion, type EstadoPartida, type Evento, type RefPizarra } from "./tipos";
 
 export class ErrorDeJuego extends Error {}
 
@@ -13,6 +13,19 @@ function evento(texto: string): Evento {
 }
 
 export const normalizarCodigo = (s: string) => s.replace(/[\s-]/g, "").toUpperCase();
+
+const LIMITE_PIZARRA = { items: 60, hilos: 120, linea: 80 };
+const acotar = (n: number) => Math.min(100, Math.max(0, Number.isFinite(n) ? n : 50));
+
+/** Solo se puede llevar a la pizarra lo que el equipo ya tiene a la vista. */
+function validarRef(ref: RefPizarra, s: EstadoPartida, caso: Caso) {
+  const ok =
+    (ref.tipo === "prueba" && pruebaVisible(ref.id, s, caso)) ||
+    (ref.tipo === "hecho" && s.hechosRevelados.includes(ref.id)) ||
+    (ref.tipo === "personaje" && !!caso.personajes.find((p) => p.id === ref.id && p.interrogable && evaluar(p.disponible, s, caso))) ||
+    (ref.tipo === "nota" && s.notas.some((n) => n.id === ref.id && n.visibilidad === "equipo"));
+  if (!ok) throw new ErrorDeJuego("Eso no está disponible para la pizarra");
+}
 
 /** recursos restantes, o null si la partida no los limita */
 export function recursosRestantes(estado: EstadoPartida): number | null {
@@ -81,6 +94,55 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
       }
       s.candadosAbiertos.push(candado.id);
       log(`🔓 ${autor.apodo} abrió «${candado.titulo}»`);
+      break;
+    }
+    case "pizarraColocar": {
+      validarRef(accion.ref, s, caso);
+      const pz = (s.pizarra ??= structuredClone(PIZARRA_VACIA));
+      if (pz.items.some((i) => i.ref.tipo === accion.ref.tipo && i.ref.id === accion.ref.id)) return estado;
+      if (pz.items.length >= LIMITE_PIZARRA.items) throw new ErrorDeJuego("La pizarra está llena");
+      pz.items.push({ id: nuevoId(), ref: accion.ref, x: acotar(accion.x), y: acotar(accion.y), autor: autorId });
+      break;
+    }
+    case "pizarraMover": {
+      const item = s.pizarra?.items.find((i) => i.id === accion.item);
+      if (!item) return estado;
+      item.x = acotar(accion.x);
+      item.y = acotar(accion.y);
+      break;
+    }
+    case "pizarraQuitar": {
+      if (!s.pizarra?.items.some((i) => i.id === accion.item)) return estado;
+      s.pizarra.items = s.pizarra.items.filter((i) => i.id !== accion.item);
+      s.pizarra.hilos = s.pizarra.hilos.filter((h) => h.a !== accion.item && h.b !== accion.item);
+      break;
+    }
+    case "pizarraHilo": {
+      const pz = s.pizarra;
+      if (!pz || accion.a === accion.b || !pz.items.some((i) => i.id === accion.a) || !pz.items.some((i) => i.id === accion.b)) {
+        throw new ErrorDeJuego("Elegí dos tarjetas de la pizarra");
+      }
+      // tocar el mismo par otra vez corta el hilo
+      const existe = pz.hilos.find((h) => (h.a === accion.a && h.b === accion.b) || (h.a === accion.b && h.b === accion.a));
+      if (existe) pz.hilos = pz.hilos.filter((h) => h !== existe);
+      else {
+        if (pz.hilos.length >= LIMITE_PIZARRA.hilos) throw new ErrorDeJuego("Demasiados hilos en la pizarra");
+        pz.hilos.push({ id: nuevoId(), a: accion.a, b: accion.b, autor: autorId });
+      }
+      break;
+    }
+    case "lineaAgregar": {
+      validarRef(accion.ref, s, caso);
+      const hora = accion.hora.trim().slice(0, 24);
+      if (!hora) throw new ErrorDeJuego("Poné una hora, por ejemplo 'Dom 23:12'");
+      const pz = (s.pizarra ??= structuredClone(PIZARRA_VACIA));
+      if (pz.linea.length >= LIMITE_PIZARRA.linea) throw new ErrorDeJuego("La línea de tiempo está llena");
+      pz.linea.push({ id: nuevoId(), ref: accion.ref, hora, autor: autorId });
+      break;
+    }
+    case "lineaQuitar": {
+      if (!s.pizarra?.linea.some((l) => l.id === accion.id)) return estado;
+      s.pizarra.linea = s.pizarra.linea.filter((l) => l.id !== accion.id);
       break;
     }
     case "resolverMinijuego": {

@@ -70,6 +70,7 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
       permiteNadie: p.permiteNadie,
       ...(terminada ? { respuesta: p.respuesta, explicacion: p.explicacion } : {}),
     })),
+    pizarra: estado.pizarra ?? { items: [], hilos: [], linea: [] },
     votos: estado.votos ?? {},
     // la ficha secreta solo le llega al traidor; el resto ni sabe quién es hasta el final
     fichaTraidor:
