@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "false"
+  },
+  "enabledPlugins": {
+    "engineering@knowledge-work-plugins": false,
+    "finance@knowledge-work-plugins": false,
+    "data@knowledge-work-plugins": false,
+    "design@knowledge-work-plugins": false,
+    "cowork-plugin-management@knowledge-work-plugins": false,
+    "mcp-tunnels@claude-plugins-official": false,
+    "mcp-server-dev@claude-plugins-official": false,
+    "plugin-dev@claude-plugins-official": false,
+    "claude-security@claude-plugins-official": false
+  }
+}
