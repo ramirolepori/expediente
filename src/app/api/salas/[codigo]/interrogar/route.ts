@@ -1,16 +1,14 @@
 import { generateText, isStepCount, tool, type ModelMessage } from "ai";
 import { z } from "zod";
 import { evaluar } from "@/motor/condiciones";
-import { construirInstrucciones, limpiarRespuesta, resolverRevelacion, textoPrueba } from "@/motor/interrogatorio";
+import { construirInstrucciones, LIMITES_INTERROGATORIO as LIMITES, limpiarRespuesta, preguntasHechas, resolverRevelacion, textoPrueba } from "@/motor/interrogatorio";
 import { nuevoId, recursosRestantes, revelarHecho } from "@/motor/reductor";
 import type { MensajeInterrogatorio } from "@/motor/tipos";
 import { almacen, type Sala } from "@/servidor/almacen";
-import { modelosInterrogatorio } from "@/servidor/llm";
+import { esCuotaAgotada, modelosInterrogatorio } from "@/servidor/llm";
 import { autenticar, ErrorSala, respuestaError } from "@/servidor/salas";
 
 export const maxDuration = 60;
-
-const LIMITES = { esperaMs: 3000, preguntasPorPartida: 300 };
 
 function agregarMensaje(codigo: string, personajeId: string, m: MensajeInterrogatorio) {
   return almacen.actualizar(codigo, (s): Sala => {
@@ -46,8 +44,11 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
       if (ultimoMio && ahora - ultimoMio.hora < LIMITES.esperaMs) throw new ErrorSala("Esperá unos segundos antes de la próxima pregunta", 429);
       const ultimoAca = sl.estado.interrogatorios[personaje.id]?.at(-1);
       if (ultimoAca?.de === "jugador" && ahora - ultimoAca.hora < 60000) throw new ErrorSala(`${personaje.nombre} todavía está respondiendo`, 429);
-      if (todos.filter((m) => m.de === "jugador").length >= LIMITES.preguntasPorPartida) {
+      if (preguntasHechas(sl.estado) >= LIMITES.porPartida) {
         throw new ErrorSala("Llegaron al máximo de preguntas de la partida", 429);
+      }
+      if (preguntasHechas(sl.estado, ahora - 60000) >= LIMITES.porSalaPorMinuto) {
+        throw new ErrorSala("Los testigos necesitan un respiro: esperen unos segundos y vuelvan a preguntar", 429);
       }
       const estado = structuredClone(sl.estado);
       if (!estado.personajesVisitados.includes(personaje.id)) {
@@ -97,6 +98,7 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
     });
 
     let respuestaModelo = "";
+    let cuotaAgotada = false;
     for (const opcion of modelos) {
       try {
         const resultado = await generateText({
@@ -112,13 +114,21 @@ export async function POST(req: Request, ctx: RouteContext<"/api/salas/[codigo]/
         respuestaModelo = resultado.text.trim();
         if (respuestaModelo) break;
       } catch (e) {
+        // con 429 el respaldo (20 pedidos por día) se gastaría igual de rápido: mejor esperar
+        if (esCuotaAgotada(e)) {
+          cuotaAgotada = true;
+          console.warn(`Interrogatorio: ${opcion.nombre} sin cuota (429)`);
+          break;
+        }
         console.warn(`Interrogatorio: ${opcion.nombre} falló (${e instanceof Error ? e.name : "error"}), probando el siguiente`);
       }
     }
     if (!respuestaModelo) {
       await agregarMensaje(codigo, personaje.id, {
         id: nuevoId(), de: "sistema", hora: Date.now(),
-        texto: `${personaje.nombre} no responde ahora (el modelo está saturado). Probá de nuevo en unos segundos.`,
+        texto: cuotaAgotada
+          ? `${personaje.nombre} pide un minuto para tomar aire. Vuelvan a preguntarle en un ratito.`
+          : `${personaje.nombre} no responde ahora (el modelo está saturado). Probá de nuevo en unos segundos.`,
       });
       return Response.json({ error: "Sin respuesta del modelo" }, { status: 503 });
     }

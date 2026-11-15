@@ -1,5 +1,5 @@
 import { google } from "@ai-sdk/google";
-import type { LanguageModel } from "ai";
+import { APICallError, RetryError, type LanguageModel } from "ai";
 
 /**
  * Modelos para los interrogatorios, en orden de preferencia.
@@ -31,4 +31,10 @@ export async function modelosInterrogatorio(): Promise<OpcionModelo[] | null> {
       providerOptions: { google: { thinkingConfig: { thinkingLevel: "low" } } },
     },
   ];
+}
+
+/** El proveedor rechazó el pedido por cuota (429). Puede venir envuelto en el RetryError de los reintentos. */
+export function esCuotaAgotada(e: unknown): boolean {
+  const error = RetryError.isInstance(e) ? e.lastError : e;
+  return APICallError.isInstance(error) && error.statusCode === 429;
 }

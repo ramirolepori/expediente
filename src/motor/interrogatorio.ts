@@ -2,6 +2,13 @@ import type { Caso, Personaje } from "@/casos/schema";
 import { evaluar, pruebaVisible } from "./condiciones";
 import type { EstadoPartida } from "./tipos";
 
+/** Topes pensados para la cuota gratis de Gemini (ADR 0005): el lite admite 15 pedidos por minuto y 500 por día. */
+export const LIMITES_INTERROGATORIO = { esperaMs: 3000, porSalaPorMinuto: 12, porPartida: 150 };
+
+export function preguntasHechas(estado: EstadoPartida, desde = 0) {
+  return Object.values(estado.interrogatorios).flat().filter((m) => m.de === "jugador" && m.hora >= desde).length;
+}
+
 /**
  * Guardrails del interrogatorio:
  * 1. Aislamiento: el personaje solo recibe SU ficha. Nunca la verdad ni lo que saben otros.

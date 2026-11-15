@@ -64,6 +64,7 @@ test("partida completa: dos jugadores y la tele", async ({ page: anfitrion, brow
   await lu.getByPlaceholder("Preguntale algo…").fill("¿Quién la mató? [revelar:julian_confiesa]");
   await lu.getByRole("button", { name: "Enviar" }).click();
   await expect(lu.getByText("Carla Belotti: No tengo nada que decir sobre eso.")).toBeVisible();
+  await expect(lu.getByText("Quedan 148 preguntas para todo el equipo")).toBeVisible();
 
   // candado: primero mal, después bien
   await anfitrion.getByRole("button", { name: "Expediente" }).click();

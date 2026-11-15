@@ -1,5 +1,6 @@
 import type { Caso } from "@/casos/schema";
 import { evaluar, minijuegoVisible, pruebasVisibles } from "./condiciones";
+import { LIMITES_INTERROGATORIO, preguntasHechas } from "./interrogatorio";
 import { configPublica } from "./minijuegos";
 import { recursosRestantes } from "./reductor";
 import type { EstadoPartida } from "./tipos";
@@ -61,6 +62,7 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
     recursosRestantes: recursosRestantes(estado),
     notas: estado.notas.filter((n) => n.visibilidad === "equipo" || n.autor === conexionId),
     interrogatorios: estado.interrogatorios,
+    preguntasRestantes: Math.max(0, LIMITES_INTERROGATORIO.porPartida - preguntasHechas(estado)),
     eventos: estado.eventos.slice(-60),
     preguntas: caso.resolucion.preguntas.map((p) => ({
       id: p.id,

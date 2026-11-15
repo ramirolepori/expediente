@@ -39,6 +39,7 @@ export function Interrogatorio({ sala, vista }: { sala: Sala; vista: VistaPartid
           Elegí a quién interrogar. Pueden mostrarle pruebas del expediente para confrontarlo.
           {vista.recursosRestantes !== null && " Citar a alguien nuevo cuesta una hora de investigación."}
         </p>
+        <ContadorPreguntas restantes={vista.preguntasRestantes} className="mb-4" />
         <div className="grid gap-3 sm:grid-cols-2">
           {vista.personajes.map((p) => (
             <button
@@ -60,6 +61,14 @@ export function Interrogatorio({ sala, vista }: { sala: Sala; vista: VistaPartid
     );
   }
   return <Chat sala={sala} vista={vista} personajeId={personaje.id} onVolver={() => setElegido(null)} />;
+}
+
+function ContadorPreguntas({ restantes, className = "" }: { restantes: number; className?: string }) {
+  return (
+    <p className={`text-xs ${restantes <= 20 ? "text-acento" : "text-suave"} ${className}`} aria-live="polite">
+      {restantes === 0 ? "No quedan preguntas en esta partida" : `Quedan ${restantes} ${restantes === 1 ? "pregunta" : "preguntas"} para todo el equipo`}
+    </p>
+  );
 }
 
 function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: VistaPartida; personajeId: string; onVolver: () => void }) {
@@ -125,6 +134,7 @@ function Chat({ sala, vista, personajeId, onVolver }: { sala: Sala; vista: Vista
           <p className="truncate font-titulo text-lg leading-tight">{personaje.nombre}</p>
           <p className="truncate text-xs text-suave">{personaje.rol}</p>
         </div>
+        <ContadorPreguntas restantes={vista.preguntasRestantes} className="ml-auto shrink-0" />
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto rounded-xl border border-borde bg-panel p-3">

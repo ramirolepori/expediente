@@ -4,7 +4,9 @@ import { CasoSchema } from "@/casos/schema";
 import { validarCaso } from "./validador";
 import { aplicar, ErrorDeJuego, revelarHecho } from "./reductor";
 import { vistaPara } from "./vista";
-import { construirInstrucciones, limpiarRespuesta, resolverRevelacion } from "./interrogatorio";
+import { construirInstrucciones, limpiarRespuesta, preguntasHechas, resolverRevelacion } from "./interrogatorio";
+import { APICallError, RetryError } from "ai";
+import { esCuotaAgotada } from "@/servidor/llm";
 import { configPublica, esRespuestaCorrecta } from "./minijuegos";
 import { CONFIG_POR_DEFECTO, type EstadoPartida } from "./tipos";
 
@@ -166,6 +168,30 @@ describe("Hotel Aurora", () => {
     s = aplicar(s, { tipo: "abrirSobre", sobre: "s2_registros" }, "a", caso);
     expect(resolverRevelacion(caso, personaje("duarte"), s, "duarte_confiesa_visita")).toEqual({ ok: true, hecho: "duarte_visita" });
     expect(resolverRevelacion(caso, personaje("duarte"), s, "clave_inventada").ok).toBe(false);
+  });
+
+  it("cuenta las preguntas de la partida y de la ventana reciente", () => {
+    const s = partida();
+    s.interrogatorios = {
+      carla: [
+        { id: "1", de: "jugador", autor: "a", texto: "?", hora: 1000 },
+        { id: "2", de: "personaje", texto: "!", hora: 2000 },
+        { id: "3", de: "jugador", autor: "b", texto: "?", hora: 70000 },
+      ],
+      esteban: [{ id: "4", de: "sistema", texto: "x", hora: 80000 }],
+    };
+    expect(preguntasHechas(s)).toBe(2);
+    expect(preguntasHechas(s, 10000)).toBe(1);
+    expect(vistaPara(caso, s, "a").preguntasRestantes).toBe(148);
+  });
+
+  it("reconoce el 429 del proveedor aunque venga envuelto en reintentos", () => {
+    const e429 = new APICallError({ message: "cuota", url: "x", requestBodyValues: {}, statusCode: 429 });
+    const e500 = new APICallError({ message: "error", url: "x", requestBodyValues: {}, statusCode: 500 });
+    expect(esCuotaAgotada(e429)).toBe(true);
+    expect(esCuotaAgotada(new RetryError({ message: "r", reason: "maxRetriesExceeded", errors: [e429] }))).toBe(true);
+    expect(esCuotaAgotada(e500)).toBe(false);
+    expect(esCuotaAgotada(new Error("timeout"))).toBe(false);
   });
 
   it("limpia las marcas internas que el modelo copie en la respuesta", () => {

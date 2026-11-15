@@ -41,7 +41,7 @@ src/app/api/*  ──►  src/servidor/salas.ts  ──►  src/motor/*  (lógic
 - `construirInstrucciones` arma el prompt con la ficha del personaje: lo que sabe, sus mentiras y los secretos que hoy puede soltar. Nunca la verdad ni lo que saben otros.
 - El modelo tiene una herramienta `revelar(clave)`; `resolverRevelacion` decide si corresponde según las condiciones del caso. Si se revela, el hecho pasa a `hechosRevelados`.
 - `limpiarRespuesta` borra etiquetas que el modelo filtre en el texto.
-- Límites (atómicos dentro de `actualizar`): 3 s entre preguntas de un jugador, una pregunta a la vez por personaje, tope por partida.
+- Límites (atómicos dentro de `actualizar`): 3 s entre preguntas de un jugador, una pregunta a la vez por personaje, 12 por sala por minuto y 150 por partida (`LIMITES_INTERROGATORIO`). La vista manda `preguntasRestantes` para el contador.
 - Modelos: `gemini-3.1-flash-lite` principal (20 s) y Flash de respaldo (35 s). Cuota gratis en [adr/0005](adr/0005-modelos-y-cuota-gemini.md).
 
 ## Entornos
