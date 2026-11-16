@@ -38,7 +38,13 @@ Más adelante: modo competitivo, que cada usuario use su propia clave y su model
 
 ## Esperando decisión de Ramiro (no avanzar sin él)
 
-- **Piloto de noir (ADR 0015):** si convence para seguir con policial, médico, terror y de época.
+- **Ambientaciones (ADR 0015), en pausa por decisión de Ramiro (15/11/2026).** El piloto de noir quedó en producción. Para cuando se retome, lo que anotó al probarlo:
+  - Noir se diferencia más que antes, pero todavía se puede marcar más.
+  - El ambiente de lluvia suena mal: parece la estática fuerte de un televisor viejo, no lluvia. Hay que rehacerlo.
+  - Poder regular por separado el volumen del ambiente, la música y los efectos (hoy hay un solo volumen general).
+  - Los efectos le gustan: sumar más. El de código mal casi no se oye; hacerlo más claro.
+  - Tomar ideas de Roll20 (interfaz y funcionalidades), que es una plataforma más madura y muy usada.
+  - Después, seguir con policial, médico, terror y de época.
 
 ## Problemas conocidos
 
