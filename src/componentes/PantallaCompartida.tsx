@@ -7,6 +7,7 @@ import { Corcho } from "./Pizarra";
 import { Avisos } from "./Avisos";
 import { Resultado } from "./Resultado";
 import { Voces } from "./Voces";
+import { AmbienteSonoro } from "./AmbienteSonoro";
 import { NarracionEnTele, ReproductorLectura } from "./Narrador";
 import { Documento, iconoPrueba } from "./Documento";
 import { Personaje } from "./personaje/Personaje";
@@ -107,6 +108,7 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
           {vista.recursosRestantes !== null && <span className="text-3xl">🕰 {vista.recursosRestantes} h</span>}
           <Reloj iniciada={vista.iniciada} limiteMin={vista.config.temporizadorMin} grande />
           <Voces vista={vista} grande />
+          <AmbienteSonoro vista={vista} grande />
         </div>
       </header>
 

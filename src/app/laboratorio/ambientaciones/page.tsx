@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { despertar } from "@/cliente/audio";
+import { paisajeDe, type Momento } from "@/cliente/paisajes";
 import { AMBIENTACIONES, type Ambientacion, type Prueba } from "@/casos/schema";
 import { Documento } from "@/componentes/Documento";
 import { BotonEscuchar, ReproductorLectura } from "@/componentes/Narrador";
@@ -79,6 +81,7 @@ export default function Pagina() {
                     const duarte = vocesDelElenco(elenco).duarte!;
                     return {
                       que: `muestra-${amb}`,
+                      ambientacion: amb,
                       titulo: PRUEBA.titulo,
                       partes: guionDePrueba(PRUEBA, elenco).flatMap((l) =>
                         oraciones(l.texto).map((texto) => ({ texto, voz: l.voz === "narrador" ? voces.narrador : l.voz === "otra" ? voces.otra : duarte })),
@@ -89,9 +92,58 @@ export default function Pagina() {
               }
             />
             <ReproductorLectura />
+            <ProbarSonido amb={amb} />
           </section>
         </div>
       </main>
     </div>
+  );
+}
+
+/** Para escuchar el paisaje sonoro de cada ambientación sin armar una partida. */
+function ProbarSonido({ amb }: { amb: Ambientacion }) {
+  const paisaje = paisajeDe(amb);
+  const [sonando, setSonando] = useState<(() => void) | null>(null);
+  useEffect(() => () => sonando?.(), [sonando]);
+  if (!paisaje) return <p className="mt-4 text-sm text-suave">Esta ambientación todavía no tiene sonido propio.</p>;
+  const efectos: [Momento, string][] = [["sobre", "Abrir sobre"], ["revelacion", "Revelación"], ["candado", "Candado"], ["error", "Código mal"], ["final", "Final"]];
+  return (
+    <div className="mt-4 flex flex-wrap gap-2 text-sm">
+      <button
+        onClick={async () => {
+          if (sonando) return setSonando(null);
+          if (await despertar()) setSonando(() => paisaje.ambiente());
+        }}
+        className="rounded-lg border border-borde px-3 py-1.5"
+      >
+        {sonando ? "⏹ Apagar ambiente" : "🌧 Escuchar ambiente"}
+      </button>
+      {paisaje.musica && <Musica url={paisaje.musica} />}
+      {efectos.map(([m, nombre]) => (
+        <button key={m} onClick={async () => (await despertar()) && paisaje.efecto(m)} className="rounded-lg border border-borde px-3 py-1.5">
+          {nombre}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function Musica({ url }: { url: string }) {
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  useEffect(() => () => audio?.pause(), [audio]);
+  return (
+    <button
+      onClick={() => {
+        if (audio) return setAudio(null);
+        const a = new Audio(url);
+        a.loop = true;
+        a.volume = 0.5;
+        void a.play();
+        setAudio(a);
+      }}
+      className="rounded-lg border border-borde px-3 py-1.5"
+    >
+      {audio ? "⏹ Apagar música" : "🎷 Escuchar música"}
+    </button>
   );
 }

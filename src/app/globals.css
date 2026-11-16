@@ -32,23 +32,30 @@
   }
 }
 
-/* Ambientación noir: se activa con data-ambientacion en el contenedor de la partida */
+/* Ambientación noir: Buenos Aires 1948, lluvia y humo (ADR 0015). Blanco y negro con un solo rojo,
+   esquinas rectas, papel de máquina de escribir y luz que entra por una persiana. */
 [data-ambientacion="noir"] {
-  --bg: #0f0f10;
-  --panel: #19191b;
-  --panel-2: #232326;
-  --texto: #e9e4d8;
-  --suave: #9c968a;
-  --borde: #34322f;
-  --acento: #c0392b;
+  --bg: #0a0a0b;
+  /* paneles de vidrio ahumado: dejan ver la persiana y el humo de atrás */
+  --panel: rgba(18, 18, 19, 0.78);
+  --panel-2: rgba(30, 30, 32, 0.85);
+  --texto: #ebe6da;
+  --suave: #8e897f;
+  --borde: #2f2d2a;
+  --acento: #b3261e;
   --acento-texto: #fff;
-  --papel: #efe6d0;
-  --tinta: #2a241b;
-  --ok: #7fae74;
+  --papel: #ece5d3;
+  --tinta: #1d1a15;
+  --ok: #9fbf8f;
   --fuente-titulo: var(--font-titular), Georgia, serif;
   --fuente-doc: var(--font-maquina), "Courier New", monospace;
-  --fondo-textura: radial-gradient(ellipse at top, rgba(192, 57, 43, 0.08), transparent 60%),
-    radial-gradient(ellipse at bottom, rgba(255, 255, 255, 0.03), transparent 50%);
+  --fondo-textura: radial-gradient(ellipse 80% 60% at 70% -10%, rgba(255, 244, 214, 0.07), transparent 60%);
+  /* nada redondeado: el noir es de esquinas rectas */
+  --radius-sm: 1px;
+  --radius-md: 1px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 3px;
 }
 
 @theme inline {
@@ -176,22 +183,133 @@ body {
 .ambiente-fx > * { position: absolute; inset: -50% 0 0 0; }
 .capa-juego { position: relative; z-index: 1; }
 
+/* lluvia contra el vidrio */
 [data-ambientacion="noir"] .fx-1 {
-  background-image: repeating-linear-gradient(105deg, transparent 0 22px, rgba(200, 210, 230, 0.06) 22px 23px, transparent 23px 61px),
-    repeating-linear-gradient(100deg, transparent 0 37px, rgba(200, 210, 230, 0.045) 37px 38px, transparent 38px 89px);
+  background-image: repeating-linear-gradient(105deg, transparent 0 22px, rgba(200, 210, 230, 0.07) 22px 23px, transparent 23px 61px),
+    repeating-linear-gradient(100deg, transparent 0 37px, rgba(200, 210, 230, 0.05) 37px 38px, transparent 38px 89px);
   animation: lluvia 0.9s linear infinite;
 }
 @keyframes lluvia { from { transform: translate(0, 0); } to { transform: translate(-60px, 50%); } }
 
-[data-ambientacion="noir"] .fx-3 { inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.55) 100%); }
-
+/* grano de película con un parpadeo de proyector */
 [data-ambientacion="noir"] .fx-2 {
   inset: -10%;
-  opacity: 0.07;
+  opacity: 0.09;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  animation: grano 0.5s steps(4) infinite;
+  animation: grano 0.5s steps(4) infinite, proyector 7s steps(1) infinite;
 }
 @keyframes grano { 0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); } 50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } 100% { transform: translate(1%, 3%); } }
+@keyframes proyector { 0%, 100% { opacity: 0.09; } 47% { opacity: 0.16; } 48% { opacity: 0.07; } 83% { opacity: 0.13; } }
+
+/* la luz de la calle entrando por una persiana: franjas de luz y sombra bien marcadas, que se mueven apenas */
+[data-ambientacion="noir"] .fx-3 {
+  inset: -25%;
+  background: repeating-linear-gradient(-22deg, rgba(255, 236, 196, 0.13) 0 34px, rgba(0, 0, 0, 0.5) 34px 80px);
+  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 72% 28%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 65% 55% at 72% 28%, #000 25%, transparent 78%);
+  animation: persiana 18s ease-in-out infinite alternate;
+}
+@keyframes persiana { from { transform: translate(0, 0); } to { transform: translate(3%, 2%); } }
+
+/* humo que sube despacio y la viñeta de cine; la lámpara del escritorio, arriba a la izquierda */
+[data-ambientacion="noir"] .ambiente-fx::before,
+[data-ambientacion="noir"] .ambiente-fx::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+[data-ambientacion="noir"] .ambiente-fx::before {
+  inset: -30%;
+  background:
+    radial-gradient(closest-side at 30% 60%, rgba(210, 210, 215, 0.09), transparent),
+    radial-gradient(closest-side at 65% 75%, rgba(210, 210, 215, 0.07), transparent),
+    radial-gradient(closest-side at 50% 40%, rgba(210, 210, 215, 0.05), transparent);
+  filter: blur(30px);
+  animation: humo 40s ease-in-out infinite alternate;
+}
+@keyframes humo { from { transform: translate(-4%, 6%) scale(1); } to { transform: translate(5%, -8%) scale(1.15); } }
+[data-ambientacion="noir"] .ambiente-fx::after {
+  inset: 0;
+  background:
+    radial-gradient(ellipse 45% 40% at 8% 0%, rgba(255, 214, 150, 0.16), transparent 70%),
+    radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+/* todo en blanco y negro: los personajes, las escenas y las fotos */
+[data-ambientacion="noir"] svg[aria-label*="expresión"],
+[data-ambientacion="noir"] img:not([alt^="QR"]) {
+  filter: grayscale(1) contrast(1.15) brightness(0.95);
+}
+
+/* la navegación y las etiquetas, a máquina de escribir */
+[data-ambientacion="noir"] nav button,
+[data-ambientacion="noir"] summary,
+[data-ambientacion="noir"] label > span:first-child {
+  font-family: var(--fuente-doc);
+  letter-spacing: 0.02em;
+}
+
+/* títulos de intertítulo de cine: versalitas espaciadas */
+[data-ambientacion="noir"] h1,
+[data-ambientacion="noir"] h2 {
+  font-family: var(--fuente-titulo);
+  letter-spacing: 0.04em;
+}
+[data-ambientacion="noir"] h1 { font-style: italic; }
+[data-ambientacion="noir"] h2 { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.95em; }
+[data-ambientacion="noir"] h2::after { content: ""; display: block; width: 3rem; height: 2px; margin-top: 0.35rem; background: var(--acento); }
+
+/* botones principales como un cartel de neón apagado: mayúsculas y borde fino */
+[data-ambientacion="noir"] button.bg-acento,
+[data-ambientacion="noir"] a.bg-acento {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.82em;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 0 18px rgba(179, 38, 30, 0.25);
+}
+
+/* paneles con un filo de luz arriba, como un escritorio bajo una lámpara */
+[data-ambientacion="noir"] .bg-panel { box-shadow: inset 0 1px 0 rgba(255, 244, 214, 0.06); }
+
+/* el papel: hoja de máquina de escribir, bordes gastados, una aureola de café y un clip (solo en documentos) */
+[data-ambientacion="noir"] .papel {
+  background-color: var(--papel);
+  background-image: radial-gradient(ellipse at center, transparent 55%, rgba(80, 60, 30, 0.16) 100%);
+  text-shadow: 0 0 0.5px rgba(29, 26, 21, 0.6);
+}
+[data-ambientacion="noir"] article.papel {
+  position: relative;
+  background-color: var(--papel);
+  background-image:
+    radial-gradient(circle at 88% 82%, transparent 26px, rgba(110, 72, 30, 0.16) 27px, rgba(110, 72, 30, 0.08) 31px, transparent 33px),
+    radial-gradient(ellipse at center, transparent 55%, rgba(80, 60, 30, 0.18) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0, 0, 0, 0.03) 28px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3), 0 18px 40px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 0 0.5px rgba(29, 26, 21, 0.6);
+}
+[data-ambientacion="noir"] article.papel::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 26px;
+  width: 18px;
+  height: 52px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 52'><path d='M5 14v26a4 4 0 0 0 8 0V8a6 6 0 0 0-12 0v34a8 8 0 0 0 16 0V16' fill='none' stroke='%23a3a6ab' stroke-width='1.8' stroke-linecap='round'/></svg>") no-repeat center / contain;
+  filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+}
+[data-ambientacion="noir"] .sello { border-width: 3px; border-style: double; mix-blend-mode: multiply; opacity: 0.85; }
+
+/* el sobre de papel madera */
+[data-ambientacion="noir"] .sobre { background: #b89d6c; color: #2a2116; }
+[data-ambientacion="noir"] .sobre::before { background: #a68a5a; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ambientacion="noir"] .fx-1,
+  [data-ambientacion="noir"] .fx-2,
+  [data-ambientacion="noir"] .fx-3,
+  [data-ambientacion="noir"] .ambiente-fx::before { animation: none; }
+}
 
 /* ---------- Otras ambientaciones ---------- */
 

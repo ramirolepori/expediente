@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { contexto, despertar, salida } from "@/cliente/audio";
+import { paisajeDe } from "@/cliente/paisajes";
 import { precargar, sintetizar } from "@/cliente/piper";
 import { oraciones } from "@/cliente/voces";
 import { guionDe, guionDePrueba, textoParaLeer, type Linea } from "@/motor/narracion";
@@ -16,6 +18,8 @@ export interface Lectura {
   titulo: string;
   /** de dónde salió (ej. "prueba:x"), para saber si este botón es el que está sonando */
   que: string;
+  /** la ambientación del caso: decide el efecto de la voz (radio vieja en noir, por ejemplo) */
+  ambientacion?: string;
   partes: { texto: string; voz: VozPiper }[];
 }
 
@@ -65,7 +69,24 @@ const SILENCIO = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+
 export function desbloquearAudio() {
   audio ??= new Audio();
   audio.src = SILENCIO;
+  void despertar();
   return audio.play().catch(() => {});
+}
+
+// el efecto de la ambientación: la voz pasa por Web Audio. Una vez conectado, el elemento ya no suena
+// por su cuenta, así que solo se conecta con el contexto andando (si no, se oiría en silencio)
+let fuente: MediaElementAudioSourceNode | null = null;
+let apagarEfecto: (() => void) | null = null;
+function efectoDeVoz(ambientacion: string | undefined) {
+  apagarEfecto?.();
+  apagarEfecto = null;
+  const narrador = paisajeDe(ambientacion)?.narrador;
+  if (!fuente && (!narrador || contexto().state !== "running")) return;
+  audio ??= new Audio();
+  fuente ??= contexto().createMediaElementSource(audio);
+  fuente.disconnect();
+  if (narrador) apagarEfecto = narrador(fuente);
+  else fuente.connect(salida());
 }
 
 function reproducirParte(blob: Blob, mio: number): Promise<void> {
@@ -107,6 +128,7 @@ export async function leer(lectura: Lectura): Promise<"ok" | "bloqueado"> {
   detener();
   const mio = ++turno;
   const partes = lectura.partes;
+  efectoDeVoz(lectura.ambientacion);
   publicar({ que: lectura.que, titulo: lectura.titulo, fase: "preparando", avance: 0, indice: 0, total: partes.length, frase: "", velocidad });
   let conPiper = true;
   try {
@@ -161,6 +183,8 @@ export function continuar() {
 
 export function detener() {
   turno++;
+  apagarEfecto?.();
+  apagarEfecto = null;
   audio?.pause();
   terminarAudio?.();
   reanudar?.();
@@ -186,17 +210,18 @@ function aPartes(lineas: Linea[], vista: Pick<VistaPartida, "lectura" | "persona
 /** Arma la lectura de "introduccion", "resolucion" o "prueba:<id>" con lo que hay en la vista. */
 export function lecturaDe(que: string, vista: VistaPartida): Lectura | null {
   const personajes = vista.personajes.filter((p) => p.disponible).map((p) => ({ id: p.id, nombre: p.nombre }));
-  if (que === "introduccion") return { que, titulo: "Introducción", partes: aPartes(guionDe(vista.caso.introduccion, personajes), vista) };
+  const ambientacion = vista.caso.ambientacion;
+  if (que === "introduccion") return { que, ambientacion, titulo: "Introducción", partes: aPartes(guionDe(vista.caso.introduccion, personajes), vista) };
   if (que === "resolucion" && vista.verdad) {
     const lineas: Linea[] = [
       { voz: "narrador", texto: textoParaLeer(vista.verdad.resumen) },
       ...vista.verdad.cronologia.map((c) => ({ voz: "narrador" as const, texto: textoParaLeer(`A las ${c.hora}: ${c.hecho}`) })),
     ];
-    return { que, titulo: "La resolución", partes: aPartes(lineas, vista) };
+    return { que, ambientacion, titulo: "La resolución", partes: aPartes(lineas, vista) };
   }
   if (que.startsWith("prueba:")) {
     const prueba = vista.pruebas.find((p) => p.id === que.slice("prueba:".length));
-    if (prueba) return { que, titulo: prueba.titulo, partes: aPartes(guionDePrueba(prueba, personajes), vista) };
+    if (prueba) return { que, ambientacion, titulo: prueba.titulo, partes: aPartes(guionDePrueba(prueba, personajes), vista) };
   }
   return null;
 }

@@ -18,3 +18,4 @@ Una decisión por archivo: contexto, decisión y consecuencias. Si una decisión
 | [0012](0012-casos-de-autores.md) | Casos de cualquier autor: kit, cuentas, Supabase y moderación | Implementada |
 | [0013](0013-reparto-de-voces.md) | Reparto de voces por elenco, con el género medido | Implementada |
 | [0014](0014-narrador.md) | Narrador: lectura en voz alta, con el lugar elegido en el momento | Implementada |
+| [0015](0015-identidad-de-ambientaciones.md) | Identidad de las ambientaciones: estética propia, sonido y voz del narrador | Piloto en noir |

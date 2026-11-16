@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
 import { BotonSalir, Markdown, Punto, QR, Reloj, useUrlSala } from "./comunes";
+import { AmbienteSonoro } from "./AmbienteSonoro";
 import { ModoAutor } from "./ModoAutor";
 import { BotonEscuchar, lecturaDe, ReproductorLectura } from "./Narrador";
 import { Documento, iconoPrueba } from "./Documento";
@@ -125,6 +126,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
             {vista.recursosRestantes !== null && <span title="Horas de investigación">🕰 {vista.recursosRestantes} h</span>}
             <Reloj iniciada={vista.iniciada} limiteMin={vista.config.temporizadorMin} />
             <Voces vista={vista} />
+            <AmbienteSonoro vista={vista} />
             <Sumar codigo={vista.codigo} />
             <BotonSalir onSalir={sala.salir} />
           </div>
