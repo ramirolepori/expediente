@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { useSala } from "@/cliente/useSala";
 import type { VistaPartida } from "@/motor/vista";
 import { BotonSalir, Markdown, Punto, QR, Reloj, useUrlSala } from "./comunes";
+import { ModoAutor } from "./ModoAutor";
 import { BotonEscuchar, lecturaDe, ReproductorLectura } from "./Narrador";
 import { Documento, iconoPrueba } from "./Documento";
 import { Avisos } from "./Avisos";
@@ -87,6 +88,7 @@ export function PanelJugador({ sala, vista }: { sala: Sala; vista: VistaPartida 
     <div className="flex min-h-dvh flex-col lg:flex-row">
       <Avisos vista={vista} />
       <ReproductorLectura />
+      <ModoAutor vista={vista} token={sala.token} />
       {/* barra lateral en pantallas grandes, barra inferior en celulares */}
       <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-borde bg-panel/95 backdrop-blur lg:sticky lg:top-0 lg:h-dvh lg:w-56 lg:shrink-0 lg:flex-col lg:border-t-0 lg:border-r lg:bg-panel lg:p-3">
         <div className="hidden px-2 pb-4 lg:block">

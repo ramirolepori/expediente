@@ -380,6 +380,18 @@ export async function casoDeAutor(casoId: string): Promise<{ caso: Caso; dePrueb
   return { caso, dePrueba: fila.estado !== "publicado" };
 }
 
+/**
+ * Si quien pide puede usar el modo autor en una sala de este caso: tiene que ser su autor (o moderar),
+ * y el caso tiene que estar sin publicar (en un caso publicado los atajos serían trampa).
+ */
+export async function puedeUsarModoAutor(autor: Autor, casoId: string) {
+  if (!casoId.startsWith(PREFIJO_AUTOR)) return false;
+  const id = casoId.slice(PREFIJO_AUTOR.length);
+  if (!UUID.test(id)) return false;
+  const fila = await datos().obtener(id);
+  return !!fila && fila.estado !== "publicado" && (fila.autor === autor.id || esModerador(autor));
+}
+
 export async function casosPublicados(): Promise<Caso[]> {
   const d = g.__datosCasos ?? (g.__datosCasos = crearDatos());
   if (!d) return [];

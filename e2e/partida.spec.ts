@@ -517,3 +517,35 @@ test("narrador: cada uno elige en el momento si escucha en su celular o en la te
   await enLu.getByRole("button", { name: "Dejar de escuchar" }).click();
   await expect(enLu).toHaveCount(0);
 });
+
+test("modo autor: en la sala de prueba el autor ve por qué está cerrado cada sobre y usa atajos", async ({ page: autora, browser }, info) => {
+  const carpeta = info.outputPath("vendimia");
+  cpSync("casos/vendimia/caso.json", `${carpeta}/caso.json`);
+  cpSync("public/casos/vendimia", carpeta, { recursive: true });
+  await autora.goto("/autores");
+  await autora.getByLabel("Mail para el login de prueba").fill("autora3@prueba.test");
+  await autora.getByRole("button", { name: "Entrar (modo prueba)" }).click();
+  await autora.getByLabel("Carpeta del caso a subir").setInputFiles(carpeta);
+  const tarjeta = autora.getByRole("listitem").filter({ hasText: "Muerte en la vendimia" });
+  await tarjeta.getByRole("button", { name: "Probar con amigos" }).click();
+  const link = await tarjeta.getByRole("link", { name: "Jugarlo" }).getAttribute("href");
+
+  // la autora arma la sala con su cuenta abierta; un amigo entra sin cuenta
+  await autora.goto(link!);
+  await autora.getByPlaceholder("Ej.: Ramiro").fill("Autora");
+  await autora.getByRole("button", { name: "Crear sala" }).click();
+  await autora.waitForURL(/\/sala\/[A-Z]{4}$/);
+  const amigo = await unirJugador(browser, autora.url().split("/").pop()!, "Amigo");
+  await autora.getByRole("button", { name: "Abrir el caso" }).click();
+
+  await autora.getByRole("button", { name: "🛠 Modo autor" }).click();
+  const panel = autora.getByRole("dialog", { name: "Modo autor" });
+  await expect(panel.getByText("Se abre con:").first()).toBeVisible();
+  await panel.getByRole("button", { name: /^Abrir «Sobre 2/ }).click();
+  await expect(amigo.getByText(/pruebas? nuevas? en el expediente/)).toBeVisible();
+  await expect(amigo.getByRole("button", { name: "🛠 Modo autor" })).toHaveCount(0);
+
+  await panel.getByRole("button", { name: "personajes" }).click();
+  await panel.getByText("Ficha que le llega al modelo ahora").first().click();
+  await expect(panel.getByText(/\[clave:/).first()).toBeVisible();
+});

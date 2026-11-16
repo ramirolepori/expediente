@@ -24,7 +24,7 @@ export interface CasoAutor {
 export const ESTADOS: Record<CasoAutor["estado"], { nombre: string; estilo: string; ayuda: string }> = {
   borrador: { nombre: "Borrador", estilo: "bg-panel-2 text-suave border border-borde", ayuda: "Tiene errores: corregilos con tu IA y volvé a subirlo." },
   validado: { nombre: "Validado", estilo: "bg-ok/15 text-ok border border-ok/40", ayuda: "Pasó el validador. Ya lo podés probar con amigos." },
-  privado: { nombre: "Privado", estilo: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/40", ayuda: "Se juega con el link, con el modelo de prueba." },
+  privado: { nombre: "Privado", estilo: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/40", ayuda: "Se juega con el link, con el modelo de prueba. Si lo jugás con esta cuenta abierta, tenés el modo autor." },
   publicado: { nombre: "Publicado", estilo: "bg-acento text-acento-texto", ayuda: "Está en el catálogo para todos." },
 };
 

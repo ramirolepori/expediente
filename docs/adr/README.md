@@ -15,6 +15,6 @@ Una decisión por archivo: contexto, decisión y consecuencias. Si una decisión
 | [0009](0009-audio-una-pista.md) | Audio: una sola pista para todos | Implementada |
 | [0010](0010-apariencia-de-personajes.md) | Apariencia de los personajes: retratos o vectorial, y emoción desde el modelo | Implementada |
 | [0011](0011-escenas-clickeables.md) | Escenas ilustradas con puntos que abren pruebas | Implementada como índice visual |
-| [0012](0012-casos-de-autores.md) | Casos de cualquier autor: kit, cuentas, Supabase y moderación | Cuentas, validador y casos en Supabase implementados; faltan el panel de la sala de prueba y el kit descargable |
+| [0012](0012-casos-de-autores.md) | Casos de cualquier autor: kit, cuentas, Supabase y moderación | Implementada salvo el kit descargable |
 | [0013](0013-reparto-de-voces.md) | Reparto de voces por elenco, con el género medido | Implementada |
 | [0014](0014-narrador.md) | Narrador: lectura en voz alta, con el lugar elegido en el momento | Implementada |
