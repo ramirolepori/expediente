@@ -549,3 +549,17 @@ test("modo autor: en la sala de prueba el autor ve por qué está cerrado cada s
   await panel.getByText("Ficha que le llega al modelo ahora").first().click();
   await expect(panel.getByText(/\[clave:/).first()).toBeVisible();
 });
+
+test("kit de autor: se baja desde /autores sin cuenta y el prompt se copia", async ({ page }) => {
+  await page.goto("/autores");
+  const enlace = page.getByRole("link", { name: /Bajar el kit/ });
+  await expect(enlace).toBeVisible();
+  const r = await page.request.get((await enlace.getAttribute("href"))!);
+  expect(r.headers()["content-type"]).toBe("application/zip");
+  const zip = await r.body();
+  expect(zip.subarray(0, 2).toString()).toBe("PK");
+  expect(zip.toString("latin1")).toContain("kit-autor-expediente/PROMPT-INICIAL.md");
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.getByRole("button", { name: "Copiar el prompt inicial" }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/^Vas a ayudarme a escribir un caso para \*\*Expediente\*\*/);
+});

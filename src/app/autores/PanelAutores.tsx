@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAutor, type Proveedor } from "@/cliente/sesion";
 import type { Autor } from "@/servidor/autores";
+import { KitAutor } from "./KitAutor";
 import { MisCasos } from "./MisCasos";
 import { Moderacion } from "./Moderacion";
 import { Validador } from "./Validador";
@@ -46,6 +47,7 @@ export function PanelAutores() {
       ) : autor ? (
         <div className="mt-10 space-y-6">
           <Perfil autor={autor} salir={salir} />
+          <KitAutor />
           <Validador pedir={pedir} />
           <MisCasos pedir={pedir} />
           {(autor.rol === "admin" || autor.rol === "moderador") && <Moderacion pedir={pedir} />}
@@ -53,7 +55,10 @@ export function PanelAutores() {
         </div>
       ) : (
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <ComoFunciona />
+          <div className="space-y-6">
+            <ComoFunciona />
+            <KitAutor />
+          </div>
           <Login config={config} entrar={entrar} entrarFalso={entrarFalso} error={error} />
         </div>
       )}

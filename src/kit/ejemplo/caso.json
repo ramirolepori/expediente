@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "meta": {
+    "id": "la_receta",
+    "titulo": "La receta de la abuela",
+    "sinopsis": "La noche antes del concurso de pastelería del barrio, desaparece el cuaderno de recetas de la confitería La Perla. Sin él, la familia no tiene con qué competir. Alguien de adentro sabe dónde está.",
+    "duracionMin": 30,
+    "dificultad": "facil",
+    "jugadores": { "min": 2, "max": 5 },
+    "advertencias": []
+  },
+  "ambientacion": "policial",
+  "introduccion": "**Sábado, 08:15. Confitería La Perla, Villa Crespo.**\n\nNorma Paz, dueña de La Perla, abrió la confitería y encontró la vitrina del fondo vacía. Ahí guardaba el **cuaderno de recetas de su madre**, el que usan desde 1984 y con el que mañana iban a presentarse al concurso del barrio.\n\nNo hay vidrios rotos ni cerraduras forzadas. La alarma estuvo activa toda la noche, salvo un rato.\n\nUstedes son la brigada de la comisaría del barrio. Tienen el primer sobre y a tres personas del local que se quedaron para hablar.\n\nObjetivo: descubrir **quién se llevó el cuaderno y por qué**.",
+  "verdad": {
+    "resumen": "Bruno Paz, sobrino de Norma y pastelero de La Perla, se llevó el cuaderno el viernes a la noche para vendérselo a la confitería Dulce Norte, que le ofreció plata justo cuando él tenía una deuda de apuestas. Esperó a que se fueran todos, desactivó la alarma con su código a las 22:41, lo sacó en una caja de zapatos y volvió a activarla. Tito, el repartidor, volvió a buscar su campera y lo vio salir, pero no dijo nada para no meterse en problemas familiares.",
+    "culpables": [{ "personaje": "bruno", "papel": "autor", "detalle": "Se llevó el cuaderno para vendérselo a la competencia y pagar una deuda." }],
+    "movil": "Pagar una deuda de apuestas con la plata que le ofreció Dulce Norte.",
+    "medio": "Usó su código de la alarma para entrar de noche, sin forzar nada.",
+    "cronologia": [
+      { "hora": "21:00", "hecho": "Elena cierra la caja y se va al cumpleaños de su hermana." },
+      { "hora": "21:10", "hecho": "Bruno dice que se va, pero se queda en el auto a la vuelta." },
+      { "hora": "22:30", "hecho": "Tito vuelve a buscar la campera que se olvidó en la cocina." },
+      { "hora": "22:41", "hecho": "Bruno desactiva la alarma con su código y entra." },
+      { "hora": "22:43", "hecho": "Bruno sale con una caja de zapatos; Tito lo ve desde la esquina." },
+      { "hora": "22:47", "hecho": "Bruno vuelve a activar la alarma." }
+    ]
+  },
+  "hechos": [
+    { "id": "elena_cumple", "texto": "Elena estuvo desde las 21 en el cumpleaños de su hermana, en Caballito; hay fotos con hora." },
+    { "id": "tito_campera", "texto": "Tito se olvidó la campera en la cocina y pensaba buscarla el sábado." },
+    { "id": "tito_vio", "texto": "Tito volvió a las 22:30 por la campera y vio a Bruno salir de La Perla con una caja de zapatos bajo el brazo." },
+    { "id": "bruno_deuda", "texto": "Bruno le debe plata de apuestas a un tal Rulo, que lo viene apurando." },
+    { "id": "bruno_vendio", "texto": "Bruno admite que se llevó el cuaderno para vendérselo a Dulce Norte y pagar la deuda." }
+  ],
+  "personajes": [
+    {
+      "id": "bruno",
+      "nombre": "Bruno Paz",
+      "rol": "Pastelero, sobrino de la dueña",
+      "edad": 31,
+      "descripcion": "Trabaja en La Perla desde los 18. Tiene código propio de la alarma porque abre los lunes.",
+      "personalidad": "Simpático y conversador, pero se pone a la defensiva si le preguntan por plata. Quiere a su tía y le pesa lo que hizo.",
+      "formaDeHablar": "Rápido, con muletillas ('mirá', 'te juro'). Cambia de tema cuando se incomoda.",
+      "voz": { "genero": "masculino", "edad": "joven", "velocidad": 1.1, "tono": "nervioso" },
+      "secretos": [
+        {
+          "id": "bruno_confiesa",
+          "hecho": "bruno_vendio",
+          "cuando": { "tipo": "todas", "condiciones": [{ "tipo": "prueba", "prueba": "celular_bruno" }, { "tipo": "hecho", "hecho": "bruno_deuda" }] },
+          "como": "Si le muestran los mensajes con Dulce Norte y ya saben de la deuda, se quiebra de a poco: primero dice que solo lo pensó, después admite que lo vendió."
+        }
+      ],
+      "mentiras": [
+        {
+          "tema": "la hora a la que se fue",
+          "dice": "que se fue a las 21:10, igual que Elena, y que no volvió.",
+          "cae": { "tipo": "prueba", "prueba": "registro_alarma" },
+          "alCaer": "dice que volvió un minuto por las llaves de su casa y que no tocó nada."
+        }
+      ],
+      "apariencia": { "rasgos": { "cuerpo": "masculino", "edad": "adulto", "peinado": "rulos", "ropa": "delantal", "vello": "barba_corta" } }
+    },
+    {
+      "id": "elena",
+      "nombre": "Elena Ríos",
+      "rol": "Encargada del local",
+      "edad": 52,
+      "descripcion": "Trabaja con Norma hace veinte años. Cierra la caja todas las noches.",
+      "personalidad": "Seria, ordenada y muy leal a Norma. Sospecha de Bruno, pero no quiere acusar a alguien de la familia.",
+      "formaDeHablar": "Pausada y precisa, da horarios exactos.",
+      "voz": { "genero": "femenino", "edad": "adulto", "velocidad": 0.95, "tono": "formal" },
+      "sabe": ["elena_cumple"],
+      "secretos": [
+        {
+          "id": "elena_deuda",
+          "hecho": "bruno_deuda",
+          "cuando": { "tipo": "sobre", "sobre": "s2_noche" },
+          "como": "Cuando el grupo ya sabe que alguien entró de noche, cuenta en voz baja que escuchó a Bruno discutir por teléfono con un tal Rulo por una deuda."
+        }
+      ],
+      "apariencia": { "rasgos": { "cuerpo": "femenino", "edad": "adulto", "peinado": "rodete", "ropa": "camisa", "anteojos": "rectangulares" } }
+    },
+    {
+      "id": "tito",
+      "nombre": "Tito Gómez",
+      "rol": "Repartidor",
+      "edad": 24,
+      "descripcion": "Reparte en moto desde hace un año. Es el último en llegar y el primero en irse.",
+      "personalidad": "Tímido y bueno. Vio algo y le da miedo meterse en un problema de familia.",
+      "formaDeHablar": "Corto, mirando para abajo. Usa 'eh' y 'no sé' cuando duda.",
+      "voz": { "genero": "masculino", "edad": "joven", "velocidad": 1, "tono": "tímido" },
+      "sabe": ["tito_campera"],
+      "secretos": [
+        {
+          "id": "tito_cuenta",
+          "hecho": "tito_vio",
+          "cuando": { "tipo": "prueba", "prueba": "registro_alarma" },
+          "como": "Si le muestran que la alarma se desactivó a las 22:41, admite que volvió por la campera y vio a Bruno salir con una caja."
+        }
+      ],
+      "apariencia": { "rasgos": { "cuerpo": "masculino", "edad": "adolescente", "peinado": "corto", "ropa": "buzo", "accesorios": ["gorra"] } }
+    }
+  ],
+  "sobres": [
+    { "id": "s1_local", "titulo": "Sobre 1: El local", "descripcion": "La denuncia, el registro de la alarma y lo que declaró cada uno.", "requisito": { "tipo": "siempre" } },
+    { "id": "s2_noche", "titulo": "Sobre 2: La noche", "descripcion": "Alguien vio quién entró: el celular de esa persona.", "requisito": { "tipo": "hecho", "hecho": "tito_vio" } }
+  ],
+  "pruebas": [
+    {
+      "id": "denuncia",
+      "titulo": "Denuncia de Norma Paz",
+      "tipo": "informe",
+      "sobre": "s1_local",
+      "contenido": "**Comisaría 25. Sábado 08:40.**\n\nNorma Paz, 64 años, dueña de la confitería **La Perla**, fundada en **1984** por su madre.\n\n- Falta el cuaderno de recetas de tapas de cuero marrón, guardado en la vitrina del fondo.\n- La vitrina estaba cerrada con llave; la llave cuelga en la cocina.\n- No falta plata de la caja.\n- Tienen código de la alarma: Norma, Elena y Bruno."
+    },
+    {
+      "id": "registro_alarma",
+      "titulo": "Registro de la alarma",
+      "tipo": "registro",
+      "sobre": "s1_local",
+      "contenido": "| Hora | Evento | Código |\n|---|---|---|\n| 21:12 | Alarma activada | Elena |\n| 22:41 | Alarma desactivada | **Bruno** |\n| 22:47 | Alarma activada | **Bruno** |\n| 08:12 | Alarma desactivada | Norma |"
+    },
+    {
+      "id": "declaraciones",
+      "titulo": "Declaraciones del sábado",
+      "tipo": "declaracion",
+      "sobre": "s1_local",
+      "contenido": "> Tomadas en la confitería, sábado 09:00.\n\n**Elena Ríos:** Cerré la caja a las 21 y me fui al cumpleaños de mi hermana. Activé la alarma yo.\n\n**Bruno Paz:** Me fui a las 21:10, mirá, igual que Elena. Ni volví.\n\n**Tito Gómez:** Yo terminé el último reparto a las 20 y me fui a casa."
+    },
+    {
+      "id": "camara_vereda",
+      "titulo": "Cámara del kiosco de enfrente",
+      "tipo": "video",
+      "sobre": "s1_local",
+      "desbloqueo": { "tipo": "minijuego", "minijuego": "orden_noche" },
+      "contenido": "Captura del kiosco de enfrente, viernes.\n\n- **22:40**: un auto gris estaciona a la vuelta.\n- **22:43**: un hombre de rulos sale de La Perla con una **caja de zapatos**.\n- **22:44**: una moto se detiene en la esquina y vuelve a arrancar."
+    },
+    {
+      "id": "celular_bruno",
+      "titulo": "Celular de Bruno",
+      "tipo": "celular",
+      "sobre": "s2_noche",
+      "desbloqueo": { "tipo": "candado", "candado": "pin_bruno" },
+      "contenido": "Bruno lo entregó y dio el PIN después de dudar un rato.",
+      "celular": {
+        "hora": "09:30",
+        "fecha": "sábado",
+        "bateria": 40,
+        "dueno": "Bruno",
+        "chats": [
+          {
+            "contacto": "Rulo",
+            "mensajes": [
+              { "hora": "Jue 23:10", "de": "contacto", "texto": "El lunes vence. No me hagas ir a buscarte." },
+              { "hora": "Jue 23:12", "de": "victima", "texto": "El sábado te pago todo, te juro." }
+            ]
+          },
+          {
+            "contacto": "Dulce Norte",
+            "mensajes": [
+              { "hora": "Mié 18:02", "de": "contacto", "texto": "La oferta sigue en pie por el cuaderno de la abuela." },
+              { "hora": "Vie 22:50", "de": "victima", "texto": "Ya está. Mañana te lo llevo." }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "candados": [
+    {
+      "id": "pin_bruno",
+      "titulo": "PIN del celular de Bruno",
+      "descripcion": "Bruno dice que el PIN es 'el año de la familia'.",
+      "disponible": { "tipo": "sobre", "sobre": "s2_noche" },
+      "codigo": "1984",
+      "pista": "¿En qué año abrió La Perla?"
+    }
+  ],
+  "minijuegos": [
+    {
+      "id": "orden_noche",
+      "titulo": "Armá la noche del viernes",
+      "descripcion": "Ordená lo que pasó según el registro de la alarma y las declaraciones.",
+      "sobre": "s1_local",
+      "tipo": "linea_tiempo",
+      "modo": "compartido",
+      "config": { "eventos": ["Elena se va al cumpleaños", "Elena activa la alarma", "Alguien desactiva la alarma", "La alarma se vuelve a activar"] }
+    }
+  ],
+  "ayudas": [
+    { "id": "ayuda_alarma", "disponible": { "tipo": "siempre" }, "nivel": 1, "texto": "Comparen lo que dice cada uno con el registro de la alarma." },
+    { "id": "ayuda_tito", "disponible": { "tipo": "prueba", "prueba": "registro_alarma" }, "nivel": 2, "texto": "Alguien del local estuvo cerca esa noche y no lo contó. Muéstrenle el registro." },
+    { "id": "ayuda_pin", "disponible": { "tipo": "sobre", "sobre": "s2_noche" }, "nivel": 1, "texto": "El PIN está en la denuncia." }
+  ],
+  "resolucion": {
+    "preguntas": [
+      { "id": "quien", "texto": "¿Quién se llevó el cuaderno?", "tipo": "personaje", "respuesta": "bruno", "puntos": 3, "explicacion": "La alarma se desactivó con el código de Bruno y Tito lo vio salir con la caja." },
+      { "id": "ayuda", "texto": "¿Alguien lo ayudó?", "tipo": "personaje", "permiteNadie": true, "respuesta": "nadie", "puntos": 1, "explicacion": "Tito lo vio pero no participó; Elena estaba en el cumpleaños." },
+      {
+        "id": "por_que",
+        "texto": "¿Por qué se lo llevó?",
+        "tipo": "opcion",
+        "opciones": [
+          { "id": "deuda", "texto": "Para venderlo y pagar una deuda" },
+          { "id": "concurso", "texto": "Para presentarse solo al concurso" },
+          { "id": "venganza", "texto": "Para vengarse de un reto de su tía" },
+          { "id": "proteger", "texto": "Para guardarlo de un robo anunciado" }
+        ],
+        "respuesta": "deuda",
+        "puntos": 2,
+        "explicacion": "Los mensajes con Rulo y con Dulce Norte muestran la deuda y la venta."
+      }
+    ]
+  }
+}

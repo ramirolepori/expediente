@@ -1,6 +1,6 @@
 # 0012. Casos de cualquier autor: kit, cuentas, Supabase y moderación
 
-**Estado.** Decidida (15/11/2026). Implementados las cuentas, el validador, los casos en Supabase con sus estados y la sala de prueba en modo autor; falta el kit descargable. Reemplaza a la 0008 para los casos nuevos.
+**Estado.** Decidida (15/11/2026). Implementada: cuentas, validador, casos en Supabase con sus estados, sala de prueba en modo autor y kit descargable. Reemplaza a la 0008 para los casos nuevos.
 
 **Contexto.** Queremos que cualquiera pueda armar un caso con su propia IA (Claude, ChatGPT, Gemini) por fuera de la plataforma, y después subirlo, validarlo y publicarlo. El caso de Franco mostró que una IA externa arma casos compatibles cuando tiene el contrato, el validador y un formato de entrega claro. También que cada caso puede tener su impronta usando las piezas opcionales del contrato (escenas, capítulos, retratos o vectorial, minijuegos), sin interfaces propias por caso.
 
