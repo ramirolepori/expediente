@@ -11,6 +11,7 @@ export const AMBIENTACIONES = ["policial", "noir", "medico", "terror", "epoca"] 
 export type Condicion =
   | { tipo: "siempre" }
   | { tipo: "sobre"; sobre: string }
+  | { tipo: "capitulo"; capitulo: string }
   | { tipo: "prueba"; prueba: string }
   | { tipo: "hecho"; hecho: string }
   | { tipo: "candado"; candado: string }
@@ -22,6 +23,7 @@ export const CondicionSchema: z.ZodType<Condicion> = z.lazy(() =>
   z.discriminatedUnion("tipo", [
     z.object({ tipo: z.literal("siempre") }),
     z.object({ tipo: z.literal("sobre"), sobre: z.string() }),
+    z.object({ tipo: z.literal("capitulo"), capitulo: z.string() }),
     z.object({ tipo: z.literal("prueba"), prueba: z.string() }),
     z.object({ tipo: z.literal("hecho"), hecho: z.string() }),
     z.object({ tipo: z.literal("candado"), candado: z.string() }),
@@ -206,6 +208,16 @@ export const SobreSchema = z.object({
   /** condición para poder abrirlo (además de abrirlo a mano) */
   requisito: CondicionSchema,
   escena: EscenaSchema.optional(),
+  resumen: z.string().trim().min(1).optional(),
+  preguntaCapitulo: z.object({
+    texto: z.string().trim().min(1),
+    opciones: z.array(z.object({ id: Id, texto: z.string().trim().min(1) })).min(2),
+    respuesta: Id,
+    disponible: CondicionSchema.optional(),
+    orientacion: z.string().trim().min(1).optional(),
+    cierre: z.string().trim().min(1),
+    gancho: z.string().trim().min(1),
+  }).optional(),
 });
 
 export const CandadoSchema = z.object({
@@ -339,7 +351,10 @@ export const CasoSchema = z.object({
   candados: z.array(CandadoSchema).default([]),
   minijuegos: z.array(MinijuegoSchema).default([]),
   ayudas: z.array(AyudaSchema).default([]),
-  resolucion: z.object({ preguntas: z.array(PreguntaSchema).min(1) }),
+  resolucion: z.object({
+    preguntas: z.array(PreguntaSchema).min(1),
+    requisito: CondicionSchema.optional(),
+  }),
   modos: z.array(z.enum(["cooperativo", "competitivo", "traidor"])).default(["cooperativo"]),
   traidor: TraidorSchema.optional(),
 });

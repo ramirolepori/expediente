@@ -215,7 +215,7 @@ Cada pieza contra Sofía se puede conseguir por más de un camino:
 
 ## Capítulos
 
-Cada capítulo es un sobre. Se abre cuando se cumple su requisito, que es el sobre anterior más lo central del capítulo anterior.
+Cada capítulo es un sobre. Al abrirlo se lee un resumen. El acierto muestra el cierre y el gancho y habilita el siguiente sobre (o la votación final).
 
 ### Capítulo 1. El accidente
 
@@ -249,7 +249,8 @@ Cada capítulo es un sobre. Se abre cuando se cumple su requisito, que es el sob
 ### Capítulo 2. La fiesta
 
 - **Pregunta del capítulo:** ¿Quién tenía problemas con Ignacio y dónde estaba cada uno?
-- **Se abre con:** sobre «Sobre 1: El accidente» abierto
+- **Se abre con:** pregunta de «Sobre 1: El accidente» acertada
+- **Opciones habilitadas con:** la coartada de Marcos revelada o el minijuego «Reconstruir la noche de la fiesta» resuelto
 - **Texto del sobre:** Alguien encerró a Ignacio. Lo que quedó en la galería después de la fiesta. La pregunta: ¿quién tenía problemas con Ignacio y dónde estaba cada uno?
 - **Personajes que aparecen:** Marcos Ferrer, Camila Sosa
 - **Pistas clave para responder:** La pelea de la galería, las fotos de Camila y la confesión de Camila o de Marcos.
@@ -275,7 +276,8 @@ Cada capítulo es un sobre. Se abre cuando se cumple su requisito, que es el sob
 ### Capítulo 3. La sala de control
 
 - **Pregunta del capítulo:** ¿Quién apagó los extractores y silenció la alarma?
-- **Se abre con:** sobre «Sobre 2: La fiesta» abierto **y** (que se haya revelado «Marcos estuvo con Camila en el viñedo de 23:30 a 00:10.» **o** minijuego «Reconstruir la noche de la fiesta» resuelto)
+- **Se abre con:** pregunta de «Sobre 2: La fiesta» acertada
+- **Opciones habilitadas con:** Inés admitió que salió a fumar y contó a quién vio desde el patio
 - **Texto del sobre:** Marcos tiene coartada. Los extractores se apagaron desde el tablero con el código MANT-04. La pregunta: ¿quién apagó la ventilación?
 - **Personajes que aparecen:** Paula Gómez
 - **Pistas clave para responder:** Las sesiones de la consola, el cenicero y lo que Inés vio desde el patio.
@@ -305,7 +307,8 @@ Cada capítulo es un sobre. Se abre cuando se cumple su requisito, que es el sob
 ### Capítulo 4. La venta
 
 - **Pregunta del capítulo:** ¿Qué iba a contar Ignacio y a quién perjudicaba?
-- **Se abre con:** sobre «Sobre 3: La sala de control» abierto **y** que se haya revelado «Inés dejó la sala de control sola entre las 23:20 y las 23:45 para fumar en el patio.»
+- **Se abre con:** pregunta de «Sobre 3: La sala de control» acertada
+- **Opciones habilitadas con:** el PIN del celular resuelto y, además, la revelación de quién firmaba los certificados o el minijuego «La libreta de catas de Ignacio» resuelto
 - **Texto del sobre:** La sala de control quedó sola y alguien conocía el código. La pregunta: ¿qué iba a contar Ignacio y a quién perjudicaba?
 - **Personajes que aparecen:** Tomás Bertoldi, Raúl Arrieta
 - **Pistas clave para responder:** El PIN del celular, el fraude que admite Raúl y quién firma los certificados (Raúl o la libreta).
@@ -341,7 +344,7 @@ Cada capítulo es un sobre. Se abre cuando se cumple su requisito, que es el sob
 ### Capítulo 5. El vestido
 
 - **Pregunta del capítulo:** ¿Quién mató a Ignacio, cómo y por qué?
-- **Se abre con:** sobre «Sobre 4: La venta» abierto **y** (que se haya revelado «Desde hace cinco años, los certificados de exportación y de origen los firma Sofía, no Raúl.» **o** minijuego «La libreta de catas de Ignacio» resuelto)
+- **Se abre con:** pregunta de «Sobre 4: La venta» acertada
 - **Texto del sobre:** Hay un fraude, pero los papeles no los firmaba quien todos creen. Lo que dejó el laboratorio. La pregunta final: ¿quién, cómo y por qué?
 - **Pistas clave para responder:** El laboratorio (mosto, óxido y huella), las fotos del cambio de vestido y los certificados.
 - **Cierre:** Sofía Arrieta lo encerró en la nave 2 y apagó la ventilación. Actuó sola.

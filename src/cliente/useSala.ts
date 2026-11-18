@@ -148,7 +148,7 @@ export function useSala(codigo: string, tipo: TipoConexion) {
   );
 
   const accion = useCallback(
-    async (a: Accion) => {
+    async (a: Accion, alError?: (mensaje: string) => void) => {
       const r = await fetch(`/api/salas/${codigo}/accion`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -156,7 +156,7 @@ export function useSala(codigo: string, tipo: TipoConexion) {
       });
       if (!r.ok) {
         const d = await r.json().catch(() => ({}));
-        setError(d.error ?? "No se pudo");
+        (alError ?? setError)(d.error ?? "No se pudo");
         return false;
       }
       setError(null);

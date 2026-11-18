@@ -95,6 +95,7 @@ export interface EstadoPartida {
   iniciada: number | null;
   conexiones: Record<string, Conexion>;
   sobresAbiertos: string[];
+  capitulosResueltos?: string[];
   hechosRevelados: string[];
   candadosAbiertos: string[];
   /** minijuego → conexión que lo resolvió (opcional para salas creadas antes) */
@@ -128,6 +129,7 @@ export type Accion =
   | { tipo: "lineaAgregar"; ref: RefPizarra; hora: string }
   | { tipo: "lineaQuitar"; id: string }
   | { tipo: "abrirSobre"; sobre: string }
+  | { tipo: "responderCapitulo"; sobre: string; respuesta: string }
   | { tipo: "probarCandado"; candado: string; codigo: string }
   | { tipo: "resolverMinijuego"; minijuego: string; respuesta: string }
   | { tipo: "pedirAyuda" }

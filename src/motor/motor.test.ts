@@ -9,7 +9,7 @@ import { construirInstrucciones, limpiarRespuesta, preguntasHechas, resolverReve
 import { APICallError, RetryError } from "ai";
 import { esCuotaAgotada } from "@/servidor/llm";
 import { configPublica, esRespuestaCorrecta } from "./minijuegos";
-import { CONFIG_POR_DEFECTO, type EstadoPartida } from "./tipos";
+import { CONFIG_POR_DEFECTO, type Accion, type EstadoPartida } from "./tipos";
 
 const caso = CasoSchema.parse(datos);
 const personaje = (id: string) => caso.personajes.find((p) => p.id === id)!;
@@ -252,7 +252,7 @@ describe("Hotel Aurora", () => {
   });
 });
 
-describe("Muerte en la vendimia (escenas)", () => {
+describe("Muerte en la vendimia", () => {
   const casoV = CasoSchema.parse(datosVendimia);
   const partidaV = (): EstadoPartida => {
     const s = partida();
@@ -269,6 +269,80 @@ describe("Muerte en la vendimia (escenas)", () => {
     const v = vistaPara(casoV, partidaV(), "a");
     expect(v.sobres.find((s) => s.id === "s1_nave")!.escena?.puntos.length).toBe(5);
     expect(v.sobres.find((s) => s.id === "s2_fiesta")!.escena).toBeNull();
+  });
+
+  it("el servidor solo habilita el segundo sobre con un acierto y revela el cierre al equipo", () => {
+    const s = partidaV();
+    const abrir: Accion = { tipo: "abrirSobre", sobre: "s2_fiesta" };
+    const responder = (respuesta: string): Accion => ({ tipo: "responderCapitulo", sobre: "s1_nave", respuesta });
+    const [primero, segundo] = vistaPara(casoV, s, "b").sobres;
+    expect(primero.resumen).toBe(casoV.sobres[0].resumen);
+    expect(primero.preguntaCapitulo).toEqual({
+      texto: casoV.sobres[0].preguntaCapitulo!.texto,
+      opciones: casoV.sobres[0].preguntaCapitulo!.opciones,
+      resultado: null,
+      orientacion: null,
+    });
+    expect(segundo).toMatchObject({ abierto: false, sePuedeAbrir: false, resumen: null, preguntaCapitulo: null });
+    expect(() => aplicar(s, abrir, "a", casoV)).toThrow("Todavía no se puede abrir");
+    expect(() => aplicar(s, responder("b"), "tv", casoV)).toThrow("Solo los jugadores");
+    expect(() => aplicar(s, responder("inventada"), "a", casoV)).toThrow("Elegí una");
+    expect(() => aplicar(s, responder("a"), "a", casoV)).toThrow("no encaja con las pistas");
+    expect(s.capitulosResueltos).toBeUndefined();
+
+    const resuelta = aplicar(s, responder("b"), "a", casoV);
+    expect(aplicar(resuelta, responder("b"), "b", casoV)).toBe(resuelta);
+    const vista = vistaPara(casoV, resuelta, "b");
+    expect(vista.sobres[0].preguntaCapitulo?.resultado).toEqual({
+      cierre: casoV.sobres[0].preguntaCapitulo!.cierre,
+      gancho: casoV.sobres[0].preguntaCapitulo!.gancho,
+    });
+    expect(vista.sobres[1]).toMatchObject({ abierto: false, sePuedeAbrir: true, resumen: null, preguntaCapitulo: null });
+    expect(vistaPara(casoV, aplicar(resuelta, abrir, "b", casoV), "a").sobres[1].resumen).toBe(casoV.sobres[1].resumen);
+  });
+
+  it.each(["hechos", "minijuegos"])("se puede llegar a la votación pasando por los cinco capítulos (%s)", (camino) => {
+    let s = partidaV();
+    const responder = (sobre: string, respuesta: string): Accion => ({ tipo: "responderCapitulo", sobre, respuesta });
+    const avanzar = (siguiente: string) => { s = aplicar(s, { tipo: "abrirSobre", sobre: siguiente }, "b", casoV); };
+    const intentar = (a: Accion) => aplicar(s, a, "a", casoV);
+
+    expect(() => intentar(responder("s5_vestido", "b"))).toThrow("Todavía no se puede responder");
+    expect(vistaPara(casoV, s, "a").preguntas).toEqual([]);
+    const votos = Object.fromEntries(casoV.resolucion.preguntas.map((q) => [q.id, q.respuesta]));
+    expect(() => intentar({ tipo: "votar", respuestas: votos })).toThrow("Todavía no se habilitó la votación");
+    expect(() => intentar({ tipo: "cerrarVotacion" })).toThrow("Todavía no se habilitó la votación");
+    s = intentar(responder("s1_nave", "b"));
+    avanzar("s2_fiesta");
+
+    expect(vistaPara(casoV, s, "a").sobres[1].preguntaCapitulo?.opciones).toEqual([]);
+    expect(() => intentar(responder("s2_fiesta", "c"))).toThrow("Todavía no se puede responder");
+    s = camino === "hechos"
+      ? revelarHecho(s, "marcos_con_camila", "Camila")
+      : { ...s, minijuegosResueltos: { reconstruir_fiesta: "a" } };
+    s = intentar(responder("s2_fiesta", "c"));
+    avanzar("s3_control");
+
+    s = revelarHecho(s, "ines_salio", "Inés");
+    expect(() => intentar(responder("s3_control", "a"))).toThrow("Todavía no se puede responder");
+    s = revelarHecho(s, "ines_vio_sofia", "Inés");
+    s = intentar(responder("s3_control", "a"));
+    avanzar("s4_venta");
+
+    s = camino === "hechos"
+      ? revelarHecho(s, "sofia_firmaba", "Raúl")
+      : { ...s, minijuegosResueltos: { ...s.minijuegosResueltos, cuaderno_ignacio: "b" } };
+    expect(() => intentar(responder("s4_venta", "c"))).toThrow("Todavía no se puede responder");
+    s = intentar({ tipo: "probarCandado", candado: "pin_celular", codigo: "030398" });
+    s = intentar(responder("s4_venta", "c"));
+    avanzar("s5_vestido");
+
+    expect(vistaPara(casoV, s, "a").sePuedeVotar).toBe(false);
+    s = intentar(responder("s5_vestido", "b"));
+    expect(vistaPara(casoV, s, "a").sePuedeVotar).toBe(true);
+    expect(vistaPara(casoV, s, "a").sobres[4].preguntaCapitulo?.resultado?.gancho).toBe("Votación final.");
+    s = intentar({ tipo: "votar", respuestas: votos });
+    expect(aplicar(s, { tipo: "votar", respuestas: votos }, "b", casoV).fase).toBe("terminada");
   });
 
   it("la escena no muestra puntos de pruebas bloqueadas", () => {

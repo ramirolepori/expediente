@@ -3,6 +3,7 @@ import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 import aurora from "../../casos/hotel-aurora/caso.json";
 import vendimia from "../../casos/vendimia/caso.json";
+import { CasoSchema } from "@/casos/schema";
 import { informeParaIA } from "./informe";
 import { revisarCaso, type ArchivoPaquete, type Hallazgo } from "./validador";
 import { leerImagen } from "./validador-archivos";
@@ -36,6 +37,31 @@ describe("validador de autores", () => {
   it("la Vendimia subida como autor, con sus imágenes, no tiene errores", () => {
     const r = revisarCaso(vendimia, { origen: "autor", archivos: archivosVendimia() });
     expect(r.hallazgos.filter((h) => h.nivel === "error")).toEqual([]);
+  });
+
+  it("valida la clave de respuesta, los ids de opción y las referencias a preguntas de capítulo", () => {
+    const c = CasoSchema.parse(vendimia);
+    const pregunta = c.sobres[0].preguntaCapitulo!;
+    pregunta.respuesta = "inexistente";
+    pregunta.opciones[1].id = pregunta.opciones[0].id;
+    delete c.sobres[1].preguntaCapitulo;
+    const errores = de(revisarCaso(c).hallazgos, "referencias");
+    expect(errores).toEqual(expect.arrayContaining([
+      expect.objectContaining({ nivel: "error", mensaje: expect.stringContaining("no está entre las opciones") }),
+      expect.objectContaining({ nivel: "error", mensaje: expect.stringContaining("ids de opción duplicados") }),
+      expect.objectContaining({ nivel: "error", mensaje: expect.stringContaining('capitulo inexistente "s2_fiesta"') }),
+    ]));
+  });
+
+  it("detecta si una pregunta depende del sobre que ella misma tiene que habilitar", () => {
+    const c = CasoSchema.parse(vendimia);
+    c.sobres[0].preguntaCapitulo!.disponible = { tipo: "sobre", sobre: "s2_fiesta" };
+    const errores = de(revisarCaso(c).hallazgos, "resolucion");
+    expect(errores).toEqual(expect.arrayContaining([
+      expect.objectContaining({ nivel: "error", donde: "sobre s1_nave › preguntaCapitulo" }),
+      expect.objectContaining({ nivel: "error", donde: "sobre s2_fiesta" }),
+      expect.objectContaining({ nivel: "error", donde: "resolucion › requisito" }),
+    ]));
   });
 
   it("lee formato y tamaño de las imágenes por su cabecera", () => {

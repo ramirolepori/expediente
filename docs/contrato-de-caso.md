@@ -23,6 +23,7 @@ Casi todo lo que se desbloquea usa una condición:
 |---|---|
 | `{ "tipo": "siempre" }` | Siempre |
 | `{ "tipo": "sobre", "sobre": "s2" }` | El sobre está abierto |
+| `{ "tipo": "capitulo", "capitulo": "s2" }` | El equipo acertó la pregunta del sobre `s2` |
 | `{ "tipo": "prueba", "prueba": "informe_adn" }` | La prueba está visible en el expediente |
 | `{ "tipo": "hecho", "hecho": "duarte_visita" }` | Algún personaje ya reveló ese hecho |
 | `{ "tipo": "candado", "candado": "pendrive" }` | El candado se abrió |
@@ -89,9 +90,14 @@ Hay dos estilos y conviene usar uno solo por caso:
 Todas las combinaciones se ven en `/laboratorio/personaje`. La emoción la elige el modelo en cada respuesta (`neutral`, `nervioso`, `enojado`, `triste`, `sorprendido`, `evasivo`, `confiado` o `quebrado`): no hace falta escribirla en el caso.
 
 ### `sobres`
-`{ id, titulo, descripcion, requisito, escena }`. El primero tiene que tener `requisito: { "tipo": "siempre" }`. Lo habitual es que cada sobre pida el anterior.
+`{ id, titulo, descripcion, requisito, escena, resumen, preguntaCapitulo }`. El primero tiene que tener `requisito: { "tipo": "siempre" }`. Lo habitual es que cada sobre pida el anterior. La `descripcion` recién se muestra cuando el sobre se puede abrir.
 
-Para armar el caso por capítulos, cada sobre es un capítulo: su `requisito` pide el sobre anterior y, si querés que el grupo resuelva algo antes de avanzar, un hecho, un candado o un minijuego del capítulo (por ejemplo `todas: [sobre anterior, hecho clave]`). La `descripcion` lleva el resumen de lo sabido y la pregunta del capítulo. Los jugadores ven la `descripcion` recién cuando el sobre se puede abrir, así que puede resumir lo que ya descubrieron sin adelantar nada.
+Cada sobre puede tener estas dos piezas opcionales:
+
+- `resumen`: markdown que aparece al abrir el sobre. Repasá lo que el grupo ya sabe, sin adelantar la respuesta.
+- `preguntaCapitulo`: `{ texto, opciones, respuesta, cierre, gancho, disponible?, orientacion? }`. Incluí al menos dos opciones `{ id, texto }` con ids distintos y poné en `respuesta` el id correcto. Al abrir el sobre, el grupo ve la pregunta; si definís `disponible`, las opciones esperan a que se cumpla esa condición (por ejemplo, un hecho clave o un minijuego). Mientras tanto, `orientacion` puede dar una pista de cómo seguir. Cualquier jugador puede responder para el equipo; se puede volver a intentar si falla. El `cierre` confirma lo descubierto y el `gancho` anticipa lo que sigue; se muestran recién al acertar.
+
+Para trabar el sobre siguiente hasta que el grupo acierte, poné en su `requisito` una condición `capitulo` con el id del sobre anterior. Una vez habilitado, el grupo abre el sobre a mano. Los casos sin estas piezas mantienen sus requisitos de siempre.
 
 `escena` (opcional) es una ilustración del lugar con puntos para tocar. Cada punto abre una prueba del mismo sobre:
 
@@ -130,6 +136,8 @@ Ver [docs/minijuegos.md](minijuegos.md). Hay tres tipos de catálogo (`rompecabe
 
 ### `resolucion.preguntas`
 Las preguntas que el equipo vota al final. Cada una tiene `id`, `texto`, `tipo` (`personaje` u `opcion`), `opciones` (si es de opción), `respuesta`, `puntos` y `explicacion`. Con `permiteNadie: true`, una pregunta de personaje ofrece "Nadie", así no se adelanta que hubo cómplices. Ojo con las pistas involuntarias: la opción correcta no puede ser la única larga ni la única con detalles del caso.
+
+`resolucion.requisito` es opcional. Usá una condición `capitulo` si querés habilitar la votación recién después de que el grupo acierte la pregunta del último sobre.
 
 ### `narrador` (opcional) y diálogos con voces
 `narrador` es una `voz` (`genero`, `edad`, `velocidad`, `tono`) para quien lee los documentos en voz alta; si falta, se elige una según la ambientación. Para que una línea de un documento la diga un personaje con su voz, empezala con su nombre en negrita: `**Martín Duarte:** Yo estuve en mi casa.` (también vale el id o un nombre que no se repita). Lo que no está marcado lo lee el narrador.

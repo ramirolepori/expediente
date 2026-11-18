@@ -11,8 +11,9 @@ async function unirJugador(browser: Browser, codigo: string, apodo: string) {
   return pagina;
 }
 
-async function crearSala(pagina: Page, apodo: string) {
+async function crearSala(pagina: Page, apodo: string, caso?: string) {
   await pagina.goto("/");
+  if (caso) await pagina.getByRole("button", { name: new RegExp(caso) }).click();
   await pagina.getByPlaceholder("Ej.: Ramiro").fill(apodo);
   await pagina.getByRole("button", { name: "Crear sala" }).click();
   await pagina.waitForURL(/\/sala\/[A-Z]{4}$/);
@@ -99,6 +100,35 @@ test("partida completa: dos jugadores y la tele", async ({ page: anfitrion, brow
   // salir vuelve al inicio
   await anfitrion.getByRole("button", { name: "⎋ Salir" }).click();
   await anfitrion.waitForURL("/");
+});
+
+test("Vendimia: acertar la pregunta revela el cierre y destraba el sobre en ambos dispositivos", async ({ page: anfitrion, browser }) => {
+  const codigo = await crearSala(anfitrion, "Ana", "Muerte en la vendimia");
+  const otro = await unirJugador(browser, codigo, "Beto");
+  await anfitrion.getByRole("button", { name: "Abrir el caso" }).click();
+
+  const sobreCerrado = anfitrion.getByRole("button", { name: /Sobre 2.*Cerrado/ });
+  await expect(sobreCerrado).toBeDisabled();
+  await expect(anfitrion.getByText("Resumen del capítulo", { exact: true })).toHaveCount(1);
+  const pregunta = anfitrion.getByRole("group", { name: "¿Fue de verdad un accidente laboral?" });
+  await pregunta.getByRole("radio", { name: /Ignacio se encerró sin querer/ }).check();
+  await pregunta.getByRole("button", { name: "Responder" }).click();
+  await expect(anfitrion.getByRole("alert").filter({ hasText: "Esa respuesta no encaja" })).toBeVisible();
+  await expect(sobreCerrado).toBeDisabled();
+  await expect(anfitrion.getByText("¿Quién estaba en la fiesta y quién tenía algo contra Ignacio?")).toHaveCount(0);
+
+  await pregunta.getByRole("radio", { name: /Alguien trabó la puerta desde afuera/ }).check();
+  await pregunta.getByRole("button", { name: "Responder" }).click();
+  for (const jugador of [anfitrion, otro]) {
+    await expect(jugador.getByText("¿Quién estaba en la fiesta y quién tenía algo contra Ignacio?")).toBeVisible();
+    await expect(jugador.getByText(/No fue un accidente\. La puerta solo se traba/)).toBeVisible();
+    await expect(jugador.getByRole("button", { name: /Sobre 2.*Abrir sobre/ })).toBeEnabled();
+  }
+  await otro.reload();
+  await otro.getByRole("button", { name: /Sobre 2.*Abrir sobre/ }).click();
+  await expect(anfitrion.getByText("Resumen del capítulo", { exact: true })).toHaveCount(2);
+  await expect(anfitrion.getByText(/Ahora toca reconstruir qué pasó en la fiesta/)).toBeVisible();
+  await expect(anfitrion.getByRole("button", { name: /Sobre 3.*Cerrado/ })).toBeDisabled();
 });
 
 test("con la partida empezada se suman la tele y un jugador", async ({ page: anfitrion, browser }) => {

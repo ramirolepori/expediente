@@ -1,7 +1,7 @@
 import type { Caso, Condicion } from "@/casos/schema";
 import type { EstadoPartida } from "./tipos";
 
-type EstadoMinimo = Pick<EstadoPartida, "sobresAbiertos" | "hechosRevelados" | "candadosAbiertos"> & { minijuegosResueltos?: Record<string, string> };
+type EstadoMinimo = Pick<EstadoPartida, "sobresAbiertos" | "capitulosResueltos" | "hechosRevelados" | "candadosAbiertos" | "minijuegosResueltos">;
 
 export function evaluar(cond: Condicion, estado: EstadoMinimo, caso: Caso): boolean {
   switch (cond.tipo) {
@@ -9,6 +9,8 @@ export function evaluar(cond: Condicion, estado: EstadoMinimo, caso: Caso): bool
       return true;
     case "sobre":
       return estado.sobresAbiertos.includes(cond.sobre);
+    case "capitulo":
+      return estado.capitulosResueltos?.includes(cond.capitulo) ?? false;
     case "hecho":
       return estado.hechosRevelados.includes(cond.hecho);
     case "candado":
@@ -22,6 +24,16 @@ export function evaluar(cond: Condicion, estado: EstadoMinimo, caso: Caso): bool
     case "alguna":
       return cond.condiciones.some((c) => evaluar(c, estado, caso));
   }
+}
+
+export function preguntaCapituloDisponible(sobre: Caso["sobres"][number], estado: EstadoMinimo, caso: Caso): boolean {
+  const pregunta = sobre.preguntaCapitulo;
+  return !!pregunta && estado.sobresAbiertos.includes(sobre.id) &&
+    (!pregunta.disponible || evaluar(pregunta.disponible, estado, caso));
+}
+
+export function votacionDisponible(caso: Caso, estado: EstadoMinimo): boolean {
+  return !caso.resolucion.requisito || evaluar(caso.resolucion.requisito, estado, caso);
 }
 
 export function pruebaVisible(id: string, estado: EstadoMinimo, caso: Caso): boolean {
