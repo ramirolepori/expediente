@@ -67,7 +67,7 @@ export async function borrarVocesViejas(ahora = Date.now()) {
   for (;;) {
     const { data, error } = await bucket.list("", { limit, sortBy: { column: "created_at", order: "asc" } });
     if (error) throw error;
-    const viejas = data.filter((voz) => Date.parse(voz.created_at) < antesDe).map((voz) => voz.name);
+    const viejas = data.filter((voz) => voz.created_at && Date.parse(voz.created_at) < antesDe).map((voz) => voz.name);
     if (viejas.length) {
       const { error } = await bucket.remove(viejas);
       if (error) throw error;
