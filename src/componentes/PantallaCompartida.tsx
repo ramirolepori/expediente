@@ -91,6 +91,8 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
   const prueba = (id: string) => vista.pruebas.find((p) => p.id === id);
   const pruebasDestacadas = mensajes === destacadas.mensajes ? destacadas.ids.flatMap((id) => prueba(id) ?? []) : [];
   const recientes = conocidas.slice(0, 6).flatMap((id) => prueba(id) ?? []);
+  const capitulo = vista.sobres.findLast((s) => s.abierto);
+  const resultadoCapitulo = capitulo?.preguntaCapitulo?.resultado;
 
   return (
     <main className="grid min-h-dvh grid-rows-[auto_1fr] gap-6 p-6 lg:p-10">
@@ -164,7 +166,27 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
           )}
         </section>
 
-        <aside className="flex min-h-0 flex-col gap-6">
+        <aside className="flex min-h-0 min-w-0 flex-col gap-6">
+          {capitulo && (capitulo.resumen || resultadoCapitulo) && (
+            <section aria-labelledby="capitulo-en-tele" className="rounded-2xl border border-borde bg-panel p-5">
+              <h2 id="capitulo-en-tele" className="font-titulo text-2xl lg:text-3xl">{capitulo.titulo}</h2>
+              {capitulo.resumen && (
+                <div className="mt-4">
+                  <h3 className="mb-1 text-sm uppercase tracking-widest text-suave">Resumen del capítulo</h3>
+                  <p className="whitespace-pre-line break-words text-xl leading-snug lg:text-2xl">{capitulo.resumen}</p>
+                </div>
+              )}
+              <div role="status">
+                {resultadoCapitulo && (
+                  <>
+                    <h3 className="mt-4 mb-1 text-sm uppercase tracking-widest text-suave">Cierre del capítulo</h3>
+                    <p className="whitespace-pre-line break-words text-xl leading-snug lg:text-2xl">{resultadoCapitulo.cierre}</p>
+                    <p className="mt-2 whitespace-pre-line break-words text-xl leading-snug text-acento lg:text-2xl">{resultadoCapitulo.gancho}</p>
+                  </>
+                )}
+              </div>
+            </section>
+          )}
           <section className="rounded-2xl border border-borde bg-panel p-5">
             <h2 className="mb-3 text-lg font-semibold">Sobres</h2>
             <ul className="space-y-1.5 text-lg">
