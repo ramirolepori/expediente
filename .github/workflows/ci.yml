@@ -42,7 +42,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      # El runner ya trae las bibliotecas de Chromium; la suite usa el modo headless.
+      - run: npx playwright install --only-shell chromium
       - run: npm run e2e -- --fully-parallel --workers=1 --shard=${{ matrix.shard }}/2
         env:
           CI: "true"
