@@ -1,5 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm test && npm run validar && npm run build",
+  "buildCommand": "npm test && if [ \"$VERCEL_ENV\" = production ]; then npm run validar -- --verificar-destino; else npm run validar; fi && npm run build",
   "crons": [{ "path": "/api/cron/limpiar", "schedule": "0 8 * * *" }]
 }

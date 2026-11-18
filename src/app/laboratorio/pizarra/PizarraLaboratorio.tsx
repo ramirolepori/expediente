@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { obtenerCaso } from "@/casos/registro";
+import { casoLaboratorio as caso } from "@/casos/laboratorio";
 import { Corcho, LineaDeTiempo } from "@/componentes/Pizarra";
 import { aplicar, ErrorDeJuego } from "@/motor/reductor";
 import { CONFIG_POR_DEFECTO, type Accion, type EstadoPartida } from "@/motor/tipos";
 import { vistaPara } from "@/motor/vista";
-
-const caso = obtenerCaso("hotel_aurora")!;
 
 /** Partida de mentira con el motor real: sobres 1 y 2 abiertos, algunos descubrimientos y una nota de equipo. */
 function partidaDePrueba(conEjemplo: boolean): EstadoPartida {
@@ -22,13 +20,13 @@ function partidaDePrueba(conEjemplo: boolean): EstadoPartida {
     conexiones: {
       yo: { id: "yo", tipo: "jugador", apodo: "Laboratorio", color: "#e4572e", anfitrion: true, ultimaVez: ahora },
     },
-    sobresAbiertos: ["s1_escena", "s2_registros"],
-    hechosRevelados: ["hielo_2255", "hombre_605", "duarte_visita", "mansilla_subio"],
+    sobresAbiertos: ["s1_local", "s2_noche"],
+    hechosRevelados: ["elena_cumple", "tito_campera", "tito_vio"],
     candadosAbiertos: [],
     ayudasUsadas: [],
     personajesVisitados: [],
     intentosCandado: 0,
-    notas: [{ id: "nota1", autor: "yo", texto: "El reloj se adelantó a propósito: la muerte fue antes de las 23:37.", visibilidad: "equipo", hora: ahora }],
+    notas: [{ id: "nota1", autor: "yo", texto: "Comparar las declaraciones con el registro de la alarma.", visibilidad: "equipo", hora: ahora }],
     interrogatorios: {},
     acusacion: null,
     eventos: [],
@@ -36,14 +34,14 @@ function partidaDePrueba(conEjemplo: boolean): EstadoPartida {
   };
   if (conEjemplo) {
     const acciones: Accion[] = [
-      { tipo: "pizarraColocar", ref: { tipo: "personaje", id: "alberto" }, x: 30, y: 25 },
-      { tipo: "pizarraColocar", ref: { tipo: "prueba", id: "registro_ascensor" }, x: 70, y: 22 },
-      { tipo: "pizarraColocar", ref: { tipo: "hecho", id: "mansilla_subio" }, x: 50, y: 55 },
-      { tipo: "pizarraColocar", ref: { tipo: "personaje", id: "duarte" }, x: 20, y: 75 },
+      { tipo: "pizarraColocar", ref: { tipo: "personaje", id: "elena" }, x: 30, y: 25 },
+      { tipo: "pizarraColocar", ref: { tipo: "prueba", id: "registro_alarma" }, x: 70, y: 22 },
+      { tipo: "pizarraColocar", ref: { tipo: "hecho", id: "tito_vio" }, x: 50, y: 55 },
+      { tipo: "pizarraColocar", ref: { tipo: "personaje", id: "tito" }, x: 20, y: 75 },
       { tipo: "pizarraColocar", ref: { tipo: "nota", id: "nota1" }, x: 78, y: 72 },
-      { tipo: "lineaAgregar", ref: { tipo: "hecho", id: "duarte_visita" }, hora: "Dom 22:36" },
-      { tipo: "lineaAgregar", ref: { tipo: "hecho", id: "hielo_2255" }, hora: "Dom 22:55" },
-      { tipo: "lineaAgregar", ref: { tipo: "hecho", id: "mansilla_subio" }, hora: "Dom 23:06" },
+      { tipo: "lineaAgregar", ref: { tipo: "hecho", id: "elena_cumple" }, hora: "Vie 21:00" },
+      { tipo: "lineaAgregar", ref: { tipo: "hecho", id: "tito_campera" }, hora: "Vie 22:30" },
+      { tipo: "lineaAgregar", ref: { tipo: "hecho", id: "tito_vio" }, hora: "Vie 22:43" },
     ];
     for (const a of acciones) s = aplicar(s, a, "yo", caso);
     const [a, b, c] = s.pizarra!.items;

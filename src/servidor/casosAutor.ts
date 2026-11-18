@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { BUCKET_CASOS as BUCKET } from "@/casos/oficiales";
 import { CasoSchema, type Caso } from "@/casos/schema";
 import { BYTES_CABECERA } from "@/motor/validador-archivos";
 import { revisarCaso, type ArchivoPaquete, type Hallazgo } from "@/motor/validador";
@@ -40,7 +41,6 @@ export interface FilaCaso {
 /** Lo que ve el autor de su caso en la lista (sin el JSON). */
 export type ResumenCaso = Omit<FilaCaso, "datos" | "revision_md"> & { autorEmail?: string; autorNombre?: string | null };
 
-const BUCKET = "casos-autores";
 
 /** Una fila sin el JSON del caso (trae la solución) ni el REVISION.md. */
 function sinJson(fila: FilaCaso): ResumenCaso {
@@ -405,7 +405,7 @@ export async function casosPublicados(): Promise<Caso[]> {
     const casos = await Promise.all(filas.map((f) => casoDeAutor(casoIdDe(f.id))));
     return casos.flatMap((c) => (c ? [c.caso] : []));
   } catch (e) {
-    // si Supabase falla, el catálogo sigue con los casos del repo
+    // un error en los casos de autores no bloquea el catálogo oficial
     console.error(e);
     return [];
   }

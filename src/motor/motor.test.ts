@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import datos from "../../casos/hotel-aurora/caso.json";
-import datosVendimia from "../../casos/vendimia/caso.json";
+import { leerCasoArchivado } from "@/casos/archivados";
 import { CasoSchema } from "@/casos/schema";
 import { validarCaso } from "./validador";
 import { aplicar, ErrorDeJuego, revelarHecho } from "./reductor";
@@ -11,6 +10,8 @@ import { esCuotaAgotada } from "@/servidor/llm";
 import { configPublica, esRespuestaCorrecta } from "./minijuegos";
 import { CONFIG_POR_DEFECTO, type Accion, type EstadoPartida } from "./tipos";
 
+const datos = leerCasoArchivado("hotel-aurora");
+const datosVendimia = leerCasoArchivado("vendimia");
 const caso = CasoSchema.parse(datos);
 const personaje = (id: string) => caso.personajes.find((p) => p.id === id)!;
 
@@ -359,7 +360,7 @@ describe("Muerte en la vendimia", () => {
   });
 
   it("la escena no muestra puntos de pruebas bloqueadas", () => {
-    const conEscena = structuredClone(datosVendimia) as typeof datosVendimia;
+    const conEscena = CasoSchema.parse(datosVendimia);
     conEscena.sobres[3].escena = { imagen: "/x.jpg", proporcion: 1.5, puntos: [{ prueba: "celular_ignacio", x: 10, y: 10, etiqueta: "Celular" }] } as never;
     const c = CasoSchema.parse(conEscena);
     const s = { ...partidaV(), sobresAbiertos: ["s1_nave", "s2_fiesta", "s3_control", "s4_venta"] };
@@ -368,7 +369,7 @@ describe("Muerte en la vendimia", () => {
   });
 
   it("el validador rechaza puntos que apuntan a pruebas de otro sobre", () => {
-    const malo = structuredClone(datosVendimia) as typeof datosVendimia;
+    const malo = CasoSchema.parse(datosVendimia);
     malo.sobres[0].escena!.puntos[0].prueba = "fotos_camila";
     expect(validarCaso(malo).errores.join(" ")).toContain("es del sobre s2_fiesta");
   });

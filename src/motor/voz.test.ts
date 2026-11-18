@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { listarCasos } from "@/casos/registro";
+import { leerCasoArchivado } from "@/casos/archivados";
+import { CASOS_OFICIALES } from "@/casos/oficiales";
+import { CasoSchema } from "@/casos/schema";
 import { BASES, RANGO_F0, f0De, vocesDelElenco } from "./voz";
 
 type Genero = "femenino" | "masculino";
 const GENEROS: Genero[] = ["femenino", "masculino"];
 const EDADES = ["joven", "adulto", "mayor"] as const;
 const TONOS = [undefined, "grave y seco", "nervioso", "calmo y frío", "alegre"];
+const casos = CASOS_OFICIALES.map(({ carpeta }) => CasoSchema.parse(leerCasoArchivado(carpeta)));
 
 const generoDe = (modelo: string, hablante?: number) => GENEROS.filter((g) => BASES[g].some((b) => b.modelo === modelo && b.hablante === hablante));
 
@@ -20,7 +23,7 @@ describe("voces de los personajes", () => {
         voz: { genero: GENEROS[i % 2], edad: EDADES[i % 3], velocidad: 1, tono: TONOS[i % TONOS.length] },
       })),
     );
-    const reales = listarCasos().map((c) => c.personajes);
+    const reales = casos.map((c) => c.personajes);
     for (const elenco of [...sinteticos, ...reales]) {
       const voces = vocesDelElenco(elenco);
       for (const p of elenco) {
@@ -34,7 +37,7 @@ describe("voces de los personajes", () => {
   });
 
   it("en cada caso, dos personajes no comparten voz base y tono parecido", () => {
-    for (const caso of listarCasos()) {
+    for (const caso of casos) {
       const voces = vocesDelElenco(caso.personajes);
       const ids = Object.keys(voces);
       for (const a of ids)
@@ -47,7 +50,7 @@ describe("voces de los personajes", () => {
   });
 
   it("la voz de cada uno no depende del orden del elenco y respeta la velocidad del caso", () => {
-    const elenco = listarCasos()[0].personajes;
+    const elenco = casos[0].personajes;
     expect(vocesDelElenco([...elenco].reverse())).toEqual(vocesDelElenco(elenco));
     const v = vocesDelElenco([{ id: "a", voz: { genero: "masculino", edad: "mayor", velocidad: 0.8 } }]).a;
     expect(v.lengthScale).toBe(1.25);
