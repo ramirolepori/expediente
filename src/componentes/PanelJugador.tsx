@@ -184,7 +184,7 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
             {s.resumen && (
               <div className="mb-3 rounded-xl border border-borde bg-panel px-4 py-3 text-sm">
                 <h3 className="mb-1 font-semibold text-acento">Resumen del capítulo</h3>
-                <Markdown>{s.resumen}</Markdown>
+                <p className="whitespace-pre-line">{s.resumen}</p>
               </div>
             )}
             {!s.abierto && (
