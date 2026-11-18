@@ -1,5 +1,5 @@
 import { CasoSchema, type Caso, type Condicion } from "@/casos/schema";
-import { evaluar, pruebaVisible } from "./condiciones";
+import { evaluar, preguntaCapituloDisponible, pruebaVisible, votacionDisponible } from "./condiciones";
 import { extension, leerImagen } from "./validador-archivos";
 import { MAX_CASO_BYTES, revisarTextos, rutaSegura } from "./validador-seguridad";
 
@@ -134,6 +134,7 @@ type Reportar = (nivel: Nivel, donde: string, mensaje: string) => void;
 function revisarReferencias(caso: Caso, r: Reportar) {
   const ids = {
     sobre: new Set(caso.sobres.map((x) => x.id)),
+    capitulo: new Set(caso.sobres.filter((s) => s.preguntaCapitulo).map((s) => s.id)),
     prueba: new Set(caso.pruebas.map((x) => x.id)),
     hecho: new Set(caso.hechos.map((x) => x.id)),
     candado: new Set(caso.candados.map((x) => x.id)),
@@ -163,7 +164,17 @@ function revisarReferencias(caso: Caso, r: Reportar) {
       if (!ids[ref.tipo as keyof typeof ids]?.has(ref.id)) r("error", donde, `referencia a ${ref.tipo} inexistente "${ref.id}"`);
     }
   };
-  caso.sobres.forEach((s) => chequear(s.requisito, `sobre ${s.id} › requisito`));
+  caso.sobres.forEach((s) => {
+    chequear(s.requisito, `sobre ${s.id} › requisito`);
+    const pregunta = s.preguntaCapitulo;
+    if (!pregunta) return;
+    const donde = `sobre ${s.id} › preguntaCapitulo`;
+    if (pregunta.disponible) chequear(pregunta.disponible, `${donde} › disponible`);
+    const opciones = new Set(pregunta.opciones.map((o) => o.id));
+    if (opciones.size !== pregunta.opciones.length) r("error", donde, "hay ids de opción duplicados");
+    if (!opciones.has(pregunta.respuesta)) r("error", donde, `la respuesta "${pregunta.respuesta}" no está entre las opciones`);
+  });
+  if (caso.resolucion.requisito) chequear(caso.resolucion.requisito, "resolucion › requisito");
   caso.sobres.forEach((s) =>
     s.escena?.puntos.forEach((pt) => {
       const prueba = caso.pruebas.find((p) => p.id === pt.prueba);
@@ -239,6 +250,8 @@ function revisarReferencias(caso: Caso, r: Reportar) {
 function condicionesDelCaso(caso: Caso): Condicion[] {
   return [
     ...caso.sobres.map((s) => s.requisito),
+    ...caso.sobres.flatMap((s) => s.preguntaCapitulo?.disponible ? [s.preguntaCapitulo.disponible] : []),
+    ...(caso.resolucion.requisito ? [caso.resolucion.requisito] : []),
     ...caso.pruebas.flatMap((p) => (p.desbloqueo ? [p.desbloqueo] : [])),
     ...caso.candados.map((c) => c.disponible),
     ...caso.minijuegos.map((m) => m.disponible),
@@ -248,6 +261,7 @@ function condicionesDelCaso(caso: Caso): Condicion[] {
 
 interface EstadoSimulado {
   sobresAbiertos: string[];
+  capitulosResueltos: string[];
   hechosRevelados: string[];
   candadosAbiertos: string[];
   minijuegosResueltos: Record<string, string>;
@@ -255,13 +269,17 @@ interface EstadoSimulado {
 
 /** Jugadores perfectos que abren todo lo que pueden. Los sobres bloqueados no se abren nunca. */
 function simular(caso: Caso, bloqueados: Set<string> = new Set()): EstadoSimulado {
-  const estado: EstadoSimulado = { sobresAbiertos: [], hechosRevelados: [], candadosAbiertos: [], minijuegosResueltos: {} };
+  const estado: EstadoSimulado = { sobresAbiertos: [], capitulosResueltos: [], hechosRevelados: [], candadosAbiertos: [], minijuegosResueltos: {} };
   let cambios = true;
   while (cambios) {
     cambios = false;
     for (const s of caso.sobres) {
       if (!bloqueados.has(s.id) && !estado.sobresAbiertos.includes(s.id) && evaluar(s.requisito, estado, caso)) {
         estado.sobresAbiertos.push(s.id);
+        cambios = true;
+      }
+      if (!estado.capitulosResueltos.includes(s.id) && preguntaCapituloDisponible(s, estado, caso)) {
+        estado.capitulosResueltos.push(s.id);
         cambios = true;
       }
     }
@@ -300,7 +318,13 @@ const plano = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerC
 
 function revisarResolucion(caso: Caso, r: Reportar) {
   const estado = simular(caso);
-  caso.sobres.forEach((s) => !estado.sobresAbiertos.includes(s.id) && r("error", `sobre ${s.id}`, "no se puede abrir nunca: su requisito no se cumple jugando"));
+  caso.sobres.forEach((s) => {
+    if (!estado.sobresAbiertos.includes(s.id)) r("error", `sobre ${s.id}`, "no se puede abrir nunca: su requisito no se cumple jugando");
+    if (s.preguntaCapitulo && !estado.capitulosResueltos.includes(s.id)) {
+      r("error", `sobre ${s.id} › preguntaCapitulo`, "nunca queda disponible para responder");
+    }
+  });
+  if (!votacionDisponible(caso, estado)) r("error", "resolucion › requisito", "la votación final nunca queda disponible");
   caso.pruebas.forEach((p) => !pruebaVisible(p.id, estado, caso) && r("error", `prueba ${p.id}`, "no se puede ver nunca: su sobre o su desbloqueo no se alcanzan"));
   caso.candados.forEach((c) => !estado.candadosAbiertos.includes(c.id) && r("error", `candado ${c.id}`, "nunca queda disponible"));
   caso.minijuegos.forEach((m) => !estado.minijuegosResueltos[m.id] && r("error", `minijuego ${m.id}`, "nunca queda disponible"));
@@ -328,13 +352,20 @@ function revisarResolucion(caso: Caso, r: Reportar) {
 
 function revisarDiseno(caso: Caso, r: Reportar) {
   // la opción correcta no puede delatarse por ser la más larga
-  caso.resolucion.preguntas.forEach((q) => {
-    if (q.tipo !== "opcion" || !q.opciones || q.opciones.length < 3) return;
-    const correcta = q.opciones.find((o) => o.id === q.respuesta);
-    const resto = q.opciones.filter((o) => o.id !== q.respuesta).map((o) => o.texto.length);
+  const revisarOpciones = (opciones: { id: string; texto: string }[], respuesta: string, donde: string) => {
+    if (opciones.length < 3) return;
+    const correcta = opciones.find((o) => o.id === respuesta);
+    const resto = opciones.filter((o) => o.id !== respuesta).map((o) => o.texto.length);
     if (correcta && correcta.texto.length > Math.max(...resto) * 1.25) {
-      r("aviso", `pregunta ${q.id}`, "la opción correcta es bastante más larga que las demás y se delata. Emparejá el largo de las opciones");
+      r("aviso", donde, "la opción correcta es bastante más larga que las demás y se delata. Emparejá el largo de las opciones");
     }
+  };
+  caso.resolucion.preguntas.forEach((q) => {
+    if (q.tipo === "opcion" && q.opciones) revisarOpciones(q.opciones, q.respuesta, `pregunta ${q.id}`);
+  });
+  caso.sobres.forEach((s) => {
+    const pregunta = s.preguntaCapitulo;
+    if (pregunta) revisarOpciones(pregunta.opciones, pregunta.respuesta, `sobre ${s.id} › preguntaCapitulo`);
   });
 
   // un capítulo que se abre sin pasar por el anterior se puede saltear

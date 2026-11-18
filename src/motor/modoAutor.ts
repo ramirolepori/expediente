@@ -23,6 +23,8 @@ export function explicar(c: Condicion, estado: EstadoPartida, caso: Caso): Nodo 
       return { texto: "Desde el principio", cumple };
     case "sobre":
       return { texto: `Abrir el sobre «${caso.sobres.find((s) => s.id === c.sobre)?.titulo ?? c.sobre}»`, cumple };
+    case "capitulo":
+      return { texto: `Responder la pregunta de «${caso.sobres.find((s) => s.id === c.capitulo)?.titulo ?? c.capitulo}»`, cumple };
     case "prueba":
       return { texto: `Ver la prueba «${caso.pruebas.find((p) => p.id === c.prueba)?.titulo ?? c.prueba}»`, cumple };
     case "hecho":

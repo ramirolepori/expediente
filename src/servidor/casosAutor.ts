@@ -201,14 +201,19 @@ class DatosFalsos implements Datos {
 }
 
 function crearDatos(): Datos | null {
-  if (process.env.AUTH_FALSO === "1" && !process.env.VERCEL) return new DatosFalsos();
+  const falsos = datosFalsos();
+  if (falsos) return falsos;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const secreta = process.env.SUPABASE_SECRET_KEY;
   if (url && secreta) return new DatosSupabase(createClient(url, secreta, { auth: { persistSession: false, autoRefreshToken: false } }), url);
   return null;
 }
 
-const g = globalThis as unknown as { __datosCasos?: Datos | null; __cacheCasos?: Map<string, { hasta: number; caso: Caso; estado: EstadoCaso }> };
+const g = globalThis as unknown as {
+  __datosCasos?: Datos | null;
+  __datosCasosFalsos?: DatosFalsos;
+  __cacheCasos?: Map<string, { hasta: number; caso: Caso; estado: EstadoCaso }>;
+};
 function datos(): Datos {
   const d = (g.__datosCasos ??= crearDatos());
   if (!d) throw new ErrorSala("Los casos de autores no están configurados", 503);
@@ -216,8 +221,8 @@ function datos(): Datos {
 }
 /** Solo para la ruta que sirve archivos con el login falso. */
 export const datosFalsos = () => {
-  const d = (g.__datosCasos ??= crearDatos());
-  return d instanceof DatosFalsos ? d : null;
+  if (process.env.AUTH_FALSO !== "1" || process.env.VERCEL) return null;
+  return (g.__datosCasosFalsos ??= new DatosFalsos());
 };
 
 const IMAGEN = /\.(jpe?g|png|webp)$/i;

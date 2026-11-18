@@ -157,7 +157,8 @@ Todo lo opcional que puede usar un caso, y cuándo conviene. Los campos exactos 
 
 | Pieza | Qué es | Cuándo conviene |
 |---|---|---|
-| **Sobres por capítulos** | Cada sobre es un capítulo con su pregunta | Siempre: 2 a 4 capítulos dan ritmo |
+| **Pregunta de capítulo** (\`sobres[].preguntaCapitulo\`) | Opción múltiple cuyo acierto revela cierre y gancho; puede habilitar otro sobre | Cuando querés que el equipo confirme un hallazgo antes de avanzar |
+| **Resumen** (\`sobres[].resumen\`) | Repaso de lo sabido al abrir el sobre | Para retomar el hilo entre capítulos |
 | **Escena** (\`sobres[].escena\`) | Una ilustración del lugar con puntos que abren pruebas | Cuando el lugar importa (una habitación, una nave). Imagen 16:9, sin texto, de unos 1600 px de ancho y menos de 500 KB |
 | **Celular** (\`tipo: "celular"\`) | Un teléfono navegable con chats, llamadas, correos y notas | Para mensajes que comprometen a alguien o una línea de tiempo de llamadas |
 | **Fotos en pruebas** | \`![epígrafe](/casos/<id>/pruebas/foto.jpg)\` dentro del \`contenido\` | Cuando una imagen es una pista (una pisada, una puerta) |

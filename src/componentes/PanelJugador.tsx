@@ -178,9 +178,15 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
             <div className="mb-3 flex items-end justify-between gap-3">
               <div>
                 <h2 className="font-titulo text-xl">{s.titulo}</h2>
-                <p className="text-sm text-suave">{s.descripcion}</p>
+                {s.descripcion && <p className="text-sm text-suave">{s.descripcion}</p>}
               </div>
             </div>
+            {s.resumen && (
+              <div className="mb-3 rounded-xl border border-borde bg-panel px-4 py-3 text-sm">
+                <h3 className="mb-1 font-semibold text-acento">Resumen del capítulo</h3>
+                <p className="whitespace-pre-line">{s.resumen}</p>
+              </div>
+            )}
             {!s.abierto && (
               <button
                 disabled={!s.sePuedeAbrir}
@@ -235,6 +241,7 @@ function Expediente({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
                 <Documento prueba={pruebas.find((p) => p.id === abierta)!} accion={<Escuchar que={`prueba:${abierta}`} sala={sala} vista={vista} chico />} />
               </div>
             )}
+            {s.preguntaCapitulo && <PreguntaCapitulo sobre={s.id} pregunta={s.preguntaCapitulo} enviar={sala.accion} />}
           </section>
         );
       })}
@@ -407,6 +414,66 @@ function Notas({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
   );
 }
 
+function PreguntaCapitulo({ sobre, pregunta, enviar }: {
+  sobre: string;
+  pregunta: NonNullable<VistaPartida["sobres"][number]["preguntaCapitulo"]>;
+  enviar: Sala["accion"];
+}) {
+  const [respuesta, setRespuesta] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  return (
+    <div className="mt-4 rounded-xl border border-borde bg-panel p-4">
+      <h3 className="mb-2 text-sm font-semibold text-acento">Pregunta del capítulo</h3>
+      {pregunta.resultado ? (
+        <div role="status" className="space-y-2 text-sm">
+          <p className="font-semibold">{pregunta.texto}</p>
+          <p><strong>Cierre:</strong> {pregunta.resultado.cierre}</p>
+          <p className="text-acento">{pregunta.resultado.gancho}</p>
+        </div>
+      ) : pregunta.opciones.length === 0 ? (
+        <>
+          <p className="font-semibold">{pregunta.texto}</p>
+          <p className="mt-1 text-sm text-suave">{pregunta.orientacion ?? "Seguí investigando para habilitar las opciones."}</p>
+        </>
+      ) : (
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          if (enviando || !respuesta) return;
+          setEnviando(true);
+          setError(null);
+          try {
+            await enviar({ tipo: "responderCapitulo", sobre, respuesta }, setError);
+          } catch {
+            setError("No se pudo enviar la respuesta. Probá de nuevo.");
+          } finally {
+            setEnviando(false);
+          }
+        }}>
+          <fieldset disabled={enviando}>
+            <legend className="font-semibold">{pregunta.texto}</legend>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              {pregunta.opciones.map((o) => (
+                <label key={o.id} className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${respuesta === o.id ? "border-acento bg-panel-2" : "border-borde"}`}>
+                  <input type="radio" name={`capitulo-${sobre}`} className="accent-[var(--acento)]" checked={respuesta === o.id} onChange={() => {
+                    setRespuesta(o.id);
+                    setError(null);
+                  }} />
+                  {o.texto}
+                </label>
+              ))}
+            </div>
+            <button type="submit" disabled={!respuesta} className="mt-3 rounded-lg bg-acento px-4 py-2 text-sm font-semibold text-acento-texto disabled:opacity-50">
+              Responder
+            </button>
+          </fieldset>
+          {error && <p role="alert" className="mt-2 text-sm text-acento">{error}</p>}
+        </form>
+      )}
+    </div>
+  );
+}
+
 function Resolver({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
   const yo = vista.yo?.id ?? "";
   const miVoto = vista.votos[yo];
@@ -416,6 +483,9 @@ function Resolver({ sala, vista }: { sala: Sala; vista: VistaPartida }) {
   const completas = vista.preguntas.every((p) => respuestas[p.id]) && (!vista.hayTraidor || !!respuestas.traidor);
   const cambiado = JSON.stringify(respuestas) !== JSON.stringify(miVoto ?? {});
   const puedeCerrar = vista.yo?.anfitrion && votaron.length >= Math.ceil(jugadores.length / 2);
+  if (!vista.sePuedeVotar) {
+    return <p className="rounded-xl border border-borde bg-panel p-4 text-sm text-suave">La votación final todavía no está habilitada. Seguí investigando en el expediente.</p>;
+  }
   return (
     <div className="space-y-4">
       <div className="rounded-xl border border-borde bg-panel p-4">

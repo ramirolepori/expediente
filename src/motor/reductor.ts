@@ -1,5 +1,5 @@
 import type { Caso } from "@/casos/schema";
-import { evaluar, minijuegoVisible, pruebaVisible } from "./condiciones";
+import { evaluar, minijuegoVisible, pruebaVisible, preguntaCapituloDisponible, votacionDisponible } from "./condiciones";
 import { esRespuestaCorrecta } from "./minijuegos";
 import { PIZARRA_VACIA, type Accion, type EstadoPartida, type Evento, type RefPizarra } from "./tipos";
 
@@ -81,6 +81,21 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
       if (!evaluar(sobre.requisito, s, caso)) throw new ErrorDeJuego("Todavía no se puede abrir ese sobre");
       s.sobresAbiertos.push(sobre.id);
       log(`${autor.apodo} abrió «${sobre.titulo}»`);
+      break;
+    }
+    case "responderCapitulo": {
+      const sobre = caso.sobres.find((x) => x.id === accion.sobre);
+      const pregunta = sobre?.preguntaCapitulo;
+      if (!sobre || !pregunta || !preguntaCapituloDisponible(sobre, s, caso)) {
+        throw new ErrorDeJuego("Todavía no se puede responder esa pregunta");
+      }
+      if (s.capitulosResueltos?.includes(sobre.id)) return estado;
+      if (!pregunta.opciones.some((o) => o.id === accion.respuesta)) throw new ErrorDeJuego("Elegí una de las opciones");
+      if (accion.respuesta !== pregunta.respuesta) {
+        throw new ErrorDeJuego("Esa respuesta no encaja con las pistas. Revisalas y probá de nuevo.");
+      }
+      (s.capitulosResueltos ??= []).push(sobre.id);
+      log(`${autor.apodo} resolvió «${sobre.titulo}»`);
       break;
     }
     case "probarCandado": {
@@ -183,6 +198,7 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
       break;
     }
     case "votar": {
+      if (!votacionDisponible(caso, s)) throw new ErrorDeJuego("Todavía no se habilitó la votación final");
       const faltan = caso.resolucion.preguntas.filter((p) => !accion.respuestas[p.id]);
       if (faltan.length) throw new ErrorDeJuego("Respondé todas las preguntas antes de votar");
       if (s.traidor && !accion.respuestas.traidor) throw new ErrorDeJuego("Votá también quién es el traidor");
@@ -215,6 +231,7 @@ export function aplicar(estado: EstadoPartida, accion: Accion, autorId: string, 
     }
     case "cerrarVotacion": {
       if (!autor.anfitrion) throw new ErrorDeJuego("Solo el anfitrión puede cerrar la votación");
+      if (!votacionDisponible(caso, s)) throw new ErrorDeJuego("Todavía no se habilitó la votación final");
       const jugadores = Object.values(s.conexiones).filter((c) => c.tipo === "jugador").length;
       const votos = Object.keys(s.votos ?? {}).length;
       if (votos < Math.ceil(jugadores / 2)) throw new ErrorDeJuego("Tiene que votar al menos la mitad del equipo");

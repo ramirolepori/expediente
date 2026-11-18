@@ -575,9 +575,21 @@
     {
       "id": "s1_nave",
       "titulo": "Sobre 1: El accidente",
-      "descripcion": "La nave de fermentación 2, tal como la encontró la patrulla. La pregunta: ¿fue de verdad un accidente?",
+      "descripcion": "La nave de fermentación 2, tal como la encontró la patrulla.",
+      "resumen": "Después de la fiesta de la vendimia, Inés encontró a Ignacio Ferrer muerto en la nave 2. La primera hipótesis es un accidente laboral.",
       "requisito": {
         "tipo": "siempre"
+      },
+      "preguntaCapitulo": {
+        "texto": "¿Fue de verdad un accidente laboral?",
+        "opciones": [
+          { "id": "a", "texto": "Sí. Ignacio se encerró sin querer y los extractores fallaron solos." },
+          { "id": "b", "texto": "No. Alguien trabó la puerta desde afuera y apagó los extractores." },
+          { "id": "c", "texto": "No. La puerta estaba abierta y alguien movió el cuerpo a la nave." }
+        ],
+        "respuesta": "b",
+        "cierre": "No fue un accidente. La puerta solo se traba desde afuera, Ignacio golpeó desde adentro y alguien apagó los extractores y silenció la alarma con el código MANT-04.",
+        "gancho": "¿Quién estaba en la fiesta y quién tenía algo contra Ignacio?"
       },
       "escena": {
         "imagen": "/casos/vendimia/escenas/nave.jpg",
@@ -620,10 +632,30 @@
     {
       "id": "s2_fiesta",
       "titulo": "Sobre 2: La fiesta",
-      "descripcion": "Lo que quedó en la galería después de la fiesta. La pregunta: ¿quién tenía problemas con Ignacio y dónde estaba cada uno?",
+      "descripcion": "Lo que quedó en la galería después de la fiesta.",
+      "resumen": "Alguien encerró a Ignacio en la nave 2 y apagó la ventilación. Ahora toca reconstruir qué pasó en la fiesta.",
       "requisito": {
-        "tipo": "sobre",
-        "sobre": "s1_nave"
+        "tipo": "capitulo",
+        "capitulo": "s1_nave"
+      },
+      "preguntaCapitulo": {
+        "texto": "¿Quién tenía problemas con Ignacio y dónde estaba cada uno?",
+        "disponible": {
+          "tipo": "alguna",
+          "condiciones": [
+            { "tipo": "hecho", "hecho": "marcos_con_camila" },
+            { "tipo": "minijuego", "minijuego": "reconstruir_fiesta" }
+          ]
+        },
+        "orientacion": "Reconstruí la noche de la fiesta o contrastá la coartada de Marcos con quienes estuvieron ahí.",
+        "opciones": [
+          { "id": "a", "texto": "Marcos discutió con Ignacio y se quedó solo en el estacionamiento." },
+          { "id": "b", "texto": "Camila discutió con Ignacio y se fue sola antes de sacar las fotos." },
+          { "id": "c", "texto": "Marcos discutió con Ignacio, pero después estuvo con Camila en el viñedo." }
+        ],
+        "respuesta": "c",
+        "cierre": "Marcos discutió con su padre, pero entre las 23:30 y las 00:10 estuvo con Camila en el viñedo. Queda descartado.",
+        "gancho": "A las 22:30 Ignacio llamó a alguien que todavía no apareció. Y alguien conocía el código del tablero."
       },
       "escena": {
         "imagen": "/casos/vendimia/escenas/galeria.jpg",
@@ -654,28 +686,36 @@
     {
       "id": "s3_control",
       "titulo": "Sobre 3: La sala de control",
-      "descripcion": "Marcos tiene coartada. Los extractores se apagaron desde el tablero con el código MANT-04. La pregunta: ¿quién apagó la ventilación?",
+      "descripcion": "La consola y los turnos de la noche de la fiesta.",
+      "resumen": "Marcos discutió con Ignacio, pero estaba con Camila en el viñedo. Los extractores se apagaron desde el tablero con el código MANT-04.",
       "requisito": {
-        "tipo": "todas",
-        "condiciones": [
-          {
-            "tipo": "sobre",
-            "sobre": "s2_fiesta"
-          },
-          {
-            "tipo": "alguna",
-            "condiciones": [
-              {
-                "tipo": "hecho",
-                "hecho": "marcos_con_camila"
-              },
-              {
-                "tipo": "minijuego",
-                "minijuego": "reconstruir_fiesta"
-              }
-            ]
-          }
-        ]
+        "tipo": "capitulo",
+        "capitulo": "s2_fiesta"
+      },
+      "preguntaCapitulo": {
+        "texto": "¿Quién apagó los extractores y silenció la alarma?",
+        "disponible": {
+          "tipo": "alguna",
+          "condiciones": [
+            {
+              "tipo": "todas",
+              "condiciones": [
+                { "tipo": "hecho", "hecho": "ines_salio" },
+                { "tipo": "hecho", "hecho": "ines_vio_sofia" }
+              ]
+            },
+            { "tipo": "minijuego", "minijuego": "acta_ines" }
+          ]
+        },
+        "orientacion": "Preguntale a Inés por su turno y qué vio esa noche, o reconstruí su declaración escrita.",
+        "opciones": [
+          { "id": "a", "texto": "El código no identifica a nadie. La sala quedó sola e Inés vio a Sofía con Ignacio." },
+          { "id": "b", "texto": "Paula apagó los equipos. Solo ella conocía el código y la sala nunca quedó sola." },
+          { "id": "c", "texto": "Inés apagó los equipos. Las colillas prueban que nunca salió de la sala de control." }
+        ],
+        "respuesta": "a",
+        "cierre": "Inés salió a fumar y dejó la sala sola de 23:20 a 23:45. En ese hueco alguien entró con el código MANT-04, que cualquiera podía leer en el armario. Paula estaba bailando. Desde el patio, Inés vio a Ignacio ir hacia la nave 2 con Sofía.",
+        "gancho": "¿Por qué Ignacio necesitaba hablar a solas esa noche, dos días antes de la venta?"
       },
       "escena": {
         "imagen": "/casos/vendimia/escenas/sala-control.jpg",
@@ -724,19 +764,36 @@
     {
       "id": "s4_venta",
       "titulo": "Sobre 4: La venta",
-      "descripcion": "La sala de control quedó sola y alguien conocía el código. La pregunta: ¿qué iba a contar Ignacio y a quién perjudicaba?",
+      "descripcion": "Los papeles de la bodega antes de la firma.",
+      "resumen": "La sala de control quedó sola y cualquiera podía usar el código. Desde el patio, Inés vio a Ignacio ir hacia la nave 2 con Sofía.",
       "requisito": {
-        "tipo": "todas",
-        "condiciones": [
-          {
-            "tipo": "sobre",
-            "sobre": "s3_control"
-          },
-          {
-            "tipo": "hecho",
-            "hecho": "ines_salio"
-          }
-        ]
+        "tipo": "capitulo",
+        "capitulo": "s3_control"
+      },
+      "preguntaCapitulo": {
+        "texto": "¿Qué iba a contar Ignacio y a quién perjudicaba?",
+        "disponible": {
+          "tipo": "todas",
+          "condiciones": [
+            { "tipo": "candado", "candado": "pin_celular" },
+            {
+              "tipo": "alguna",
+              "condiciones": [
+                { "tipo": "hecho", "hecho": "sofia_firmaba" },
+                { "tipo": "minijuego", "minijuego": "cuaderno_ignacio" }
+              ]
+            }
+          ]
+        },
+        "orientacion": "Desbloqueá el celular de Ignacio y averiguá quién firmaba los certificados: revisá la libreta o hablá con Raúl.",
+        "opciones": [
+          { "id": "a", "texto": "Iba a contar que el fondo maquillaba las cuentas. Bertoldi firmaba como responsable." },
+          { "id": "b", "texto": "Iba a contar que Raúl falsificaba los premios. Raúl era el único firmante." },
+          { "id": "c", "texto": "Iba a contar que cortaban los vinos con granel. Sofía firmaba los certificados." }
+        ],
+        "respuesta": "c",
+        "cierre": "Ignacio iba a contarle a Bertoldi que los premiados se cortaban con granel de San Juan. Raúl empezó el fraude, pero por la cláusula 9 responden los firmantes de los certificados: Sofía. Sofía lo citó a las 23:40 en la nave 2. Bertoldi llegó a La Cumbre a las 23:58: descartado.",
+        "gancho": "Falta probarlo: ¿qué hizo Sofía entre las 23:31 y las 00:45?"
       },
       "escena": {
         "imagen": "/casos/vendimia/escenas/oficina.jpg",
@@ -791,28 +848,22 @@
     {
       "id": "s5_vestido",
       "titulo": "Sobre 5: El vestido",
-      "descripcion": "Hay un fraude, pero los papeles no los firmaba quien todos creen. Lo que dejó el laboratorio. La pregunta final: ¿quién, cómo y por qué?",
+      "descripcion": "Lo que encontró el laboratorio en el lavadero.",
+      "resumen": "Ignacio iba a denunciar el fraude de los vinos. Sofía firmaba los certificados y lo citó en la nave 2. Falta reconstruir lo que hizo esa noche.",
       "requisito": {
-        "tipo": "todas",
-        "condiciones": [
-          {
-            "tipo": "sobre",
-            "sobre": "s4_venta"
-          },
-          {
-            "tipo": "alguna",
-            "condiciones": [
-              {
-                "tipo": "hecho",
-                "hecho": "sofia_firmaba"
-              },
-              {
-                "tipo": "minijuego",
-                "minijuego": "cuaderno_ignacio"
-              }
-            ]
-          }
-        ]
+        "tipo": "capitulo",
+        "capitulo": "s4_venta"
+      },
+      "preguntaCapitulo": {
+        "texto": "¿Quién mató a Ignacio, cómo y por qué?",
+        "opciones": [
+          { "id": "a", "texto": "Raúl encerró a Ignacio y cortó la ventilación para ocultar que él firmaba los papeles." },
+          { "id": "b", "texto": "Sofía encerró a Ignacio y cortó la ventilación para evitar que denunciara el fraude." },
+          { "id": "c", "texto": "Bertoldi encerró a Ignacio y cortó la ventilación para forzar la venta de la bodega." }
+        ],
+        "respuesta": "b",
+        "cierre": "Sofía Arrieta lo encerró en la nave 2 y apagó la ventilación. Actuó sola.",
+        "gancho": "Votación final."
       },
       "escena": {
         "imagen": "/casos/vendimia/escenas/lavadero.jpg",
@@ -1213,6 +1264,21 @@
       }
     },
     {
+      "id": "acta_ines",
+      "tipo": "rompecabezas",
+      "titulo": "La declaración escrita de Inés",
+      "descripcion": "Armá la declaración que Inés dejó en la sala de control.",
+      "sobre": "s3_control",
+      "config": {
+        "fragmentos": [
+          "Salí a fumar al patio a las 23:20.",
+          "Desde ahí, a las 23:40, vi a Sofía",
+          "caminar con Ignacio hacia la nave 2.",
+          "A las 23:45 volví a la sala de control."
+        ]
+      }
+    },
+    {
       "id": "cuaderno_ignacio",
       "tipo": "cifrado",
       "titulo": "La libreta de catas de Ignacio",
@@ -1365,6 +1431,7 @@
     }
   ],
   "resolucion": {
+    "requisito": { "tipo": "capitulo", "capitulo": "s5_vestido" },
     "preguntas": [
       {
         "id": "autor",

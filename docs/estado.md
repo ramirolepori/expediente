@@ -27,10 +27,11 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 - Laboratorio: personaje (muestrario de variedad y el elenco del Hotel Aurora), ambientaciones, minijuegos, pizarra y voces.
 - Documentación para autores: [contrato-de-caso.md](contrato-de-caso.md) y [prompt-autor-de-casos.md](prompt-autor-de-casos.md).
 
+- La Vendimia: los cinco capítulos tienen resumen y pregunta. Al acertar aparece el cierre y el gancho y se habilita el siguiente sobre o la votación final ([ADR 0016](adr/0016-preguntas-de-capitulo.md)).
+
 ## Pendiente, en orden
 
-1. **Pregunta del capítulo** (camino de piezas opcionales en el contrato, elegido por Ramiro el 15/11/2026): opciones que, al acertar, muestran un cierre y un gancho y destraban el sobre siguiente, más un resumen al empezar cada capítulo. En la Vendimia hoy el sobre 2 se abre apenas se abre el 1, sin resolver nada: esta pieza lo cubre. Los textos de cierre y gancho ya están en `casos/vendimia/REVISION.md`.
-2. **Casos de cualquier autor** (ADR 0012, decidida): kit de autor descargable desde `/autores`, cuentas con Supabase Auth, casos nuevos en Supabase (tabla y Storage), validador con sala de prueba (modelo falso), estados borrador, validado, privado y publicado, y aprobación de Ramiro o sus moderadores. Ya están las cuentas, el validador y los casos en Supabase con sus estados. Ya está todo lo de la ADR 0012, kit incluido. Queda migrar Hotel Aurora y la Vendimia a Supabase.
+1. **Casos de cualquier autor** (ADR 0012, decidida): kit de autor descargable desde `/autores`, cuentas con Supabase Auth, casos nuevos en Supabase (tabla y Storage), validador con sala de prueba (modelo falso), estados borrador, validado, privado y publicado, y aprobación de Ramiro o sus moderadores. Ya están las cuentas, el validador y los casos en Supabase con sus estados. Ya está todo lo de la ADR 0012, kit incluido. Queda migrar Hotel Aurora y la Vendimia a Supabase.
 
 Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
 

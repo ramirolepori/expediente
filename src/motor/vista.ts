@@ -1,6 +1,6 @@
 import type { Caso } from "@/casos/schema";
 import { aparienciaPublica } from "./apariencia";
-import { evaluar, minijuegoVisible, pruebaVisible, pruebasVisibles } from "./condiciones";
+import { evaluar, minijuegoVisible, pruebaVisible, pruebasVisibles, preguntaCapituloDisponible, votacionDisponible } from "./condiciones";
 import { LIMITES_INTERROGATORIO, preguntasHechas } from "./interrogatorio";
 import { configPublica } from "./minijuegos";
 import { recursosRestantes } from "./reductor";
@@ -14,6 +14,7 @@ import { vocesDeLectura, vocesDelElenco } from "./voz";
 export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string | null) {
   const yo = conexionId ? (estado.conexiones[conexionId] ?? null) : null;
   const terminada = estado.fase === "terminada";
+  const sePuedeVotar = votacionDisponible(caso, estado);
   return {
     codigo: estado.codigo,
     fase: estado.fase,
@@ -30,6 +31,9 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
     sobres: caso.sobres.map((s) => {
       const abierto = estado.sobresAbiertos.includes(s.id);
       const sePuedeAbrir = evaluar(s.requisito, estado, caso);
+      const pregunta = abierto ? s.preguntaCapitulo : undefined;
+      const resuelto = estado.capitulosResueltos?.includes(s.id);
+      const puedeResponder = !resuelto && preguntaCapituloDisponible(s, estado, caso);
       return {
         id: s.id,
         titulo: s.titulo,
@@ -37,6 +41,15 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
         descripcion: abierto || sePuedeAbrir ? s.descripcion : "",
         abierto,
         sePuedeAbrir,
+        resumen: abierto ? s.resumen ?? null : null,
+        preguntaCapitulo: pregunta
+          ? {
+              texto: pregunta.texto,
+              opciones: puedeResponder ? pregunta.opciones : [],
+              orientacion: !puedeResponder && !resuelto ? pregunta.orientacion ?? null : null,
+              resultado: resuelto ? { cierre: pregunta.cierre, gancho: pregunta.gancho } : null,
+            }
+          : null,
         // la escena solo viaja con el sobre abierto, y sin los puntos de pruebas todavía bloqueadas
         // (un círculo de más adelantaría que ahí hay algo)
         escena:
@@ -85,7 +98,8 @@ export function vistaPara(caso: Caso, estado: EstadoPartida, conexionId: string 
     interrogatorios: estado.interrogatorios,
     preguntasRestantes: Math.max(0, LIMITES_INTERROGATORIO.porPartida - preguntasHechas(estado)),
     eventos: estado.eventos.slice(-60),
-    preguntas: caso.resolucion.preguntas.map((p) => ({
+    sePuedeVotar,
+    preguntas: (sePuedeVotar || terminada ? caso.resolucion.preguntas : []).map((p) => ({
       id: p.id,
       texto: p.texto,
       tipo: p.tipo,
