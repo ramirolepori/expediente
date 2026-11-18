@@ -301,8 +301,9 @@ describe("Muerte en la vendimia", () => {
     expect(vistaPara(casoV, aplicar(resuelta, abrir, "b", casoV), "a").sobres[1].resumen).toBe(casoV.sobres[1].resumen);
   });
 
-  it.each(["hechos", "minijuegos"])("se puede llegar a la votación pasando por los cinco capítulos (%s)", (camino) => {
+  it.each(["hechos", "minijuegos sin horas"])("se puede llegar a la votación pasando por los cinco capítulos (%s)", (camino) => {
     let s = partidaV();
+    if (camino !== "hechos") s.config.recursos = 8;
     const responder = (sobre: string, respuesta: string): Accion => ({ tipo: "responderCapitulo", sobre, respuesta });
     const avanzar = (siguiente: string) => { s = aplicar(s, { tipo: "abrirSobre", sobre: siguiente }, "b", casoV); };
     const intentar = (a: Accion) => aplicar(s, a, "a", casoV);
@@ -323,9 +324,21 @@ describe("Muerte en la vendimia", () => {
     s = intentar(responder("s2_fiesta", "c"));
     avanzar("s3_control");
 
-    s = revelarHecho(s, "ines_salio", "Inés");
-    expect(() => intentar(responder("s3_control", "a"))).toThrow("Todavía no se puede responder");
-    s = revelarHecho(s, "ines_vio_sofia", "Inés");
+    if (camino === "hechos") {
+      s = revelarHecho(s, "ines_salio", "Inés");
+      expect(() => intentar(responder("s3_control", "a"))).toThrow("Todavía no se puede responder");
+      s = revelarHecho(s, "ines_vio_sofia", "Inés");
+    } else {
+      for (let i = 0; i < 8; i++) s = intentar({ tipo: "pedirAyuda" });
+      expect(vistaPara(casoV, s, "a").recursosRestantes).toBe(0);
+      expect(() => intentar(responder("s3_control", "a"))).toThrow("Todavía no se puede responder");
+      const acta = casoV.minijuegos.find((m) => m.id === "acta_ines")!;
+      if (acta.tipo !== "rompecabezas") throw new Error("El acta tiene que ser un rompecabezas");
+      const piezas = configPublica(acta, s.codigo).piezas!;
+      const respuesta = acta.config.fragmentos.map((fragmento) => piezas.find((p) => p.texto === fragmento)!.id).join(",");
+      s = intentar({ tipo: "resolverMinijuego", minijuego: acta.id, respuesta });
+      expect(s.hechosRevelados).toEqual([]);
+    }
     s = intentar(responder("s3_control", "a"));
     avanzar("s4_venta");
 

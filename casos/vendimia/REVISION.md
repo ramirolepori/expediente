@@ -277,7 +277,7 @@ Cada capítulo es un sobre. Al abrirlo se lee un resumen. El acierto muestra el 
 
 - **Pregunta del capítulo:** ¿Quién apagó los extractores y silenció la alarma?
 - **Se abre con:** pregunta de «Sobre 2: La fiesta» acertada
-- **Opciones habilitadas con:** Inés admitió que salió a fumar y contó a quién vio desde el patio
+- **Opciones habilitadas con:** Inés admitió que salió a fumar y contó a quién vio desde el patio, o el grupo reconstruyó su declaración escrita sin gastar horas
 - **Texto del sobre:** Marcos tiene coartada. Los extractores se apagaron desde el tablero con el código MANT-04. La pregunta: ¿quién apagó la ventilación?
 - **Personajes que aparecen:** Paula Gómez
 - **Pistas clave para responder:** Las sesiones de la consola, el cenicero y lo que Inés vio desde el patio.
@@ -393,6 +393,10 @@ Orden correcto:
 4. Paula baila en la pista
 5. Alguien saca una foto desde adentro del viñedo
 6. Sofía vuelve a la fiesta con vestido azul
+
+**Minijuego: La declaración escrita de Inés** (rompecabezas, individual)
+
+Armá la declaración que Inés dejó en la sala de control: salió a las 23:20, vio a Sofía con Ignacio a las 23:40 y volvió a las 23:45. Es la alternativa al interrogatorio del capítulo 3.
 
 **Minijuego: La libreta de catas de Ignacio** (cifrado, individual)
 

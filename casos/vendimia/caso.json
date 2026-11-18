@@ -695,13 +695,19 @@
       "preguntaCapitulo": {
         "texto": "¿Quién apagó los extractores y silenció la alarma?",
         "disponible": {
-          "tipo": "todas",
+          "tipo": "alguna",
           "condiciones": [
-            { "tipo": "hecho", "hecho": "ines_salio" },
-            { "tipo": "hecho", "hecho": "ines_vio_sofia" }
+            {
+              "tipo": "todas",
+              "condiciones": [
+                { "tipo": "hecho", "hecho": "ines_salio" },
+                { "tipo": "hecho", "hecho": "ines_vio_sofia" }
+              ]
+            },
+            { "tipo": "minijuego", "minijuego": "acta_ines" }
           ]
         },
-        "orientacion": "Revisá la puerta trasera y preguntale a Inés por su turno y qué vio esa noche.",
+        "orientacion": "Preguntale a Inés por su turno y qué vio esa noche, o reconstruí su declaración escrita.",
         "opciones": [
           { "id": "a", "texto": "El código no identifica a nadie. La sala quedó sola e Inés vio a Sofía con Ignacio." },
           { "id": "b", "texto": "Paula apagó los equipos. Solo ella conocía el código y la sala nunca quedó sola." },
@@ -1254,6 +1260,21 @@
           "Paula baila en la pista",
           "Alguien saca una foto desde adentro del viñedo",
           "Sofía vuelve a la fiesta con vestido azul"
+        ]
+      }
+    },
+    {
+      "id": "acta_ines",
+      "tipo": "rompecabezas",
+      "titulo": "La declaración escrita de Inés",
+      "descripcion": "Armá la declaración que Inés dejó en la sala de control.",
+      "sobre": "s3_control",
+      "config": {
+        "fragmentos": [
+          "Salí a fumar al patio a las 23:20.",
+          "Desde ahí, a las 23:40, vi a Sofía",
+          "caminar con Ignacio hacia la nave 2.",
+          "A las 23:45 volví a la sala de control."
         ]
       }
     },

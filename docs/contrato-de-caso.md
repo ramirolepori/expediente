@@ -96,6 +96,7 @@ Cada sobre puede tener estas dos piezas opcionales:
 
 - `resumen`: texto plano que aparece al abrir el sobre. Repasá lo que el grupo ya sabe, sin adelantar la respuesta.
 - `preguntaCapitulo`: `{ texto, opciones, respuesta, cierre, gancho, disponible?, orientacion? }`. Incluí al menos dos opciones `{ id, texto }` con ids distintos y poné en `respuesta` el id correcto. Al abrir el sobre, el grupo ve la pregunta; si definís `disponible`, las opciones esperan a que se cumpla esa condición (por ejemplo, un hecho clave o un minijuego). Mientras tanto, `orientacion` puede dar una pista de cómo seguir. Cualquier jugador puede responder para el equipo; se puede volver a intentar si falla. El `cierre` confirma lo descubierto y el `gancho` anticipa lo que sigue; se muestran recién al acertar.
+- Si una pregunta es obligatoria para avanzar y depende de un interrogatorio, dejá un camino alternativo que no consuma horas ni preguntas.
 
 Para trabar el sobre siguiente hasta que el grupo acierte, poné en su `requisito` una condición `capitulo` con el id del sobre anterior. Una vez habilitado, el grupo abre el sobre a mano. Los casos sin estas piezas mantienen sus requisitos de siempre.
 
