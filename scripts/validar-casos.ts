@@ -55,7 +55,9 @@ function validarPaquetes() {
   });
 }
 
-type Modo = "--aplicar" | "--actualizar" | "--verificar-destino";
+const MODOS = ["--aplicar", "--actualizar", "--verificar-destino"] as const;
+type Modo = (typeof MODOS)[number];
+const esModo = (texto: string): texto is Modo => (MODOS as readonly string[]).includes(texto);
 
 async function migrar(paquetes: ReturnType<typeof validarPaquetes>, modo: Modo) {
   const soloVerificar = modo === "--verificar-destino";
@@ -112,11 +114,11 @@ async function migrar(paquetes: ReturnType<typeof validarPaquetes>, modo: Modo) 
 async function main() {
   const args = process.argv.slice(2);
   const [modo] = args;
-  if (args.length > 1 || (modo && modo !== "--aplicar" && modo !== "--actualizar" && modo !== "--verificar-destino")) {
+  if (args.length > 1 || (modo !== undefined && !esModo(modo))) {
     throw new Error("Usá --aplicar, --actualizar o --verificar-destino");
   }
   const paquetes = validarPaquetes();
-  if (modo) await migrar(paquetes, modo);
+  if (modo !== undefined && esModo(modo)) await migrar(paquetes, modo);
   else console.log("\nValidación local; no se escribió en Supabase.");
 }
 
