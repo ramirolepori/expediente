@@ -1,4 +1,7 @@
 import type { Conexion, DondeSuena } from "@/motor/tipos";
+import { pantallaDeVoces } from "@/motor/voz";
+
+export const SILENCIO = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=";
 
 /**
  * Una sola pista (ADR 0009): decide si este dispositivo pone la voz.
@@ -9,7 +12,7 @@ export function suenaAca(audioEn: DondeSuena, yo: Conexion, conexiones: Conexion
   if (audioEn === "todos") return true;
   if (audioEn === "interrogador") return yo.tipo === "jugador" && (autor === undefined || autor === yo.id);
   // compartida: la primera tele si hay alguna; si no hay tele, el anfitrión
-  const tele = conexiones.filter((c) => c.tipo === "pantalla").sort((a, b) => a.id.localeCompare(b.id))[0];
+  const tele = pantallaDeVoces(conexiones);
   return tele ? tele.id === yo.id : yo.anfitrion;
 }
 

@@ -93,11 +93,16 @@ export async function unirse(codigo: string, apodo: string, tipo: TipoConexion, 
   return { token: nuevoToken, conexionId };
 }
 
-export async function autenticar(codigo: string, token: string | null) {
+export async function autenticarConexion(codigo: string, token: string | null) {
   const sala = await almacen.obtener(codigo);
   if (!sala) throw new ErrorSala("No existe una sala con ese código", 404);
   const conexionId = token ? sala.tokens[token] : undefined;
-  if (!conexionId) throw new ErrorSala("No estás en esta sala", 401);
+  if (!conexionId || !sala.estado.conexiones[conexionId]) throw new ErrorSala("No estás en esta sala", 401);
+  return { sala, conexionId };
+}
+
+export async function autenticar(codigo: string, token: string | null) {
+  const { sala, conexionId } = await autenticarConexion(codigo, token);
   const { caso, dePrueba } = await casoDeSala(sala.estado.casoId);
   return { sala, conexionId, caso, dePrueba };
 }
