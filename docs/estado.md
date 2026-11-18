@@ -35,6 +35,8 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 
 Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
 
+CI: GitHub Actions corre lint, unitarios y validación en paralelo con dos partes de Playwright, cada una con su propio servidor de prueba. En los PR, un nuevo commit cancela la corrida anterior.
+
 Más adelante: modo competitivo, que cada usuario use su propia clave y su modelo (ADR 0012), casos nuevos, juego online o asincrónico, `imagen` y `roles` en pruebas.
 
 ## Esperando decisión de Ramiro (no avanzar sin él)
@@ -49,6 +51,5 @@ Más adelante: modo competitivo, que cada usuario use su propia clave y su model
 
 ## Problemas conocidos
 
-- GitHub Actions bloqueado por la cuenta (ticket de soporte #5006449). Mientras tanto Vercel corre los tests.
 - El e2e falla si se editan archivos durante la corrida (ADR 0007).
 - Un amigo de Ramiro está escribiendo un caso nuevo con el prompt de autor.

@@ -7,11 +7,15 @@ on:
   # Vercel avisa cuando termina un despliegue: ahí corre la prueba rápida contra esa URL
   deployment_status:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  verificar:
+  controles:
     if: github.event_name != 'deployment_status'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,16 +26,42 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run validar
-      - run: npx playwright install --with-deps chromium
-      - run: npm run e2e
+
+  e2e:
+    if: github.event_name != 'deployment_status'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # El runner ya trae las bibliotecas de Chromium; la suite usa el modo headless.
+      - run: npx playwright install --only-shell chromium
+      - run: npm run e2e -- --fully-parallel --workers=1 --shard=${{ matrix.shard }}/2
         env:
           CI: "true"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: reporte-playwright
+          name: reporte-playwright-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 7
+
+  verificar:
+    if: always() && github.event_name != 'deployment_status'
+    needs: [controles, e2e]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Verificar los resultados
+        run: test '${{ needs.controles.result }}' = success && test '${{ needs.e2e.result }}' = success
 
   humo-produccion:
     if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
