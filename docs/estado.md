@@ -27,7 +27,7 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 - Laboratorio: personaje (muestrario de variedad y el elenco del Hotel Aurora), ambientaciones, minijuegos, pizarra y voces.
 - Documentación para autores: [contrato-de-caso.md](contrato-de-caso.md) y [prompt-autor-de-casos.md](prompt-autor-de-casos.md).
 
-- La Vendimia: los cinco capítulos tienen resumen y pregunta. Al acertar aparece el cierre y el gancho y se habilita el siguiente sobre o la votación final ([ADR 0016](adr/0016-preguntas-de-capitulo.md)).
+- La Vendimia: los cinco capítulos tienen resumen y pregunta. Al acertar aparece el cierre y el gancho y se habilita el siguiente sobre o la votación final ([ADR 0016](adr/0016-preguntas-de-capitulo.md)). La tele muestra el resumen y, tras acertar, el cierre y el gancho del capítulo más avanzado que ya se abrió; se responde desde el panel del jugador.
 
 ## Pendiente, en orden
 

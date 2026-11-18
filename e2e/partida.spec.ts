@@ -47,6 +47,7 @@ test("partida completa: dos jugadores y la tele", async ({ page: anfitrion, brow
   // la tele muestra las pruebas recién desbloqueadas y las suma al expediente
   await expect(tele.getByText("Nuevas pruebas en el expediente")).toBeVisible();
   await expect(tele.getByRole("heading", { name: /Expediente \(\d+ pruebas\)/ })).toBeVisible();
+  await expect(tele.getByRole("heading", { name: "Resumen del capítulo" })).toHaveCount(0);
 
   // el celular de la víctima se navega como uno real
   await anfitrion.getByRole("button", { name: "📱 Celular de Julia" }).click();
@@ -102,20 +103,28 @@ test("partida completa: dos jugadores y la tele", async ({ page: anfitrion, brow
   await anfitrion.waitForURL("/");
 });
 
-test("Vendimia: acertar la pregunta revela el cierre y destraba el sobre en ambos dispositivos", async ({ page: anfitrion, browser }) => {
+test("Vendimia: la tele y los jugadores ven el resumen y el cierre al avanzar de capítulo", async ({ page: anfitrion, browser }) => {
   const codigo = await crearSala(anfitrion, "Ana", "Muerte en la vendimia");
   const otro = await unirJugador(browser, codigo, "Beto");
+  const tele = await (await browser.newContext()).newPage();
+  await tele.goto(`/sala/${codigo}?pantalla`);
+  await tele.getByRole("button", { name: "Conectar como pantalla compartida" }).click();
+  await expect(tele.getByText(codigo, { exact: true })).toBeVisible();
   await anfitrion.getByRole("button", { name: "Abrir el caso" }).click();
 
   const sobreCerrado = anfitrion.getByRole("button", { name: /Sobre 2.*Cerrado/ });
   await expect(sobreCerrado).toBeDisabled();
   await expect(anfitrion.getByText("Resumen del capítulo", { exact: true })).toHaveCount(1);
+  const accidenteEnTele = tele.getByRole("region", { name: "Sobre 1: El accidente" });
+  const fiestaEnTele = tele.getByRole("region", { name: "Sobre 2: La fiesta" });
+  await expect(accidenteEnTele.getByText(/La primera hipótesis es un accidente laboral/)).toBeVisible();
   const pregunta = anfitrion.getByRole("group", { name: "¿Fue de verdad un accidente laboral?" });
   await pregunta.getByRole("radio", { name: /Ignacio se encerró sin querer/ }).check();
   await pregunta.getByRole("button", { name: "Responder" }).click();
   await expect(anfitrion.getByRole("alert").filter({ hasText: "Esa respuesta no encaja" })).toBeVisible();
   await expect(sobreCerrado).toBeDisabled();
   await expect(anfitrion.getByText("¿Quién estaba en la fiesta y quién tenía algo contra Ignacio?")).toHaveCount(0);
+  await expect(accidenteEnTele.getByRole("heading", { name: "Cierre del capítulo" })).toHaveCount(0);
 
   await pregunta.getByRole("radio", { name: /Alguien trabó la puerta desde afuera/ }).check();
   await pregunta.getByRole("button", { name: "Responder" }).click();
@@ -124,11 +133,18 @@ test("Vendimia: acertar la pregunta revela el cierre y destraba el sobre en ambo
     await expect(jugador.getByText(/No fue un accidente\. La puerta solo se traba/)).toBeVisible();
     await expect(jugador.getByRole("button", { name: /Sobre 2.*Abrir sobre/ })).toBeEnabled();
   }
+  await expect(accidenteEnTele.getByText(/No fue un accidente\. La puerta solo se traba/)).toBeVisible();
+  await expect(accidenteEnTele.getByText("¿Quién estaba en la fiesta y quién tenía algo contra Ignacio?")).toBeVisible();
+  await expect(fiestaEnTele).toHaveCount(0);
+  await expect(tele.getByRole("button", { name: "Responder" })).toHaveCount(0);
   await otro.reload();
   await otro.getByRole("button", { name: /Sobre 2.*Abrir sobre/ }).click();
   await expect(anfitrion.getByText("Resumen del capítulo", { exact: true })).toHaveCount(2);
   await expect(anfitrion.getByText(/Ahora toca reconstruir qué pasó en la fiesta/)).toBeVisible();
   await expect(anfitrion.getByRole("button", { name: /Sobre 3.*Cerrado/ })).toBeDisabled();
+  await expect(fiestaEnTele.getByText(/Ahora toca reconstruir qué pasó en la fiesta/)).toBeVisible();
+  await expect(accidenteEnTele).toHaveCount(0);
+  await expect(fiestaEnTele.getByRole("heading", { name: "Cierre del capítulo" })).toHaveCount(0);
 });
 
 test("con la partida empezada se suman la tele y un jugador", async ({ page: anfitrion, browser }) => {
