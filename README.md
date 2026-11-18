@@ -47,12 +47,12 @@ Con Supabase configurado, las salas se guardan en Postgres y el tiempo real usa 
 ### Importar los casos oficiales
 
 1. Corré `npm run migrar:oficiales` para validar los paquetes sin escribir.
-2. Con autorización para el proyecto de destino, exportá `NEXT_PUBLIC_SUPABASE_URL` y `SUPABASE_SECRET_KEY` en la terminal y corré `npm run migrar:oficiales -- --aplicar`. El comando admite reintentos con los mismos datos y no reemplaza filas ni imágenes existentes.
+2. Con autorización para el proyecto de destino, exportá `NEXT_PUBLIC_SUPABASE_URL` y `SUPABASE_SECRET_KEY` en la terminal y corré `npm run migrar:oficiales -- --aplicar`. El comando admite reintentos con los mismos datos y no reemplaza filas ni imágenes existentes. Si cambiaste un caso ya importado (ver abajo), usá `--actualizar`: sube las imágenes nuevas sin tocar las que ya están y reemplaza la fila del caso.
 3. Corré `npm run validar -- --verificar-destino` con esas mismas variables. Vercel también hace esta verificación de solo lectura antes del despliegue de producción. Después del despliegue, corré `npm run humo -- <url>`.
 
 Los JSON y documentos de autor van a `casos_oficiales` (sin acceso desde el navegador); las imágenes a `casos-autores/oficiales/`. Los ids de las salas no cambian. La caja fuerte HTML sigue siendo código de la app: la combinación la comprueba el servidor. Quitar los expedientes del árbol actual no los borra del historial público de Git.
 
-Los comandos de desarrollo, validación y tests preparan una copia congelada en `.casos-local/` desde ese historial (o GitHub si el checkout es superficial). Sin Supabase, la app local puede usar esa copia; no se sirve ni se empaqueta en Vercel.
+Los comandos de desarrollo, validación y tests preparan una copia congelada en `.casos-local/` desde ese historial (o GitHub si el checkout es superficial) y le aplican los cambios de [casos-oficiales/](casos-oficiales/): `cambios.json` reemplaza campos de pruebas y fragmentos de `REVISION.md` y `PROMPTS-IMAGENES.md`, y las imágenes de `casos-oficiales/<caso>/` se suman a las del caso. Sin Supabase, la app local puede usar esa copia; no se sirve ni se empaqueta en Vercel. Como el despliegue de producción comprueba que cada imagen esté en Storage, un cambio con imágenes nuevas se importa con `--actualizar` antes de desplegarlo.
 
 ## Cómo se prueba
 

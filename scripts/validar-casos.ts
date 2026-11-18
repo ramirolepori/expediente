@@ -55,7 +55,12 @@ function validarPaquetes() {
   });
 }
 
-async function migrar(paquetes: ReturnType<typeof validarPaquetes>, soloVerificar: boolean) {
+const MODOS = ["--aplicar", "--actualizar", "--verificar-destino"] as const;
+type Modo = (typeof MODOS)[number];
+const esModo = (texto: string): texto is Modo => (MODOS as readonly string[]).includes(texto);
+
+async function migrar(paquetes: ReturnType<typeof validarPaquetes>, modo: Modo) {
+  const soloVerificar = modo === "--verificar-destino";
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const clave = process.env.SUPABASE_SECRET_KEY;
   if (!url || !clave) throw new Error("Configurá NEXT_PUBLIC_SUPABASE_URL y SUPABASE_SECRET_KEY para el entorno de destino");
@@ -68,8 +73,8 @@ async function migrar(paquetes: ReturnType<typeof validarPaquetes>, soloVerifica
     if (soloVerificar) {
       const caso = CasoSchema.safeParse(actual?.datos);
       if (!caso.success || caso.data.meta.id !== fila.id) throw new Error(`Falta importar un expediente válido para ${fila.id} antes del despliegue`);
-    } else if (actual && !isDeepStrictEqual(actual, fila)) {
-      throw new Error(`${fila.id} ya existe con otros datos; no se sobrescribió nada`);
+    } else if (actual && !isDeepStrictEqual(actual, fila) && modo !== "--actualizar") {
+      throw new Error(`${fila.id} ya existe con otros datos; no se sobrescribió nada. Para reemplazarlo con los cambios de casos-oficiales/, usá --actualizar`);
     }
   }
 
@@ -93,17 +98,27 @@ async function migrar(paquetes: ReturnType<typeof validarPaquetes>, soloVerifica
     const { error } = await db.from("casos_oficiales").insert(faltantes);
     if (error) throw new Error(`No pude registrar los casos: ${error.message}`);
   }
+  if (modo === "--actualizar") {
+    for (const { fila } of paquetes) {
+      const actual = actuales.get(fila.id);
+      if (!actual || isDeepStrictEqual(actual, fila)) continue;
+      const { id, ...campos } = fila;
+      const { error } = await db.from("casos_oficiales").update(campos).eq("id", id);
+      if (error) throw new Error(`No pude actualizar ${id}: ${error.message}`);
+      console.log(`Actualizado ${id}`);
+    }
+  }
   console.log(`\nCasos verificados en ${new URL(url).origin}: ${paquetes.map(({ fila }) => fila.id).join(", ")}`);
 }
 
 async function main() {
   const args = process.argv.slice(2);
   const [modo] = args;
-  if (args.length > 1 || (modo && modo !== "--aplicar" && modo !== "--verificar-destino")) {
-    throw new Error("Usá --aplicar o --verificar-destino");
+  if (args.length > 1 || (modo !== undefined && !esModo(modo))) {
+    throw new Error("Usá --aplicar, --actualizar o --verificar-destino");
   }
   const paquetes = validarPaquetes();
-  if (modo) await migrar(paquetes, modo === "--verificar-destino");
+  if (modo !== undefined && esModo(modo)) await migrar(paquetes, modo);
   else console.log("\nValidación local; no se escribió en Supabase.");
 }
 

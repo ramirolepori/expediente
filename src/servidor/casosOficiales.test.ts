@@ -23,7 +23,9 @@ describe("catálogo de casos oficiales", () => {
     expect(aurora.minijuegos.find((m) => m.tipo === "personalizado")?.config.pagina).toBe("/casos/hotel-aurora/minijuegos/caja-fuerte.html");
     const storage = "https://proyecto.supabase.co/storage/v1/object/public/casos-autores/oficiales/vendimia/";
     expect(vendimia.sobres[0].escena?.imagen).toBe(storage + "escenas/nave.jpg");
-    expect(vendimia.pruebas.some((p) => p.contenido.includes(storage + "pruebas/puerta-exterior.jpg"))).toBe(true);
+    const puerta = vendimia.pruebas.find((p) => p.id === "puerta_nave")!.contenido;
+    expect(puerta).toContain(storage + "pruebas/puerta-exterior.jpg");
+    expect(puerta).toContain(storage + "pruebas/puerta-interior.jpg");
     expect(await obtenerOficial("vendimia")).toBe(vendimia);
     expect(await obtenerOficial("autor-otro")).toBeUndefined();
     expect(fetch).toHaveBeenCalledTimes(1);

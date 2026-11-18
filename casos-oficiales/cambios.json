@@ -1,0 +1,21 @@
+{
+  "vendimia": {
+    "pruebas": {
+      "puerta_nave": {
+        "contenido": "![Foto 4: lado exterior de la puerta, barra en posición trabada](/casos/vendimia/pruebas/puerta-exterior.jpg)\n\n*Foto 4. Lado exterior de la puerta, barra en posición trabada.*\n\nBarra corrediza **exterior**. Raspaduras recientes en el metal, restos de mosto y una huella parcial sobre el mosto (enviada al laboratorio).\n\n![Foto 5: lado de adentro de la puerta, chapa con abolladuras](/casos/vendimia/pruebas/puerta-interior.jpg)\n\n*Foto 5. Lado de adentro de la puerta, chapa con abolladuras.*\n\nDel lado de adentro, la chapa tiene **abolladuras a la altura de una mano**.\n\n**Nota del perito:** esta puerta **solo puede trabarse desde afuera**. Desde adentro no hay manija ni pasador."
+      }
+    },
+    "textos": {
+      "REVISION.md": [
+        [
+          "una huella parcial sobre el mosto (enviada al laboratorio).\n\nDel lado de adentro,",
+          "una huella parcial sobre el mosto (enviada al laboratorio).\n\n![Foto 5: lado de adentro de la puerta, chapa con abolladuras](../3-imagenes/pruebas/puerta-interior.jpg)\n\n*Foto 5. Lado de adentro de la puerta, chapa con abolladuras.*\n\nDel lado de adentro,"
+        ]
+      ],
+      "PROMPTS-IMAGENES.md": [
+        ["| Foto 5, lado de adentro con abolladuras | ⏳ falta generarla (opcional) |", "| Foto 5, lado de adentro con abolladuras | ✅ |"],
+        ["## Prueba · Puerta de la nave, lado interior (falta)", "## Prueba · Puerta de la nave, lado interior"]
+      ]
+    }
+  }
+}
