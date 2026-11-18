@@ -31,10 +31,17 @@ jobs:
     if: github.event_name != 'deployment_status'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Las pruebas más largas se reparten entre las dos partes.
+      PRUEBAS_SEGUNDA_PARTE: 'modo traidor: uno solo ve la ficha|minijuegos: descifrar un mensaje|pizarra: corcho con hilos|laboratorio: el papel roto'
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2]
+        include:
+          - shard: 1
+            filtro: --grep-invert
+          - shard: 2
+            filtro: --grep
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -44,7 +51,7 @@ jobs:
       - run: npm ci
       # El runner ya trae las bibliotecas de Chromium; la suite usa el modo headless.
       - run: npx playwright install --only-shell chromium
-      - run: npm run e2e -- --fully-parallel --workers=1 --shard=${{ matrix.shard }}/2
+      - run: npm run e2e -- --fully-parallel --workers=1 ${{ matrix.filtro }} "$PRUEBAS_SEGUNDA_PARTE"
         env:
           CI: "true"
       - uses: actions/upload-artifact@v4
