@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import datos from "../../casos/hotel-aurora/caso.json";
+import { leerCasoArchivado } from "@/casos/archivados";
 import { CasoSchema } from "@/casos/schema";
 import { guionCelular, guionDe, personajeDeMarca, textoParaLeer } from "./narracion";
 import { aplicar, ErrorDeJuego } from "./reductor";
@@ -7,7 +7,7 @@ import { CONFIG_POR_DEFECTO, type EstadoPartida } from "./tipos";
 import { vistaPara } from "./vista";
 import { BASES, vocesDeLectura, vocesDelElenco } from "./voz";
 
-const caso = CasoSchema.parse(datos);
+const caso = CasoSchema.parse(leerCasoArchivado("hotel-aurora"));
 const elenco = [
   { id: "md", nombre: "Martín Duarte" },
   { id: "valentina", nombre: "Valentina Ruiz" },

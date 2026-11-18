@@ -2,13 +2,13 @@
 
 Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tarea, actualizá este archivo** (mover lo hecho, sumar lo nuevo) en el mismo commit.
 
-Última actualización: 15/11/2026.
+Última actualización: 18/11/2026.
 
 ## Funcionando en producción
 
 - Salas con código y QR, panel por jugador y tele compartida, tiempo real con Supabase. Con la partida empezada se puede sumar una tele o un jugador: el botón "➕ Sumar" del encabezado muestra código, QR y abre la tele. En modo traidor el traidor se sortea al abrir el caso, así que quien entra tarde nunca lo es.
 - Caso **Hotel Aurora** jugable: 3 sobres, celular navegable, candados, 4 minijuegos, modo traidor. Valentina ya no admite ser Arcimboldo con lo del primer sobre (necesita el labial, o el celular más el testimonio del hielo) y las opciones del móvil y de Duarte tienen largo parecido, sin nombrar ECLIPSE.
-- Caso **Muerte en la vendimia** (de Franco): 5 sobres como capítulos, 31 pruebas, 7 personajes, 2 minijuegos y modo traidor. Su documento de revisión con la solución y los cierres y ganchos de cada capítulo está en `casos/vendimia/REVISION.md`; los prompts de las imágenes, en `PROMPTS-IMAGENES.md`. Faltan retocar textos en inglés de algunas ilustraciones y la foto opcional del lado de adentro de la puerta. Sus personajes usan los rasgos por defecto.
+- Caso **Muerte en la vendimia** (de Franco): 5 sobres como capítulos, 31 pruebas, 7 personajes, 2 minijuegos y modo traidor. Faltan retocar textos en inglés de algunas ilustraciones y la foto opcional del lado de adentro de la puerta. Sus personajes usan los rasgos por defecto.
 - Escenas ilustradas por sobre (ADR 0011): una imagen con círculos sobre los objetos que abren la prueba, como índice visual. Viajan solo con el sobre abierto y sin los puntos de pruebas bloqueadas. La descripción de un sobre se ve recién cuando se puede abrir, para que pueda resumir lo descubierto sin adelantar nada.
 - Interrogatorios con IA y guardrails (ADR 0002). Un secreto habilitado se cuenta de a partes, después de una reacción, no todo de golpe. Límites según la cuota gratis (ADR 0005): 3 s por jugador, 12 por sala por minuto, 150 por partida con contador visible, y ante un 429 del proveedor un aviso amable sin pasar al respaldo.
 - La tele muestra las pruebas recién desbloqueadas durante 25 s (o hasta que alguien pregunte) y una lista del expediente con las más nuevas arriba. Las del primer sobre y las que llegan con una respuesta no se destacan, solo se resaltan en la lista.
@@ -24,20 +24,20 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 - Casos de autores en Supabase (ADR 0012): en "Mis casos" de `/autores` el autor sube la carpeta del caso (caso.json, imágenes y REVISION.md). El JSON va a la tabla `casos_autor` y las imágenes al bucket `casos-autores`, directo desde el navegador con URLs firmadas; después el servidor relee cada imagen (su cabecera y su peso real) y valida todo de nuevo. Estados: borrador (con errores), validado, privado (se juega con el link `/?caso=autor-<id>`, con el modelo falso) y publicado (en el catálogo, con el modelo real). El autor pide la publicación y un moderador o administrador lee el REVISION.md, juega el caso y lo publica o lo devuelve con una nota. Subir una versión nueva lo saca del catálogo hasta que lo vuelvan a aprobar. Con `AUTH_FALSO=1` la tabla y el Storage viven en memoria.
 - Sala de prueba en modo autor (ADR 0012): si quien juega un caso propio sin publicar tiene abierta su cuenta de `/autores` (o es moderador), en la sala aparece "🛠 Modo autor". Muestra por qué está cerrado cada sobre y qué pruebas esperan algo más (con cada condición marcada como cumplida o no), los secretos de cada personaje (bloqueado, habilitado o contado) y la ficha exacta que le llega al modelo, los hechos con quién los cuenta, y los códigos de candados y soluciones de minijuegos. Atajos: abrir el sobre siguiente o cualquiera, revelar un hecho, abrir un candado, dar un minijuego por resuelto y jugar como traidor. Los atajos quedan en el registro de la partida. La ruta exige el token de la sala y la cuenta del autor, y nunca pasa por la vista.
 - Kit de autor (ADR 0012): en `/autores`, con o sin cuenta, "Bajar el kit (.zip)" y "Copiar el prompt inicial". El zip (`/autores/kit`) se arma en el build de cada deploy desde el código (`src/kit/`): LEEME, prompt inicial, guía por etapas con checklists, catálogo de piezas, reglas de diseño y lo que revisa el validador, el contrato de `docs/contrato-de-caso.md`, el JSON Schema generado de `CasoSchema`, un caso de ejemplo chico (La receta de la abuela) con su REVISION.md, y un SKILL.md para usarlo como skill de Claude. Lleva el commit del deploy como versión. Un test fija que el ejemplo pasa el validador como caso de autor sin ningún hallazgo.
-- Laboratorio: personaje (muestrario de variedad y el elenco del Hotel Aurora), ambientaciones, minijuegos, pizarra y voces.
+- Laboratorio: personaje, ambientaciones, minijuegos, pizarra y voces.
 - Documentación para autores: [contrato-de-caso.md](contrato-de-caso.md) y [prompt-autor-de-casos.md](prompt-autor-de-casos.md).
 
 - La Vendimia: los cinco capítulos tienen resumen y pregunta. Al acertar aparece el cierre y el gancho y se habilita el siguiente sobre o la votación final ([ADR 0016](adr/0016-preguntas-de-capitulo.md)). La tele muestra el resumen y, tras acertar, el cierre y el gancho del capítulo más avanzado que ya se abrió; se responde desde el panel del jugador.
 
 ## Pendiente, en orden
 
-1. **Casos de cualquier autor** (ADR 0012, decidida): kit de autor descargable desde `/autores`, cuentas con Supabase Auth, casos nuevos en Supabase (tabla y Storage), validador con sala de prueba (modelo falso), estados borrador, validado, privado y publicado, y aprobación de Ramiro o sus moderadores. Ya están las cuentas, el validador y los casos en Supabase con sus estados. Ya está todo lo de la ADR 0012, kit incluido. Queda migrar Hotel Aurora y la Vendimia a Supabase.
+1. **Catálogo oficial en Supabase** (ADR 0012): el servidor ya admite los expedientes de Hotel Aurora y la Vendimia, incluidas las notas de revisión y los prompts de Vendimia, sin cambiar los ids de las salas. El laboratorio usa un caso de ejemplo. Falta [importar y verificar en producción](../README.md#importar-los-casos-oficiales) antes de desplegar.
 
 Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
 
 CI: GitHub Actions corre lint, unitarios y validación en paralelo con dos partes de Playwright, cada una con su propio servidor de prueba. En los PR, un nuevo commit cancela la corrida anterior.
 
-Más adelante: modo competitivo, que cada usuario use su propia clave y su modelo (ADR 0012), migrar Hotel Aurora y la Vendimia a Supabase, casos nuevos, juego online o asincrónico, `imagen` y `roles` en pruebas.
+Más adelante: modo competitivo, que cada usuario use su propia clave y su modelo (ADR 0012), casos nuevos, juego online o asincrónico, `imagen` y `roles` en pruebas.
 
 ## Esperando decisión de Ramiro (no avanzar sin él)
 

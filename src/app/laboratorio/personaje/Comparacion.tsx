@@ -126,7 +126,7 @@ const FRASES: Partial<Record<Emocion, string>> = {
   quebrado: "Si no lo hacía yo, lo hacía otro. Y el otro no iba a ser mi hijo con una tarjeta.",
 };
 
-export function Comparacion({ imagenes, aurora }: { imagenes: Record<string, string>; aurora: { titulo: string; rasgos: Rasgos }[] }) {
+export function Comparacion({ imagenes, elenco }: { imagenes: Record<string, string>; elenco: { titulo: string; rasgos: Rasgos }[] }) {
   const [emocion, setEmocion] = useState<Emocion>("neutral");
   const [hablando, setHablando] = useState(false);
   const [impacto, setImpacto] = useState(0);
@@ -199,7 +199,7 @@ export function Comparacion({ imagenes, aurora }: { imagenes: Record<string, str
 
         {[
           { titulo: "Variedad vectorial", testId: "muestrario", lista: [...EJEMPLOS, ...SIN_DATOS] },
-          { titulo: "Hotel Aurora", testId: "aurora", lista: aurora },
+          { titulo: "Caso de ejemplo", testId: "elenco", lista: elenco },
         ].map((g) => (
           <section key={g.testId}>
             <h2 className="mt-10 font-titulo text-2xl">{g.titulo}</h2>

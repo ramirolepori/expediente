@@ -1,6 +1,6 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { obtenerCaso } from "@/casos/registro";
+import { casoLaboratorio } from "@/casos/laboratorio";
 import { rasgosPara } from "@/motor/apariencia";
 import { Comparacion } from "./Comparacion";
 
@@ -13,6 +13,6 @@ export default function Pagina() {
   const imagenes = Object.fromEntries(
     archivos.filter((a) => /\.(png|jpe?g|webp)$/i.test(a)).map((a) => [a.replace(/\.[^.]+$/, ""), `/retratos/alberto/${a}`]),
   );
-  const aurora = (obtenerCaso("hotel_aurora")?.personajes ?? []).map((p) => ({ titulo: p.nombre, rasgos: rasgosPara(p) }));
-  return <Comparacion imagenes={imagenes} aurora={aurora} />;
+  const elenco = casoLaboratorio.personajes.map((p) => ({ titulo: p.nombre, rasgos: rasgosPara(p) }));
+  return <Comparacion imagenes={imagenes} elenco={elenco} />;
 }

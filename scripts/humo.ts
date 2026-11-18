@@ -32,7 +32,9 @@ async function main() {
   let b = "";
   await paso("lista de casos", async () => {
     const casos = await api<{ id: string }[]>("/api/casos");
-    if (!casos.some((c) => c.id === "hotel_aurora")) throw new Error("falta hotel_aurora");
+    for (const id of ["hotel_aurora", "vendimia"]) {
+      if (!casos.some((c) => c.id === id)) throw new Error(`falta ${id}`);
+    }
   });
   await paso("crear sala", async () => ({ codigo } = await api<{ codigo: string }>("/api/salas", { casoId: "hotel_aurora" })));
   await paso("unir dos jugadores", async () => {

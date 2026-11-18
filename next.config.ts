@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
   cacheComponents: true,
   partialPrefetching: true,
+  outputFileTracingExcludes: { "/*": ["./.casos-local/**/*"] },
   turbopack: {
     rules: {
       "*.css": {

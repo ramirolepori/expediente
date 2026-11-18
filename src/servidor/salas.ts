@@ -1,9 +1,9 @@
 import { randomBytes } from "node:crypto";
-import { obtenerCaso } from "@/casos/registro";
 import { ErrorDeJuego, nuevoId } from "@/motor/reductor";
 import { CONFIG_POR_DEFECTO, type ConfigPartida, type TipoConexion } from "@/motor/tipos";
 import { almacen, type Sala } from "./almacen";
 import { casoDeAutor } from "./casosAutor";
+import { obtenerOficial } from "./casosOficiales";
 
 const LETRAS = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sin I ni O para no confundir
 const COLORES = ["#e4572e", "#29a3a3", "#f3a712", "#8e7dbe", "#7bb661", "#e86a92", "#4f8fd6", "#c9a227"];
@@ -15,12 +15,12 @@ export class ErrorSala extends Error {
 }
 
 /**
- * El caso de una sala: del repo o de un autor (ADR 0012). Los de autor sin publicar son de prueba
+ * El caso de una sala: oficial o de un autor (ADR 0012). Los de autor sin publicar son de prueba
  * y se juegan con el modelo falso, para no gastar la cuota de Gemini.
  */
 export async function casoDeSala(casoId: string) {
-  const delRepo = obtenerCaso(casoId);
-  if (delRepo) return { caso: delRepo, dePrueba: false };
+  const oficial = await obtenerOficial(casoId).catch(() => { throw new ErrorSala("No se pudo cargar el caso", 503); });
+  if (oficial) return { caso: oficial, dePrueba: false };
   const deAutor = await casoDeAutor(casoId).catch(() => null);
   if (!deAutor) throw new ErrorSala("Ese caso no existe o ya no se puede jugar", 404);
   return deAutor;

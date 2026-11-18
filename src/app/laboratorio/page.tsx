@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const PRUEBAS = [
   { href: "/laboratorio/personaje", titulo: "Personaje animado", texto: "Alberto Mansilla en dos estilos: vectorial animado y retratos realistas. Emociones, hablar y confesión." },
-  { href: "/laboratorio/minijuegos", titulo: "Minijuegos", texto: "Todos los minijuegos de los casos, para jugarlos sueltos, reiniciarlos, ver la solución y qué destraban." },
+  { href: "/laboratorio/minijuegos", titulo: "Minijuegos", texto: "Ejemplos para probar sueltos, sin adelantar soluciones de una partida." },
   { href: "/laboratorio/pizarra", titulo: "Pizarra", texto: "Corcho con hilos, línea de tiempo y la vista de la tele, con el motor real y un ejemplo cargado." },
   { href: "/laboratorio/voces", titulo: "Voces", texto: "La voz de Piper de cada personaje, generada en el navegador, para escucharlas y compararlas." },
   { href: "/laboratorio/ambientaciones", titulo: "Ambientaciones", texto: "Los cinco temas visuales (noir, policial, médico, terror y de época) con los mismos componentes del juego." },
