@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import datos from "../../casos/hotel-aurora/caso.json";
+import { leerCasoArchivado } from "@/casos/archivados";
 import { CasoSchema } from "@/casos/schema";
 import { aplicarAtajo, explicar, informeAutor } from "./modoAutor";
 import { aplicar, ErrorDeJuego } from "./reductor";
 import { CONFIG_POR_DEFECTO, type EstadoPartida } from "./tipos";
 import { vistaPara } from "./vista";
 
-const caso = CasoSchema.parse(datos);
+const caso = CasoSchema.parse(leerCasoArchivado("hotel-aurora"));
 const ahora = Date.now();
 const lobby: EstadoPartida = {
   codigo: "ABCD", casoId: caso.meta.id, config: { ...CONFIG_POR_DEFECTO }, fase: "lobby", creada: ahora, iniciada: null,

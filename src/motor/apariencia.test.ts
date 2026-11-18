@@ -57,7 +57,8 @@ describe("emoción en la respuesta del modelo", () => {
 describe("validador de apariencia", () => {
   it("avisa mezclas, exige neutral y revisa los archivos", async () => {
     const { validarCaso } = await import("./validador");
-    const datos = structuredClone((await import("../../casos/hotel-aurora/caso.json")).default) as { personajes: { apariencia?: unknown }[] };
+    const { leerCasoArchivado } = await import("@/casos/archivados");
+    const datos = leerCasoArchivado("hotel-aurora") as { personajes: { apariencia?: unknown }[] };
     datos.personajes[0].apariencia = { retratos: { nervioso: "/casos/hotel-aurora/retratos/duarte/nervioso.jpg" } };
     const r = validarCaso(datos, () => false);
     expect(r.errores).toContain('personaje duarte: los retratos necesitan al menos "neutral"');

@@ -148,7 +148,7 @@ Las preguntas que el equipo vota al final. Cada una tiene `id`, `texto`, `tipo` 
 
 ## Qué revisa el validador
 
-El mismo validador corre con `npm run validar` (casos del repo) y en `/autores` (casos de autores, con cuenta). Revisa seis capas y cada hallazgo es un **error** (bloquea probar y publicar), un **aviso** (lo decide quien modera) o una **sugerencia**:
+El mismo validador corre con `npm run validar` (paquetes oficiales archivados) y en `/autores` (casos de autores, con cuenta). Revisa seis capas y cada hallazgo es un **error** (bloquea probar y publicar), un **aviso** (lo decide quien modera) o una **sugerencia**:
 
 1. **Forma:** que el JSON cumpla el schema y su `version`. Avisa los campos que no son del contrato, que se ignoran.
 2. **Referencias:** ids duplicados, referencias a cosas que no existen, hechos usados en condiciones que ningún personaje cuenta, retratos sin `neutral` y la ficha del traidor.
@@ -163,7 +163,7 @@ En `/autores`, con tu cuenta, "Subir un caso" recibe la carpeta con `caso.json`,
 
 ## Cómo probarlo
 
-1. `npm run validar` hasta que dé ✅.
-2. `npm run dev` y jugarlo con dos pestañas (cada una es un jugador).
-3. Sus minijuegos se pueden probar sueltos en `/laboratorio/minijuegos`.
+1. Validá el paquete en `/autores` hasta que no haya errores.
+2. Elegí «Probar con amigos» y abrí el link en dos pestañas (cada una es un jugador).
+3. En `/laboratorio/minijuegos` podés jugar minijuegos de ejemplo sin spoilers.
 4. `npm run e2e` corre partidas automáticas con un modelo falso, sin gastar cuota de Gemini.
