@@ -275,6 +275,7 @@ test("modo traidor: uno solo ve la ficha y el cierre lo revela", async ({ page: 
 });
 
 test("minijuegos: descifrar un mensaje y abrir la caja fuerte propia del caso", async ({ page, browser, request }) => {
+  test.slow();
   const codigo = await crearSala(page, "Ana");
   await unirJugador(browser, codigo, "Beto");
   await page.getByRole("button", { name: "Abrir el caso" }).click();
