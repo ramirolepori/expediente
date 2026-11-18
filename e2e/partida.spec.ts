@@ -20,10 +20,11 @@ async function unirJugador(browser: Browser, codigo: string, apodo: string) {
   return pagina;
 }
 
-async function crearSala(pagina: Page, apodo: string, caso?: string) {
+async function crearSala(pagina: Page, apodo: string, caso?: string, audio?: "compartida") {
   await pagina.goto("/");
   if (caso) await pagina.getByRole("button", { name: new RegExp(caso) }).click();
   await pagina.getByPlaceholder("Ej.: Ramiro").fill(apodo);
+  if (audio) await pagina.getByRole("combobox").filter({ has: pagina.getByRole("option", { name: "Sin voces" }) }).selectOption(audio);
   await pagina.getByRole("button", { name: "Crear sala" }).click();
   await pagina.waitForURL(/\/sala\/[A-Z]{4}$/);
   return pagina.url().split("/").pop()!;
@@ -110,6 +111,85 @@ test("partida completa: dos jugadores y la tele", async ({ page: anfitrion, brow
   // salir vuelve al inicio
   await anfitrion.getByRole("button", { name: "⎋ Salir" }).click();
   await anfitrion.waitForURL("/");
+});
+
+test("el anfitrión genera la voz y solo la primera tele la reproduce sin WASM", async ({ page: anfitrion, browser }) => {
+  // Reemplazar solo los modelos y el runtime externo para que el flujo sea reproducible sin descargas.
+  await anfitrion.addInitScript(() => {
+    const scripts = document.createElement("head").appendChild;
+    HTMLHeadElement.prototype.appendChild = function <T extends Node>(nodo: T): T {
+      if (nodo instanceof HTMLScriptElement && nodo.src.includes("/onnxruntime-web@")) {
+        Object.assign(window, {
+          ort: {
+            env: { wasm: {} },
+            Tensor: class {},
+            InferenceSession: { create: async () => ({ run: async () => ({
+              output: { data: Float32Array.from({ length: 4000 }, (_, i) => 0.15 * Math.sin(i * 0.17)) },
+            }) }) },
+          },
+        });
+      } else if (nodo instanceof HTMLScriptElement && nodo.src.endsWith("/piper_phonemize.js")) {
+        Object.assign(window, { createPiperPhonemize: async ({ print }: { print: (s: string) => void }) => ({
+          callMain: () => print('{"phoneme_ids":[1,2]}'),
+        }) });
+      } else return scripts.call(this, nodo) as T;
+      queueMicrotask(() => nodo.dispatchEvent(new Event("load")));
+      return nodo;
+    };
+  });
+  await anfitrion.route("https://huggingface.co/**", (ruta) => ruta.request().url().endsWith(".json")
+    ? ruta.fulfill({ json: { espeak: { voice: "es" }, inference: { noise_scale: 1, noise_w: 1 }, audio: { sample_rate: 16000 } } })
+    : ruta.fulfill({ body: "modelo falso" }));
+  const codigo = await crearSala(anfitrion, "Ana", undefined, "compartida");
+  const jugador = await unirJugador(browser, codigo, "Beto");
+
+  async function conectarTele() {
+    const tele = await (await browser.newContext()).newPage();
+    await tele.addInitScript(() => {
+      Object.defineProperty(window, "WebAssembly", { value: undefined });
+      const play = HTMLMediaElement.prototype.play;
+      HTMLMediaElement.prototype.play = function () {
+        if (this.src.startsWith("blob:")) {
+          this.addEventListener("playing", () => document.body.setAttribute("data-voz-reproducida", "sí"), { once: true });
+        }
+        return play.call(this);
+      };
+    });
+    await tele.goto(`/sala/${codigo}?pantalla`);
+    await tele.getByRole("button", { name: "Conectar como pantalla compartida" }).click();
+    await expect(tele.getByText(codigo, { exact: true })).toBeVisible();
+    return tele;
+  }
+
+  const tele = await conectarTele();
+  const otraTele = await conectarTele();
+  const recursosPiper: string[] = [];
+  await tele.route(/onnxruntime-web|piper-wasm|piper-voices/, (ruta) => {
+    recursosPiper.push(ruta.request().url());
+    return ruta.abort();
+  });
+  await anfitrion.getByRole("button", { name: "Abrir el caso" }).click();
+  const activar = tele.getByRole("button", { name: "Activar voces" });
+  await expect(activar).toBeVisible();
+  await expect(otraTele.getByRole("button", { name: "Activar voces" })).toHaveCount(0);
+  await expect(anfitrion.getByRole("button", { name: "Activar voces" })).toHaveCount(0);
+  await activar.click();
+
+  const subida = anfitrion.waitForResponse((r) => r.url().includes("/voz/") && r.request().method() === "POST");
+  const descarga = tele.waitForResponse((r) => r.url().includes("/voz/") && r.request().method() === "GET");
+  await preguntar(jugador, "Carla Belotti", "¿Qué sabés de Julia?");
+  const [subidaVoz, descargaVoz] = await Promise.all([subida, descarga]);
+  expect(subidaVoz.status()).toBe(204);
+  expect(descargaVoz.headers()["content-type"]).toBe("audio/wav");
+  await expect(tele.locator("body")).toHaveAttribute("data-voz-reproducida", "sí");
+  expect(recursosPiper).toEqual([]);
+
+  const url = descargaVoz.url();
+  const token = (pagina: Page, tipo: string) =>
+    pagina.evaluate((clave) => sessionStorage.getItem(clave), `expediente:${codigo}:${tipo}`);
+  expect((await tele.request.get(url)).status()).toBe(401);
+  expect((await otraTele.request.get(url, { headers: { Authorization: `Bearer ${await token(otraTele, "pantalla")}` } })).status()).toBe(403);
+  expect((await jugador.request.post(url, { headers: { Authorization: `Bearer ${await token(jugador, "jugador")}` } })).status()).toBe(403);
 });
 
 test("Vendimia: la tele y los jugadores ven el resumen y el cierre al avanzar de capítulo", async ({ page: anfitrion, browser }) => {

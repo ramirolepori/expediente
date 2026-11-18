@@ -33,7 +33,7 @@ Fuente única de "dónde estamos" para todas las sesiones. **Al terminar una tar
 
 1. **Catálogo oficial en Supabase** (ADR 0012): el servidor ya admite los expedientes de Hotel Aurora y la Vendimia, incluidas las notas de revisión y los prompts de Vendimia, sin cambiar los ids de las salas. El laboratorio usa un caso de ejemplo. Falta [importar y verificar en producción](../README.md#importar-los-casos-oficiales) antes de desplegar.
 
-Deuda técnica: generar las voces en el anfitrión y repartirlas por Supabase Storage, para teles que no corren wasm (ADR 0009).
+Voces del interrogatorio en la tele (ADR 0009): el anfitrión genera con Piper y la tele solo reproduce. Para desplegarlo, ejecutar [el SQL del bucket privado](../supabase/voces.sql).
 
 CI: GitHub Actions corre lint, unitarios y validación en paralelo con dos partes de Playwright, cada una con su propio servidor de prueba. En los PR, un nuevo commit cancela la corrida anterior.
 

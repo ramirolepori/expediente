@@ -53,7 +53,8 @@ export interface MensajeInterrogatorio {
   /** prueba mostrada al personaje */
   prueba?: string;
   hora: number;
-  audioUrl?: string;
+  /** El WAV de esta respuesta ya está disponible; la URL firmada no forma parte de la vista. */
+  audioCompartido?: true;
   /** emoción con la que respondió el personaje (la elige el modelo) */
   emocion?: Emocion;
 }

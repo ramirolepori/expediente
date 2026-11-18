@@ -15,7 +15,7 @@ import { Personaje } from "./personaje/Personaje";
 const DESTACAR_MS = 25_000;
 
 /** Lo que se ve en la tele: nada privado, todo grande y legible a distancia. */
-export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; onSalir: () => Promise<void> }) {
+export function PantallaCompartida({ vista, token, onSalir }: { vista: VistaPartida; token: string; onSalir: () => Promise<void> }) {
   const salir = <BotonSalir onSalir={onSalir} className="fixed top-3 right-4 z-40 opacity-40 hover:opacity-100" />;
   const jugadores = vista.conexiones.filter((c) => c.tipo === "jugador");
   const url = useUrlSala(vista.codigo);
@@ -109,7 +109,7 @@ export function PantallaCompartida({ vista, onSalir }: { vista: VistaPartida; on
         <div className="flex items-center gap-8 text-suave">
           {vista.recursosRestantes !== null && <span className="text-3xl">🕰 {vista.recursosRestantes} h</span>}
           <Reloj iniciada={vista.iniciada} limiteMin={vista.config.temporizadorMin} grande />
-          <Voces vista={vista} grande />
+          <Voces vista={vista} token={token} grande />
           <AmbienteSonoro vista={vista} grande />
         </div>
       </header>

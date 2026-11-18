@@ -1,4 +1,9 @@
 import type { Personaje } from "@/casos/schema";
+import type { Conexion } from "./tipos";
+
+export function pantallaDeVoces(conexiones: Conexion[]) {
+  return conexiones.filter((c) => c.tipo === "pantalla").sort((a, b) => a.id.localeCompare(b.id))[0];
+}
 
 /** Una voz de Piper: modelo de rhasspy/piper-voices/es, hablante si el modelo trae varios, y cómo se dice. */
 export interface VozPiper {

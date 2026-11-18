@@ -5,7 +5,7 @@ import { oraciones, wav } from "./voces";
 
 /**
  * Piper en el navegador (ADR 0009). onnxruntime y el fonemizador se cargan desde jsDelivr con
- * versión fija e integridad, y solo cuando alguien activa las voces. Los modelos vienen de
+ * versión fija e integridad, al activar las voces o al prepararlas en el anfitrión. Los modelos vienen de
  * rhasspy/piper-voices en un commit fijo y quedan guardados con la Cache API.
  */
 const ORT = {

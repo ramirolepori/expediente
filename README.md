@@ -37,7 +37,7 @@ Armá el paquete siguiendo el [contrato](docs/contrato-de-caso.md) y subilo desd
 
 ## Despliegue (Vercel + Supabase)
 
-1. En un proyecto nuevo, ejecutar [supabase/esquema.sql](supabase/esquema.sql) desde **SQL Editor**. Después, o si el esquema base ya existe, ejecutar [supabase/casos-oficiales.sql](supabase/casos-oficiales.sql).
+1. En un proyecto nuevo, ejecutar [supabase/esquema.sql](supabase/esquema.sql) desde **SQL Editor**. Después, o si el esquema base ya existe, ejecutar [supabase/casos-oficiales.sql](supabase/casos-oficiales.sql) y [supabase/voces.sql](supabase/voces.sql). Este último crea el bucket privado para el audio de la tele.
 2. Completar en `.env.local` las tres variables de Supabase (ver `.env.example`).
 3. Antes del primer despliegue con el catálogo oficial, seguí [la importación de los casos](#importar-los-casos-oficiales).
 4. Cargar las variables en Vercel, iniciar sesión con `npx vercel login` y desplegar con `npx vercel deploy --prod`.

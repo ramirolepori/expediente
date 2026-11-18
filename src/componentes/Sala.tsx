@@ -6,6 +6,7 @@ import { useSala } from "@/cliente/useSala";
 import type { TipoConexion } from "@/motor/tipos";
 import { PanelJugador } from "./PanelJugador";
 import { PantallaCompartida } from "./PantallaCompartida";
+import { GeneradorVoces } from "./Voces";
 
 export function Sala({ codigo, tipo }: { codigo: string; tipo: TipoConexion }) {
   const sala = useSala(codigo, tipo);
@@ -27,7 +28,10 @@ export function Sala({ codigo, tipo }: { codigo: string; tipo: TipoConexion }) {
       )}
       <div className="capa-juego flex min-h-dvh flex-col">
         {!sala.conectado && <div className="bg-acento py-1 text-center text-xs text-acento-texto">Reconectando…</div>}
-        {tipo === "pantalla" ? <PantallaCompartida vista={vista} onSalir={sala.salir} /> : <PanelJugador sala={sala} vista={vista} />}
+        {vista.yo?.anfitrion && vista.config.audioEn === "compartida" && vista.fase !== "terminada" && (
+          <GeneradorVoces key={sala.token} vista={vista} token={sala.token} />
+        )}
+        {tipo === "pantalla" ? <PantallaCompartida vista={vista} token={sala.token} onSalir={sala.salir} /> : <PanelJugador sala={sala} vista={vista} />}
       </div>
     </div>
   );

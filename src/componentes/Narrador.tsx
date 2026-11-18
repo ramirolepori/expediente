@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { contexto, despertar, salida } from "@/cliente/audio";
 import { paisajeDe } from "@/cliente/paisajes";
 import { precargar, sintetizar } from "@/cliente/piper";
-import { oraciones } from "@/cliente/voces";
+import { oraciones, SILENCIO } from "@/cliente/voces";
 import { guionDe, guionDePrueba, textoParaLeer, type Linea } from "@/motor/narracion";
 import type { VistaPartida } from "@/motor/vista";
 import type { VozPiper } from "@/motor/voz";
@@ -59,8 +59,6 @@ let turno = 0;
 let velocidad = 1;
 let audio: HTMLAudioElement | null = null;
 let terminarAudio: (() => void) | null = null;
-
-const SILENCIO = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=";
 
 /**
  * Safari y los celulares solo dejan sonar audio que arrancó con un toque. Se reproduce un silencio
